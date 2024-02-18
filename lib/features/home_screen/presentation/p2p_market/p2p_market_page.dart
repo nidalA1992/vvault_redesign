@@ -1,0 +1,434 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/p2p_order_instance.dart';
+
+class P2PMarket extends StatefulWidget {
+  const P2PMarket({super.key});
+
+  @override
+  State<P2PMarket> createState() => _P2PMarketState();
+}
+
+class _P2PMarketState extends State<P2PMarket> {
+  bool isPurchaseSelected = true;
+  final List<String> _items = ['BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH'];
+  int _selectedItemIndex = -1;
+  String selectedCurrency = 'BTC';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
+              width: double.infinity,
+              height: 0.3.sh,
+              padding: const EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+              ),
+              decoration: BoxDecoration(color: Color(0xFF1D2126)),
+              child: Padding(
+                padding: EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    CustomAppBar(img_path: "assets/avatar.svg", username: "diehie", id_user: "201938064"),
+                  ],
+                ),
+              )
+          ),
+          Positioned(
+              top: 110,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                width: double.infinity,
+                decoration: ShapeDecoration(
+                  color: Color(0xFF141619),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(0),
+                      topRight: Radius.circular(0),
+                    ),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              isPurchaseSelected = !isPurchaseSelected;
+                            }),
+                            child: Container(
+                              width: 199.75.w,
+                              height: 31.h,
+                              decoration: ShapeDecoration(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      width: 1.w,
+                                      color: isPurchaseSelected ? Color(0xFF05CA77) : Color(0xFF7F2531)),
+                                  borderRadius: BorderRadius.circular(5.r),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: isPurchaseSelected
+                                        ? purchaseContainer(Color(0x4C05CA77), Color(0xFF05CA77), 'Покупка')
+                                        : saleContainer(Colors.white, 'Покупка'),
+                                  ),
+                                  Expanded(
+                                    child: isPurchaseSelected
+                                        ? saleContainer(Colors.white, 'Продажа')
+                                        : purchaseContainer(Color(0xFF3F1C23), Color(0xFFE93349), 'Продажа'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              _bottomSheetCurrency(context);
+                            },
+                            child: Container(
+                              width: 126.w,
+                              height: 31.h,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF1D2126),
+                                borderRadius: BorderRadius.circular(5.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/bitcoin-btc-logo 1.png"),
+                                  Text(
+                                    selectedCurrency,
+                                    style: TextStyle(
+                                      color: Color(0xFF8A929A),
+                                      fontSize: 12.sp,
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 20.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Введите сумму',
+                            style: TextStyle(
+                              color: Color(0xFF8A929A),
+                              fontSize: 12.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'RUB',
+                                style: TextStyle(
+                                  color: Color(0xFF8A929A),
+                                  fontSize: 12.sp,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Метод оплаты',
+                                style: TextStyle(
+                                  color: Color(0xFF8A929A),
+                                  fontSize: 12.sp,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.h,),
+                      Builder(
+                        builder: (context) {
+                          if (isPurchaseSelected) {
+                            return buyOrders();
+                          } else {
+                            return sellOrders();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buyOrders() {
+    return Expanded(
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return P2Pinstance(
+            login: 'JohnDoe123',
+            like_percentage: '95%',
+            order_quantity: '120',
+            success_percentage: '98',
+            price: '5000',
+            currency: 'USD',
+            lower_limit: '100',
+            upper_limit: '10000',
+            banks: ['Сбер', 'Тинькофф', 'Совкомбанк', 'УралСиб'],
+            buyOrder: true,
+            onPressed: (context) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen())
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget sellOrders() {
+    return Expanded(
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return P2Pinstance(
+            login: 'JohnDoe123',
+            like_percentage: '95%',
+            order_quantity: '120',
+            success_percentage: '98',
+            price: '1000000',
+            currency: 'USD',
+            lower_limit: '100',
+            upper_limit: '10000',
+            banks: ['Сбер', 'Тинькофф', 'Совкомбанк', 'УралСиб'],
+            buyOrder: false,
+            onPressed: (context) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen())
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget purchaseContainer(Color bgColor, Color textColor, String text) {
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: isPurchaseSelected
+            ? BorderRadius.only(
+          topLeft: Radius.circular(4),
+          bottomLeft: Radius.circular(4),
+        )
+            : BorderRadius.only(
+          topRight: Radius.circular(4),
+          bottomRight: Radius.circular(4),
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12.sp,
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget saleContainer(Color textColor, String text) {
+    return Container(
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12.sp,
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _bottomSheetCurrency(BuildContext context) async {
+    final String? result = await showModalBottomSheet<String> (
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22.0),
+        ),
+        useRootNavigator: true,
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return FractionallySizedBox(
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Container(
+                      width: 390.w,
+                      height: 450.h,
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        bottom: 30,
+                      ),
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF262C35),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Выберите монету',
+                            style: TextStyle(
+                              color: Color(0x7FEDF7FF),
+                              fontSize: 16.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 20.h,),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            width: 349.68.w,
+                            height: 33.17.h,
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF3E4349),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset("assets/search_icon.svg"),
+                                SizedBox(width: 10.w,),
+                                Text(
+                                  'Поиск монет',
+                                  style: TextStyle(
+                                    color: Color(0x7FEDF7FF),
+                                    fontSize: 14.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10.h,),
+                          Text(
+                            'Поддерживающие монеты для Р2Р',
+                            style: TextStyle(
+                              color: Color(0x7FEDF7FF),
+                              fontSize: 12.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 10.h,),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _items.length,
+                              itemBuilder: (context, index) {
+                                bool isSelected = index == _selectedItemIndex;
+                                return Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8), // Adjust padding as needed
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedItemIndex = index;
+                                        Navigator.pop(context, _items[index]);
+                                      });
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center, // Centers the children horizontally
+                                      children: [
+                                        Text(
+                                          _items[index],
+                                          style: TextStyle(
+                                            color: Color(0xFF8A929A),
+                                            fontSize: 14.sp,
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(width: 20), // Space between text and icon
+                                        if (isSelected)
+                                          Icon(Icons.check, color: Color(0xFF0066FF)),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+              )
+          );
+        }
+    );
+    if (result != null) {
+      setState(() {
+        selectedCurrency = result;
+      });
+    }
+  }
+
+}
