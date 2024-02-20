@@ -4,8 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_order_instance.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/p2p_payment_methods_button.dart';
 
 class P2PMarket extends StatefulWidget {
   const P2PMarket({super.key});
@@ -17,8 +19,11 @@ class P2PMarket extends StatefulWidget {
 class _P2PMarketState extends State<P2PMarket> {
   bool isPurchaseSelected = true;
   final List<String> _items = ['BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH'];
-  int _selectedItemIndex = -1;
+  final List<String> _itemsValutas = ['RUB', 'KZT', 'USD', 'UZS', 'TRY', 'UAH', 'TJA', 'ETH'];
+  int _selectedCurrencyItemIndex = -1;
   String selectedCurrency = 'BTC';
+  int _selectedValutaItemIndex = -1;
+  String selectedValuta = 'KZT';
 
   @override
   Widget build(BuildContext context) {
@@ -139,44 +144,59 @@ class _P2PMarketState extends State<P2PMarket> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Введите сумму',
-                            style: TextStyle(
-                              color: Color(0xFF8A929A),
-                              fontSize: 12.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
+                          GestureDetector(
+                            onTap: () {
+                              _bottomSheetEnterPrice(context);
+                            },
+                            child: Text(
+                              'Введите сумму',
+                              style: TextStyle(
+                                color: Color(0xFF8A929A),
+                                fontSize: 12.sp,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'RUB',
-                                style: TextStyle(
-                                  color: Color(0xFF8A929A),
-                                  fontSize: 12.sp,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w500,
+                          GestureDetector(
+                            onTap: () {
+                              _bottomSheetValuta(context);
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  selectedValuta,
+                                  style: TextStyle(
+                                    color: Color(0xFF8A929A),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
-                            ],
+                                Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
+                              ],
+                            ),
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Метод оплаты',
-                                style: TextStyle(
-                                  color: Color(0xFF8A929A),
-                                  fontSize: 12.sp,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w500,
+                          GestureDetector(
+                            onTap: () {
+                              _bottomSheetPaymentMethods(context);
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Метод оплаты',
+                                  style: TextStyle(
+                                    color: Color(0xFF8A929A),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
-                            ],
+                                Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A), size: 16.sp,),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -220,7 +240,7 @@ class _P2PMarketState extends State<P2PMarket> {
             onPressed: (context) {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen())
+                  MaterialPageRoute(builder: (context) => BuyExtended())
               );
             },
           );
@@ -384,13 +404,13 @@ class _P2PMarketState extends State<P2PMarket> {
                             child: ListView.builder(
                               itemCount: _items.length,
                               itemBuilder: (context, index) {
-                                bool isSelected = index == _selectedItemIndex;
+                                bool isSelected = index == _selectedCurrencyItemIndex;
                                 return Container(
                                   padding: EdgeInsets.symmetric(vertical: 8), // Adjust padding as needed
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
-                                        _selectedItemIndex = index;
+                                        _selectedCurrencyItemIndex = index;
                                         Navigator.pop(context, _items[index]);
                                       });
                                     },
@@ -427,6 +447,364 @@ class _P2PMarketState extends State<P2PMarket> {
     if (result != null) {
       setState(() {
         selectedCurrency = result;
+      });
+    }
+  }
+
+  Future<void> _bottomSheetPaymentMethods(BuildContext context) async {
+    final String? result = await showModalBottomSheet<String> (
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22.0),
+        ),
+        useRootNavigator: true,
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return FractionallySizedBox(
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Container(
+                      width: 390.w,
+                      height: 450.h,
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        bottom: 30,
+                      ),
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF262C35),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Методы оплаты',
+                            style: TextStyle(
+                              color: Color(0x7FEDF7FF),
+                              fontSize: 16.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 20.h,),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            width: 349.68.w,
+                            height: 33.17.h,
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF3E4349),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset("assets/search_icon.svg"),
+                                SizedBox(width: 10.w,),
+                                Text(
+                                  'Поиск монет',
+                                  style: TextStyle(
+                                    color: Color(0x7FEDF7FF),
+                                    fontSize: 14.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Все',),
+                              PaymentMethodsButton(txt: 'Garanti',),
+                            ],
+                          ),
+                          SizedBox(height: 10.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Банковский перевод',),
+                              PaymentMethodsButton(txt: 'Ziraat',),
+                            ],
+                          ),
+                          SizedBox(height: 10.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Все',),
+                              PaymentMethodsButton(txt: 'Garanti',),
+                            ],
+                          ),
+                          SizedBox(height: 10.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Банковский перевод',),
+                              PaymentMethodsButton(txt: 'Ziraat',),
+                            ],
+                          ),
+                          SizedBox(height: 10.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Все',),
+                              PaymentMethodsButton(txt: 'Garanti',),
+                            ],
+                          ),
+                          SizedBox(height: 10.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Банковский перевод',),
+                              PaymentMethodsButton(txt: 'Ziraat',),
+                            ],
+                          ),
+                          SizedBox(height: 10.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PaymentMethodsButton(txt: 'Все',),
+                              PaymentMethodsButton(txt: 'Garanti',),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+              )
+          );
+        }
+    );
+  }
+
+  Future<void> _bottomSheetEnterPrice(BuildContext context) async {
+    final String? result = await showModalBottomSheet<String> (
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22.0),
+        ),
+        useRootNavigator: true,
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return FractionallySizedBox(
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Container(
+                      width: 390.w,
+                      height: 200.h,
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        bottom: 30,
+                      ),
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF1D2126),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Сумма',
+                            style: TextStyle(
+                              color: Color(0x7FEDF7FF),
+                              fontSize: 16.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 20.h,),
+                          Container(
+                            width: 349,
+                            height: 51,
+                            padding: const EdgeInsets.only(left: 11, right: 15),
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF272D35),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Введите сумму',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF8A929A),
+                                    fontSize: 14.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Spacer(),
+                                Text(
+                                  'RUB',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+              )
+          );
+        }
+    );
+  }
+
+  Future<void> _bottomSheetValuta(BuildContext context) async {
+    final String? result = await showModalBottomSheet<String> (
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22.0),
+        ),
+        useRootNavigator: true,
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return FractionallySizedBox(
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return Container(
+                      width: 390.w,
+                      height: 450.h,
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        bottom: 30,
+                      ),
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF262C35),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Выберите монету',
+                            style: TextStyle(
+                              color: Color(0x7FEDF7FF),
+                              fontSize: 16.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 20.h,),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            width: 349.68.w,
+                            height: 33.17.h,
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF3E4349),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset("assets/search_icon.svg"),
+                                SizedBox(width: 10.w,),
+                                Text(
+                                  'Поиск монет',
+                                  style: TextStyle(
+                                    color: Color(0x7FEDF7FF),
+                                    fontSize: 14.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10.h,),
+                          Text(
+                            'Поддерживающие монеты для Р2Р',
+                            style: TextStyle(
+                              color: Color(0x7FEDF7FF),
+                              fontSize: 12.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 10.h,),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _itemsValutas.length,
+                              itemBuilder: (context, index) {
+                                bool isSelected = index == _selectedValutaItemIndex;
+                                return Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8), // Adjust padding as needed
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedValutaItemIndex = index;
+                                        Navigator.pop(context, _itemsValutas[index]);
+                                      });
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center, // Centers the children horizontally
+                                      children: [
+                                        Text(
+                                          _itemsValutas[index],
+                                          style: TextStyle(
+                                            color: Color(0xFF8A929A),
+                                            fontSize: 14.sp,
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(width: 20), // Space between text and icon
+                                        if (isSelected)
+                                          Icon(Icons.check, color: Color(0xFF0066FF)),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+              )
+          );
+        }
+    );
+    if (result != null) {
+      setState(() {
+        selectedValuta = result;
       });
     }
   }

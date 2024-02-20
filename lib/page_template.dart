@@ -36,7 +36,7 @@ class _NameState extends State<Name> {
               )
           ),
           Positioned(
-              top: 250,
+              top: 160,
               bottom: 0,
               left: 0,
               right: 0,

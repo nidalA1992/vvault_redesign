@@ -5,10 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CustomAppBar extends StatelessWidget {
   final String img_path;
   final String username;
-  final String id_user;
+  final String? id_user;
   final Function(BuildContext)? onPressedNotifications;
 
-  const CustomAppBar({Key? key, required this.img_path, required this.username, required this.id_user, this.onPressedNotifications}) : super(key: key);
+  const CustomAppBar({Key? key, required this.img_path, required this.username, this.id_user, this.onPressedNotifications}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +39,18 @@ class CustomAppBar extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 5.h,),
-            Text(
-              'ID ${id_user}',
-              style: TextStyle(
-                color: Color(0xFF80868C),
-                fontSize: 11.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w400,
-              ),
-            )
+            if (id_user != null) ... [
+              SizedBox(height: 5.h,),
+              Text(
+                'ID ${id_user}',
+                style: TextStyle(
+                  color: Color(0xFF80868C),
+                  fontSize: 11.sp,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w400,
+                ),
+              )
+            ]
           ],
         ),
         Spacer(),
