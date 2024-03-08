@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_banks.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_converter.dart';
@@ -45,78 +48,142 @@ class _BuyExtended2State extends State<BuyExtended2> {
             right: 20,
           ),
           decoration: BoxDecoration(color: Color(0xFF141619)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                      onTap: () => widget.onPressed!(context),
-                      child: Icon(Icons.arrow_back_outlined, color: Color(0xFF8A929A),)
-                  ),
-                  Spacer(),
-                  Text(
-                    'Сделка #${widget.dealNumber}',
-                    style: TextStyle(
-                      color: Color(0xFFEDF7FF),
-                      fontSize: 16.sp,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w600,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                        onTap: () => widget.onPressed!(context),
+                        child: Icon(Icons.arrow_back_outlined, color: Color(0xFF8A929A),)
                     ),
-                  )
-                ],
-              ),
-              SizedBox(height: 20.h,),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 185.15.w,
-                    child: Text(
-                      'Завершите оплату в течение ',
+                    Spacer(),
+                    Text(
+                      'Сделка #${widget.dealNumber}',
                       style: TextStyle(
                         color: Color(0xFFEDF7FF),
-                        fontSize: 18.sp,
+                        fontSize: 16.sp,
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
                       ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20.h,),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 185.15.w,
+                      child: Text(
+                        'Завершите оплату в течение ',
+                        style: TextStyle(
+                          color: Color(0xFFEDF7FF),
+                          fontSize: 18.sp,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
+                    Spacer(),
+                    CountdownTimer()
+                  ],
+                ),
+                SizedBox(height: 20.h,),
+                ExtendableBanksList(
+                    price: "363 928",
+                    currency: "RUB",
+                    onPressed: (context) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                    },
+                    bank_requis: "6529 0736 9087 1639",
+                    comment: "Куча слов про сделку я не работаю со скамерами и прочими говнюками!"
+                ),
+                SizedBox(height: 20.h,),
+                Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent, ),
+                  child: ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    childrenPadding: EdgeInsets.zero,
+                    title: Text(
+                      'Информация о сделке',
+                      style: TextStyle(
+                        color: Color(0x7FEDF7FF),
+                        fontSize: 12.sp,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    trailing: Icon(
+                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                      color: Color(0x7FEDF7FF),
+                    ),
+                    onExpansionChanged: (bool expanding) => setState(() => isExpanded = expanding),
+                    children: [
+                      Align(
+                        alignment:Alignment.centerLeft,
+                        child: Text(
+                          'Количество: ${widget.sellerAmount} ${widget.sellerCurrency}',
+                          style: TextStyle(
+                            color: Color(0xFFEDF7FF),
+                            fontSize: 14.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Продавец: ${widget.sellerLogin}',
+                          style: TextStyle(
+                            color: Color(0xFFEDF7FF),
+                            fontSize: 14.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Spacer(),
-                  CountdownTimer()
-                ],
-              ),
-              SizedBox(height: 20.h,),
-              ExtendableBanksList(
-                  price: "363 928",
-                  currency: "RUB",
-                  onPressed: (context) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                  },
-                  bank_requis: "6529 0736 9087 1639",
-                  comment: "Куча слов про сделку я не работаю со скамерами и прочими говнюками!"
-              ),
-              SizedBox(height: 20.h,),
-              ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                childrenPadding: EdgeInsets.zero,
-                title: Text(
-                  'Информация о сделке',
+                ),
+                SizedBox(height: 20.h,),
+                Container(
+                  width: 350.w,
+                  height: 1.50.h,
+                  color: Color(0xFF1D2126),
+                ),
+                SizedBox(height: 20.h,),
+                Text(
+                  'Условия сделки',
                   style: TextStyle(
-                    color: Color(0x7FEDF7FF),
-                    fontSize: 12.sp,
+                    color: Color(0xFFEDF7FF),
+                    fontSize: 14.sp,
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                trailing: Icon(
-                  isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  color: Color(0x7FEDF7FF),
+                SizedBox(height: 10.h,),
+                Text(
+                  'Куча слов про сделку я не работаю со скамерами и прочими говнюками!',
+                  style: TextStyle(
+                    color: Color(0x7FEDF7FF),
+                    fontSize: 14.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                onExpansionChanged: (bool expanding) => setState(() => isExpanded = expanding),
-                children: [
-                  Text(
-                    'Количество: ${widget.sellerAmount} ${widget.sellerCurrency}',
+                SizedBox(height: 30.h,),
+                CustomButton(text: "Платёж выполнен",
+                    onPressed: (context) {
+                  print("efew");
+                    },
+                    clr: Color(0xFF0066FF)),
+                SizedBox(height: 20.h,),
+                Center(
+                  child: Text(
+                    'Отменить',
                     style: TextStyle(
                       color: Color(0xFFEDF7FF),
                       fontSize: 14.sp,
@@ -124,18 +191,10 @@ class _BuyExtended2State extends State<BuyExtended2> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    'Продавец: ${widget.sellerLogin}',
-                    style: TextStyle(
-                      color: Color(0xFFEDF7FF),
-                      fontSize: 14.sp,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 20.h,)
+              ],
+            ),
           )
       ),
     );

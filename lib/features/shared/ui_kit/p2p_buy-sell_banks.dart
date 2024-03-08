@@ -23,7 +23,7 @@ class ExtendableBanksList extends StatefulWidget {
 }
 
 class _ExtendableBanksListState extends State<ExtendableBanksList> {
-  int selectedIndex = -1;
+  int selectedIndex = 0;
 
   List<String> buttons = ['Сбербанк', 'Тинькофф'];
 
