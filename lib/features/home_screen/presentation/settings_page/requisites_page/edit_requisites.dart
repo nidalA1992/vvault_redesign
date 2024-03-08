@@ -8,6 +8,8 @@ import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/requisite_instance.dart';
 
+import '../../../../shared/ui_kit/confirmation_window.dart';
+
 class EditRequisitePage extends StatefulWidget {
   final String requisite;
   const EditRequisitePage({super.key, required this.requisite});
@@ -124,7 +126,14 @@ class _EditRequisitePageState extends State<EditRequisitePage> {
                         SizedBox(height: 30.h,),
                         CustomButton(text: "Редактировать",
                             onPressed: (context) {
-                          print("tapped");
+                              ConfirmationWindow(
+                                content: 'Вы точно хотите удалить реквизиты 3243 2212 8873 3341?',
+                                confirmButtonText: 'Подтвердить',
+                                cancelButtonText: 'Отмена',
+                                onConfirm: () {
+                                  Navigator.pop(context);
+                                },
+                              ).showConfirmationDialog(context);
                             },
                             clr: Color(0xFF0066FF)),
                         SizedBox(height: 10.h,),
