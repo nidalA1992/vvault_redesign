@@ -7,6 +7,7 @@ class ExtendableBanksList extends StatefulWidget {
   final String currency;
   final String bank_requis;
   final String comment;
+  final List<String> banks;
   final Function(BuildContext)? onPressed;
 
   const ExtendableBanksList({
@@ -16,6 +17,7 @@ class ExtendableBanksList extends StatefulWidget {
     required this.onPressed,
     required this.bank_requis,
     required this.comment,
+    required this.banks,
   }) : super(key: key);
 
   @override
@@ -25,16 +27,14 @@ class ExtendableBanksList extends StatefulWidget {
 class _ExtendableBanksListState extends State<ExtendableBanksList> {
   int selectedIndex = 0;
 
-  List<String> buttons = ['Сбербанк', 'Тинькофф'];
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 276.h,
+      height: widget.banks.length == 1 ? 226.h : 276.h,
       child: Expanded(
         child: ListView.builder(
           padding: EdgeInsets.zero,
-          itemCount: buttons.length,
+          itemCount: widget.banks.length,
           itemBuilder: (context, index) {
             bool isSelected = selectedIndex == index;
             return Stack(
@@ -157,7 +157,7 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        buttons[index],
+                        widget.banks[index],
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,

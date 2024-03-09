@@ -24,6 +24,7 @@ class _P2PMarketState extends State<P2PMarket> {
   String selectedCurrency = 'BTC';
   int _selectedValutaItemIndex = -1;
   String selectedValuta = 'KZT';
+  TextEditingController searchController1 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -600,7 +601,7 @@ class _P2PMarketState extends State<P2PMarket> {
                   builder: (BuildContext context, StateSetter setState) {
                     return Container(
                       width: 390.w,
-                      height: 200.h,
+                      height: 180.h,
                       padding: const EdgeInsets.only(
                         top: 20,
                         left: 20,
@@ -679,7 +680,10 @@ class _P2PMarketState extends State<P2PMarket> {
   }
 
   Future<void> _bottomSheetValuta(BuildContext context) async {
-    final String? result = await showModalBottomSheet<String> (
+    // Variable to hold the filtered list based on the search
+    List<String> filteredItems = _itemsValutas;
+
+    final String? result = await showModalBottomSheet<String>(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(22.0),
         ),
@@ -723,29 +727,34 @@ class _P2PMarketState extends State<P2PMarket> {
                             ),
                           ),
                           SizedBox(height: 20.h,),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            width: 349.68.w,
-                            height: 33.17.h,
-                            decoration: ShapeDecoration(
-                              color: Color(0xFF3E4349),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
+                          TextField(
+                            controller: searchController1,
+                            decoration: InputDecoration(
+                              prefixIcon: SvgPicture.asset("assets/search_icon.svg", fit: BoxFit.scaleDown), // Adjust as needed
+                              hintText: 'Поиск монет',
+                              hintStyle: TextStyle(
+                                color: Color(0x7FEDF7FF),
+                                fontSize: 14.sp,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w500,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.r),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Color(0xFF3E4349),
                             ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset("assets/search_icon.svg"),
-                                SizedBox(width: 10.w,),
-                                Text(
-                                  'Поиск монет',
-                                  style: TextStyle(
-                                    color: Color(0x7FEDF7FF),
-                                    fontSize: 14.sp,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                              ],
+                            style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                              fontSize: 14.sp,
                             ),
+                            onChanged: (value) {
+                              setState(() {
+                                // Filter the list of items based on the search term
+                                filteredItems = _itemsValutas.where((item) => item.toLowerCase().contains(value.toLowerCase())).toList();
+                              });
+                            },
                           ),
                           SizedBox(height: 10.h,),
                           Text(
@@ -760,7 +769,7 @@ class _P2PMarketState extends State<P2PMarket> {
                           SizedBox(height: 10.h,),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: _itemsValutas.length,
+                              itemCount: filteredItems.length,
                               itemBuilder: (context, index) {
                                 bool isSelected = index == _selectedValutaItemIndex;
                                 return Container(
@@ -769,14 +778,14 @@ class _P2PMarketState extends State<P2PMarket> {
                                     onTap: () {
                                       setState(() {
                                         _selectedValutaItemIndex = index;
-                                        Navigator.pop(context, _itemsValutas[index]);
+                                        Navigator.pop(context, filteredItems[index]);
                                       });
                                     },
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center, // Centers the children horizontally
                                       children: [
                                         Text(
-                                          _itemsValutas[index],
+                                          filteredItems[index],
                                           style: TextStyle(
                                             color: Color(0xFF8A929A),
                                             fontSize: 14.sp,
@@ -808,5 +817,4 @@ class _P2PMarketState extends State<P2PMarket> {
       });
     }
   }
-
 }

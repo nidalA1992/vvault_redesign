@@ -5,26 +5,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/confirmed_deal_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/deal_canceled_page.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_banks.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_button.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_converter.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/timer.dart';
 
 import '../../../shared/ui_kit/confirmation_window.dart';
 
-class BuyExtended2 extends StatefulWidget {
+class SporPage extends StatefulWidget {
   final String dealNumber;
   final Function(BuildContext)? onPressed;
   final String sellerAmount;
   final String sellerLogin;
   final String sellerCurrency;
 
-  const BuyExtended2({
+  const SporPage({
     Key? key,
     required this.dealNumber,
     required this.onPressed,
@@ -34,10 +29,10 @@ class BuyExtended2 extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BuyExtended2State createState() => _BuyExtended2State();
+  _SporPageState createState() => _SporPageState();
 }
 
-class _BuyExtended2State extends State<BuyExtended2> {
+class _SporPageState extends State<SporPage> {
   bool isExpanded = false;
 
   @override
@@ -76,27 +71,28 @@ class _BuyExtended2State extends State<BuyExtended2> {
                   ],
                 ),
                 SizedBox(height: 20.h,),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 185.15.w,
-                      child: Text(
-                        'Завершите оплату в течение ',
-                        style: TextStyle(
-                          color: Color(0xFFEDF7FF),
-                          fontSize: 18.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    Spacer(),
-                    CountdownTimer()
-                  ],
+                Text(
+                  'В процессе спора',
+                  style: TextStyle(
+                    color: Color(0xFFEDF7FF),
+                    fontSize: 18.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 5.h,),
+                Text(
+                  'Для решения спора перейдите в чат',
+                  style: TextStyle(
+                    color: Color(0x7FEDF7FF),
+                    fontSize: 14.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 20.h,),
                 ExtendableBanksList(
-                    banks: ["Сбербанк", "Тинькофф"],
+                    banks: ["Сбербанк"],
                     price: "363 928",
                     currency: "RUB",
                     onPressed: (context) {
@@ -105,7 +101,6 @@ class _BuyExtended2State extends State<BuyExtended2> {
                     bank_requis: "6529 0736 9087 1639",
                     comment: "Куча слов про сделку я не работаю со скамерами и прочими говнюками!"
                 ),
-                SizedBox(height: 20.h,),
                 Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent, ),
                   child: ExpansionTile(
@@ -179,52 +174,35 @@ class _BuyExtended2State extends State<BuyExtended2> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 30.h,),
-                CustomButton(text: "Платёж выполнен",
-                    onPressed: (context) {
-                      ConfirmationWindow(
-                        content: 'Вы точно перевели деньги по указанным реквизитам?',
-                        confirmButtonText: 'Подтвердить',
-                        cancelButtonText: 'Отмена',
-                        onConfirm: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => ConfirmedDealPage(
-                                  dealNumber: widget.dealNumber,
-                                  onPressed: (context) {
-                                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ));
-                                  },
-                                  sellerAmount: widget.sellerAmount,
-                                  sellerLogin: widget.sellerLogin,
-                                  sellerCurrency: widget.sellerCurrency)));
-                        },
-                      ).showConfirmationDialog(context);
-                    },
-                    clr: Color(0xFF0066FF)),
-                SizedBox(height: 20.h,),
-                GestureDetector(
-                  onTap: () {
-                    ConfirmationWindow(
-                      content: 'Вы точно хотите отменить сделку?',
-                      confirmButtonText: 'Подтвердить',
-                      cancelButtonText: 'Отмена',
-                      onConfirm: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CanceledDealPage()));
-                      },
-                    ).showConfirmationDialog(context);
-                  },
-                  child: Center(
-                    child: Text(
-                      'Отменить',
-                      style: TextStyle(
-                        color: Color(0xFFEDF7FF),
-                        fontSize: 14.sp,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                      ),
+                SizedBox(height: 70.h,),
+                Center(
+                  child: Container(
+                    width: 315.w,
+                    height: 44.h,
+                    padding: EdgeInsets.symmetric(horizontal: 25.w),
+                    decoration: ShapeDecoration(
+                      color: Color(0xFF252A31),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Отменить спор',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFEDF7FF),
+                            fontSize: 14.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(height: 20.h,)
+                )
               ],
             ),
           )
