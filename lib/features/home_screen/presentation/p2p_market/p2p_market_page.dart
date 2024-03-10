@@ -633,12 +633,12 @@ class _P2PMarketState extends State<P2PMarket> {
                           ),
                           SizedBox(height: 20.h,),
                           Container(
-                            width: 349,
-                            height: 51,
-                            padding: const EdgeInsets.only(left: 11, right: 15),
+                            width: 349.w,
+                            height: 51.h,
+                            padding: EdgeInsets.only(left: 15.w, right: 15.w),
                             decoration: ShapeDecoration(
                               color: Color(0xFF272D35),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -685,7 +685,7 @@ class _P2PMarketState extends State<P2PMarket> {
 
     final String? result = await showModalBottomSheet<String>(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22.0),
+          borderRadius: BorderRadius.circular(22.0.r),
         ),
         useRootNavigator: true,
         context: context,
