@@ -1,0 +1,15 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M99.9996 199.999C155.228 199.999 199.999 155.228 199.999 99.9996C199.999 44.7713 155.228 0 99.9996 0C44.7714 0 0 44.7713 0 99.9996C0 155.228 44.7714 199.999 99.9996 199.999Z" fill="#14161A"/>
+<path d="M160 200H40V70.6672C45.656 70.6609 51.0785 68.4113 55.0779 64.4119C59.0773 60.4125 61.3269 54.99 61.3333 49.334H138.666C138.66 52.1358 139.21 54.911 140.284 57.499C141.357 60.087 142.933 62.4364 144.921 64.4112C146.896 66.3994 149.245 67.976 151.833 69.0499C154.422 70.1237 157.197 70.6734 160 70.6672V200Z" fill="#272D35"/>
+<path d="M99.9998 136C117.673 136 132 121.673 132 104C132 86.3268 117.673 72 99.9998 72C82.3267 72 67.9999 86.3268 67.9999 104C67.9999 121.673 82.3267 136 99.9998 136Z" fill="#88A8C7"/>
+<path d="M100 91.5V96.5" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.6" d="M100 111.5V116.5" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.3" d="M91.1621 95.1621L94.6996 98.6996" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.7" d="M105.3 109.301L108.838 112.838" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M87.5 104H92.5" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.8" d="M107.5 104H112.5" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.5" d="M91.1621 112.838L94.6996 109.301" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.9" d="M105.3 98.6996L108.838 95.1621" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M117.334 144H82.668C80.4588 144 78.668 145.791 78.668 148C78.668 150.209 80.4588 152 82.668 152H117.334C119.544 152 121.334 150.209 121.334 148C121.334 145.791 119.544 144 117.334 144Z" fill="#14161A"/>
+<path d="M129.334 160H70.668C68.4588 160 66.668 161.791 66.668 164C66.668 166.209 68.4588 168 70.668 168H129.334C131.544 168 133.334 166.209 133.334 164C133.334 161.791 131.544 160 129.334 160Z" fill="#14161A"/>
+</svg>

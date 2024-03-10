@@ -47,7 +47,7 @@ class _BuySellFieldState extends State<BuySellField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 349.w,
+      width: 350.w,
       height: 51.h,
       padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: ShapeDecoration(

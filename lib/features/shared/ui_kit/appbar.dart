@@ -6,9 +6,11 @@ class CustomAppBar extends StatelessWidget {
   final String img_path;
   final String username;
   final String? id_user;
+  final bool isP2P;
   final Function(BuildContext)? onPressedNotifications;
+  final Function(BuildContext)? onPressedOrders;
 
-  const CustomAppBar({Key? key, required this.img_path, required this.username, this.id_user, this.onPressedNotifications}) : super(key: key);
+  const CustomAppBar({Key? key, this.isP2P = false, required this.img_path, required this.username, this.id_user, this.onPressedNotifications, this.onPressedOrders}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,16 +56,12 @@ class CustomAppBar extends StatelessWidget {
           ],
         ),
         Spacer(),
-        /*
-        GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreateRequisitePage()),
-              );
-            },
-            child: Image.asset("assets/icons/file.png")
-        ), */
+        if (isP2P) ... [
+          GestureDetector(
+              onTap: () => onPressedOrders!(context),
+              child: SvgPicture.asset("assets/requisites_icon.svg")
+          ),
+        ],
         SizedBox(width: 15.w,),
         GestureDetector(
             onTap: () => onPressedNotifications!(context),

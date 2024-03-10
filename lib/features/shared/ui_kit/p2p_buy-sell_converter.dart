@@ -35,8 +35,18 @@ class BuySellConverterField extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
+                isBuy ?
                 Text(
                   'Доступно к покупке',
+                  style: TextStyle(
+                    color: Color(0xFF8A929A),
+                    fontSize: 14.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ) :
+                Text(
+                  'Доступно к продаже',
                   style: TextStyle(
                     color: Color(0xFF8A929A),
                     fontSize: 14.sp,

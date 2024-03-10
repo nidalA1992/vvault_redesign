@@ -9,14 +9,14 @@ import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_button.dart'
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_converter.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
 
-class BuyExtended extends StatefulWidget {
-  const BuyExtended({super.key});
+class SellExtended extends StatefulWidget {
+  const SellExtended({super.key});
 
   @override
-  State<BuyExtended> createState() => _BuyExtendedState();
+  State<SellExtended> createState() => _SellExtendedState();
 }
 
-class _BuyExtendedState extends State<BuyExtended> {
+class _SellExtendedState extends State<SellExtended> {
   final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
 
   @override
@@ -37,14 +37,14 @@ class _BuyExtendedState extends State<BuyExtended> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: Icon(Icons.arrow_back_outlined, color: Color(0xFF8A929A),)
                   ),
                   Spacer(),
                   Text(
-                    'Покупка USDT',
+                    'Продажа USDT',
                     style: TextStyle(
                       color: Color(0xFFEDF7FF),
                       fontSize: 16.sp,
@@ -55,7 +55,7 @@ class _BuyExtendedState extends State<BuyExtended> {
                 ],
               ),
               SizedBox(height: 20.h,),
-              BuySellConverterField(isBuy: true,),
+              BuySellConverterField(isBuy: false,),
               SizedBox(height: 10.h,),
               GestureDetector(
                 onTap: () {
@@ -103,7 +103,7 @@ class _BuyExtendedState extends State<BuyExtended> {
               SizedBox(height: 10.h,),
               BuySellField(isBuy: true, hint_txt: "Я получу",),
               SizedBox(height: 10.h,),
-              BuySellButton(txt: "Купить", isBuy: true),
+              BuySellButton(txt: "Продать", isBuy: false),
               SizedBox(height: 20.h,),
               Text(
                 'Способ оплаты',

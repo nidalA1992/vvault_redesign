@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_buy_extended.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_sell_extended.dart';
 
 class BuySellButton extends StatelessWidget {
   final String txt;
@@ -12,7 +13,7 @@ class BuySellButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        isBuy ? Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => BuyExtended2(
@@ -20,6 +21,19 @@ class BuySellButton extends StatelessWidget {
                   onPressed: (context) {
                     Navigator.pop(context);
                     },
+                  sellerAmount: "6 500",
+                  sellerCurrency: "USDT",
+                  sellerLogin: "umpalumpa137",
+                )
+            )
+        ) : Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SellExtended2(
+                  dealNumber: "174573",
+                  onPressed: (context) {
+                    Navigator.pop(context);
+                  },
                   sellerAmount: "6 500",
                   sellerCurrency: "USDT",
                   sellerLogin: "umpalumpa137",

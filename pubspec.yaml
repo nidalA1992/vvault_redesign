@@ -70,49 +70,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/wallet_icon.svg
-    - assets/p2p_icon.svg
-    - assets/settings_icon.svg
-    - assets/avatar.png
-    - assets/bell_icon.svg
-    - assets/download_icon.svg
-    - assets/upload_icon.svg
-    - assets/dollar-sign_icon.svg
-    - assets/corner-down-right_icon.svg
-    - assets/etherium.png
-    - assets/bitcoin-btc-logo 1.png
-    - assets/thumbs-up.svg
-    - assets/search_icon.svg
-    - assets/edit_icon.svg
-    - assets/copy_icon.svg
-    - assets/profile_icon.svg
-    - assets/requisites_icon.svg
-    - assets/logout_icon.svg
-    - assets/confidentiality_icon.svg
-    - assets/apikey_icon.svg
-    - assets/check_icon.svg
-    - assets/angle-up_icon.svg
-    - assets/sentoke_logo.svg
-    - assets/russia_flag.svg
-    - assets/passport_icon.svg
-    - assets/driverlicense_icon.svg
-    - assets/correct_passport_view.svg
-    - assets/passport_check.svg
-    - assets/passport_uncheck.svg
-    - assets/passport_upload_icon.svg
-    - assets/double_coin_image.svg
-    - assets/coin_keys_image.svg
-    - assets/falling_coin_image.svg
-    - assets/lock_coin_image.svg
-    - assets/edit.svg
-    - assets/confirm_graph.svg
-    - assets/2_in_circle.svg
-    - assets/3_in_circle.svg
-    - assets/1_in_circle.svg
-    - assets/stack_coins.svg
-    - assets/not_verified.svg
-    - assets/coin_scales.svg
-    - assets/pencil_icon.svg
+    - assets/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

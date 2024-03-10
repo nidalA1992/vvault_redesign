@@ -17,14 +17,14 @@ import 'package:vvault_redesign/features/shared/ui_kit/timer.dart';
 
 import '../../../shared/ui_kit/confirmation_window.dart';
 
-class BuyExtended2 extends StatefulWidget {
+class SellExtended2 extends StatefulWidget {
   final String dealNumber;
   final Function(BuildContext)? onPressed;
   final String sellerAmount;
   final String sellerLogin;
   final String sellerCurrency;
 
-  const BuyExtended2({
+  const SellExtended2({
     Key? key,
     required this.dealNumber,
     required this.onPressed,
@@ -34,10 +34,10 @@ class BuyExtended2 extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BuyExtended2State createState() => _BuyExtended2State();
+  _SellExtended2State createState() => _SellExtended2State();
 }
 
-class _BuyExtended2State extends State<BuyExtended2> {
+class _SellExtended2State extends State<SellExtended2> {
   bool isExpanded = false;
 
   @override
@@ -79,9 +79,9 @@ class _BuyExtended2State extends State<BuyExtended2> {
                 Row(
                   children: [
                     SizedBox(
-                      width: 185.15.w,
+                      width: 212.w,
                       child: Text(
-                        'Завершите оплату в течение ',
+                        'Ожидайте поступления средств',
                         style: TextStyle(
                           color: Color(0xFFEDF7FF),
                           fontSize: 18.sp,
@@ -178,52 +178,6 @@ class _BuyExtended2State extends State<BuyExtended2> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 60.h,),
-                CustomButton(text: "Платёж выполнен",
-                    onPressed: (context) {
-                      ConfirmationWindow(
-                        content: 'Вы точно перевели деньги по указанным реквизитам?',
-                        confirmButtonText: 'Подтвердить',
-                        cancelButtonText: 'Отмена',
-                        onConfirm: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => ConfirmedDealPage(
-                                  dealNumber: widget.dealNumber,
-                                  onPressed: (context) {
-                                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ));
-                                  },
-                                  sellerAmount: widget.sellerAmount,
-                                  sellerLogin: widget.sellerLogin,
-                                  sellerCurrency: widget.sellerCurrency)));
-                        },
-                      ).showConfirmationDialog(context);
-                    },
-                    clr: Color(0xFF0066FF)),
-                SizedBox(height: 20.h,),
-                GestureDetector(
-                  onTap: () {
-                    ConfirmationWindow(
-                      content: 'Вы точно хотите отменить сделку?',
-                      confirmButtonText: 'Подтвердить',
-                      cancelButtonText: 'Отмена',
-                      onConfirm: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CanceledDealPage()));
-                      },
-                    ).showConfirmationDialog(context);
-                  },
-                  child: Center(
-                    child: Text(
-                      'Отменить',
-                      style: TextStyle(
-                        color: Color(0xFFEDF7FF),
-                        fontSize: 14.sp,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20.h,)
               ],
             ),
           )

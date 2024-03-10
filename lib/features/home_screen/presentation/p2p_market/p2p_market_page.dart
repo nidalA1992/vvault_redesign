@@ -5,7 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/sell_extended.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_order_instance.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_payment_methods_button.dart';
 
@@ -25,6 +28,7 @@ class _P2PMarketState extends State<P2PMarket> {
   int _selectedValutaItemIndex = -1;
   String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
+    final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +49,10 @@ class _P2PMarketState extends State<P2PMarket> {
                 padding: EdgeInsets.only(top: 40),
                 child: Column(
                   children: [
-                    CustomAppBar(img_path: "assets/avatar.svg", username: "diehie", id_user: "201938064"),
+                    CustomAppBar(img_path: "assets/avatar.png", username: "diehie", isP2P: true,
+                      onPressedOrders: (context) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
+                      },),
                   ],
                 ),
               )
@@ -110,7 +117,16 @@ class _P2PMarketState extends State<P2PMarket> {
                           Spacer(),
                           GestureDetector(
                             onTap: () {
-                              _bottomSheetCurrency(context);
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return OrdersBottomSheet(
+                                    options: _items,
+                                    title: 'Выберите криптовалюту',
+                                    searchText: "Поиск монет",
+                                  );
+                                },
+                              );
                             },
                             child: Container(
                               width: 126.w,
@@ -161,7 +177,16 @@ class _P2PMarketState extends State<P2PMarket> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _bottomSheetValuta(context);
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return OrdersBottomSheet(
+                                    options: _itemsValutas,
+                                    title: 'Выберите валюту',
+                                    searchText: "Поиск валют",
+                                  );
+                                },
+                              );
                             },
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -181,7 +206,16 @@ class _P2PMarketState extends State<P2PMarket> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _bottomSheetPaymentMethods(context);
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return OrdersBottomSheet(
+                                    options: _paymentMethods,
+                                    title: 'Выберите банк',
+                                    searchText: 'Поиск',
+                                  );
+                                },
+                              );
                             },
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -270,7 +304,7 @@ class _P2PMarketState extends State<P2PMarket> {
             onPressed: (context) {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen())
+                  MaterialPageRoute(builder: (context) => SellExtended())
               );
             },
           );
@@ -318,272 +352,6 @@ class _P2PMarketState extends State<P2PMarket> {
           fontWeight: FontWeight.w500,
         ),
       ),
-    );
-  }
-
-  Future<void> _bottomSheetCurrency(BuildContext context) async {
-    final String? result = await showModalBottomSheet<String> (
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22.0),
-        ),
-        useRootNavigator: true,
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return FractionallySizedBox(
-              child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Container(
-                      width: 390.w,
-                      height: 450.h,
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                        bottom: 30,
-                      ),
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF262C35),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Выберите монету',
-                            style: TextStyle(
-                              color: Color(0x7FEDF7FF),
-                              fontSize: 16.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 20.h,),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            width: 349.68.w,
-                            height: 33.17.h,
-                            decoration: ShapeDecoration(
-                              color: Color(0xFF3E4349),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset("assets/search_icon.svg"),
-                                SizedBox(width: 10.w,),
-                                Text(
-                                  'Поиск монет',
-                                  style: TextStyle(
-                                    color: Color(0x7FEDF7FF),
-                                    fontSize: 14.sp,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 10.h,),
-                          Text(
-                            'Поддерживающие монеты для Р2Р',
-                            style: TextStyle(
-                              color: Color(0x7FEDF7FF),
-                              fontSize: 12.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 10.h,),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: _items.length,
-                              itemBuilder: (context, index) {
-                                bool isSelected = index == _selectedCurrencyItemIndex;
-                                return Container(
-                                  padding: EdgeInsets.symmetric(vertical: 8), // Adjust padding as needed
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedCurrencyItemIndex = index;
-                                        Navigator.pop(context, _items[index]);
-                                      });
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center, // Centers the children horizontally
-                                      children: [
-                                        Text(
-                                          _items[index],
-                                          style: TextStyle(
-                                            color: Color(0xFF8A929A),
-                                            fontSize: 14.sp,
-                                            fontFamily: 'Montserrat',
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        SizedBox(width: 20), // Space between text and icon
-                                        if (isSelected)
-                                          Icon(Icons.check, color: Color(0xFF0066FF)),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-              )
-          );
-        }
-    );
-    if (result != null) {
-      setState(() {
-        selectedCurrency = result;
-      });
-    }
-  }
-
-  Future<void> _bottomSheetPaymentMethods(BuildContext context) async {
-    final String? result = await showModalBottomSheet<String> (
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22.0),
-        ),
-        useRootNavigator: true,
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return FractionallySizedBox(
-              child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Container(
-                      width: 390.w,
-                      height: 450.h,
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                        bottom: 30,
-                      ),
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF262C35),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Методы оплаты',
-                            style: TextStyle(
-                              color: Color(0x7FEDF7FF),
-                              fontSize: 16.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 20.h,),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            width: 349.68.w,
-                            height: 33.17.h,
-                            decoration: ShapeDecoration(
-                              color: Color(0xFF3E4349),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset("assets/search_icon.svg"),
-                                SizedBox(width: 10.w,),
-                                Text(
-                                  'Поиск монет',
-                                  style: TextStyle(
-                                    color: Color(0x7FEDF7FF),
-                                    fontSize: 14.sp,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Все',),
-                              PaymentMethodsButton(txt: 'Garanti',),
-                            ],
-                          ),
-                          SizedBox(height: 10.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Банковский перевод',),
-                              PaymentMethodsButton(txt: 'Ziraat',),
-                            ],
-                          ),
-                          SizedBox(height: 10.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Все',),
-                              PaymentMethodsButton(txt: 'Garanti',),
-                            ],
-                          ),
-                          SizedBox(height: 10.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Банковский перевод',),
-                              PaymentMethodsButton(txt: 'Ziraat',),
-                            ],
-                          ),
-                          SizedBox(height: 10.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Все',),
-                              PaymentMethodsButton(txt: 'Garanti',),
-                            ],
-                          ),
-                          SizedBox(height: 10.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Банковский перевод',),
-                              PaymentMethodsButton(txt: 'Ziraat',),
-                            ],
-                          ),
-                          SizedBox(height: 10.h,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              PaymentMethodsButton(txt: 'Все',),
-                              PaymentMethodsButton(txt: 'Garanti',),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-              )
-          );
-        }
     );
   }
 
@@ -679,142 +447,4 @@ class _P2PMarketState extends State<P2PMarket> {
     );
   }
 
-  Future<void> _bottomSheetValuta(BuildContext context) async {
-    // Variable to hold the filtered list based on the search
-    List<String> filteredItems = _itemsValutas;
-
-    final String? result = await showModalBottomSheet<String>(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22.0.r),
-        ),
-        useRootNavigator: true,
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return FractionallySizedBox(
-              child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Container(
-                      width: 390.w,
-                      height: 450.h,
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                        bottom: 30,
-                      ),
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF262C35),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Выберите монету',
-                            style: TextStyle(
-                              color: Color(0x7FEDF7FF),
-                              fontSize: 16.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 20.h,),
-                          TextField(
-                            controller: searchController1,
-                            decoration: InputDecoration(
-                              prefixIcon: SvgPicture.asset("assets/search_icon.svg", fit: BoxFit.scaleDown), // Adjust as needed
-                              hintText: 'Поиск монет',
-                              hintStyle: TextStyle(
-                                color: Color(0x7FEDF7FF),
-                                fontSize: 14.sp,
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w500,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.r),
-                                borderSide: BorderSide.none,
-                              ),
-                              filled: true,
-                              fillColor: Color(0xFF3E4349),
-                            ),
-                            style: TextStyle(
-                              color: Color(0xFFFFFFFF),
-                              fontSize: 14.sp,
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                // Filter the list of items based on the search term
-                                filteredItems = _itemsValutas.where((item) => item.toLowerCase().contains(value.toLowerCase())).toList();
-                              });
-                            },
-                          ),
-                          SizedBox(height: 10.h,),
-                          Text(
-                            'Поддерживающие монеты для Р2Р',
-                            style: TextStyle(
-                              color: Color(0x7FEDF7FF),
-                              fontSize: 12.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 10.h,),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: filteredItems.length,
-                              itemBuilder: (context, index) {
-                                bool isSelected = index == _selectedValutaItemIndex;
-                                return Container(
-                                  padding: EdgeInsets.symmetric(vertical: 8), // Adjust padding as needed
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedValutaItemIndex = index;
-                                        Navigator.pop(context, filteredItems[index]);
-                                      });
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center, // Centers the children horizontally
-                                      children: [
-                                        Text(
-                                          filteredItems[index],
-                                          style: TextStyle(
-                                            color: Color(0xFF8A929A),
-                                            fontSize: 14.sp,
-                                            fontFamily: 'Montserrat',
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        SizedBox(width: 20), // Space between text and icon
-                                        if (isSelected)
-                                          Icon(Icons.check, color: Color(0xFF0066FF)),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-              )
-          );
-        }
-    );
-    if (result != null) {
-      setState(() {
-        selectedValuta = result;
-      });
-    }
-  }
 }
