@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/home_page/operation_instance.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,148 +26,145 @@ class _HomeScreenState extends State<HomeScreen> {
                 left: 20,
                 right: 20,
               ),
-              decoration: BoxDecoration(color: Color(0xFF1D2126)),
+              decoration: BoxDecoration(color: Color(0xFF141619)),
               child: Padding(
                 padding: EdgeInsets.only(top: 40),
-                child: Column(
-                  children: [
-                    CustomAppBar(img_path: "assets/avatar.svg", username: "diehie", id_user: "201938064"),
-                    SizedBox(height: 20.h,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          '0.00',
-                          style: TextStyle(
-                            color: Color(0xFFEDF7FF),
-                            fontSize: 28.sp,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomAppBar(img_path: "assets/avatar.svg", username: "diehie", id_user: "201938064"),
+                      SizedBox(height: 20.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            '320.05 ₽',
+                            style: TextStyle(
+                              color: Color(0xFFEDF7FF),
+                              fontSize: 36.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 30.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          buildHelperTool(
+                              "assets/download_icon.svg",
+                              "Пополнить",
+                                  (BuildContext context) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomeScreen(),
+                                      ),
+                                    );
+                                  }),
+                          buildHelperTool(
+                              "assets/vyvesti_icon.svg",
+                              "Вывести",
+                                  (BuildContext context) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeScreen(),
+                                  ),
+                                );
+                              }),
+                          buildHelperTool(
+                              "assets/arrow-left.svg",
+                              "Перевести",
+                                  (BuildContext context) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeScreen(),
+                                  ),
+                                );
+                              }),
+                          buildHelperTool(
+                              "assets/dollar-sign_icon.svg",
+                              "Счет",
+                                  (BuildContext context) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeScreen(),
+                                  ),
+                                );
+                              }),
+                        ],
+                      ),
+                      SizedBox(height: 40.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Cчета',
+                            style: TextStyle(
+                              color: Color(0xFFEDF7FF),
+                              fontSize: 20.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                        GestureDetector(
-                            onTap: () {
-                              print("tapped!");
-                            },
-                            child: Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x80EDF7FF),)
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 15.h,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        buildHelperTool(
-                            "assets/download_icon.svg",
-                            "Пополнить",
-                                (BuildContext context) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
-                                    ),
-                                  );
-                                }),
-                        buildHelperTool(
-                            "assets/upload_icon.svg",
-                            "Вывести",
-                                (BuildContext context) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
-                            }),
-                        buildHelperTool(
-                            "assets/dollar-sign_icon.svg",
-                            "Оплатить",
-                                (BuildContext context) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
-                            }),
-                        buildHelperTool(
-                            "assets/corner-down-right_icon.svg",
-                            "Получить",
-                                (BuildContext context) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
-                            }),
-                      ],
-                    )
-                  ],
+                          Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF))
+                        ],
+                      ),
+                      SizedBox(height: 10.h,),
+                      Container(
+                        width: 350.w,
+                        height: 1.50.h,
+                        color: Color(0xFF1D2126),
+                      ),
+                      SizedBox(height: 30.h,),
+                      customCryptoWidget(
+                        img: "assets/etherium.png",
+                        cryptoName: "Etherium",
+                        cryptoAmount: "1.0023 ETH",
+                        percentageChange: "+0.23%",
+                        includeDivider: false,
+                      ),
+                      SizedBox(height: 30.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'События',
+                            style: TextStyle(
+                              color: Color(0xFFEDF7FF),
+                              fontSize: 20.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            'История операций',
+                            style: TextStyle(
+                              color: Color(0xFF62A0FF),
+                              fontSize: 14.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 15.h,),
+                      OperationInstance(
+                          type: "incoming",
+                          username: "diehie",
+                          quantity: "7800",
+                          currency: "USDT"
+                      )
+                    ],
+                  ),
                 ),
               )
           ),
-          Positioned(
-              top: 250,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  color: Color(0xFF141619),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Мои счета',
-                          style: TextStyle(
-                            color: Color(0xFFEDF7FF),
-                            fontSize: 20.sp,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: 20.h,),
-                        customCryptoWidget(
-                            img: "assets/etherium.png",
-                            cryptoName: "Etherium",
-                            cryptoAmount: "1.0023 ETH",
-                            percentageChange: "+0.23%",
-                            includeDivider: true,
-                        ),
-                        SizedBox(height: 15.h,),
-                        customCryptoWidget(
-                          img: "assets/etherium.png",
-                          cryptoName: "Bitcoin",
-                          cryptoAmount: "1.0023 BTC",
-                          percentageChange: "+0.23%",
-                          includeDivider: true,
-                        ),
-                        SizedBox(height: 15.h,),
-                        customCryptoWidget(
-                          img: "assets/etherium.png",
-                          cryptoName: "Litecoin",
-                          cryptoAmount: "1.0023 LTC",
-                          percentageChange: "+0.23%",
-                          includeDivider: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-          )
         ],
       ),
     );
@@ -178,21 +176,19 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           Container(
-            width: 40.w,
-            height: 40.h,
+            width: 54.w,
+            height: 54.h,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Color(0xFF0066FF),
             ),
             child: Center(
-              child: Container(
-                width: 18.w,
-                height: 18.h,
-                child: ClipOval(
-                  child: SvgPicture.asset(
-                    img,
-                    fit: BoxFit.cover,
-                  ),
+              child: ClipOval(
+                child: SvgPicture.asset(
+                  img,
+                  fit: BoxFit.cover,
+                  width: 20.w,
+                  height: 20.h,
                 ),
               ),
             ),
@@ -226,13 +222,13 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-              width: 30.w,
-              height: 30.h,
+              width: 35.w,
+              height: 35.h,
               child: Stack(
                 children: [
                   Container(
-                    width: 30.w,
-                    height: 30.h,
+                    width: 35.w,
+                    height: 35.h,
                     decoration: ShapeDecoration(
                       color: Color(0xFFFFFFFF),
                       shape: OvalBorder(),
@@ -244,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SizedBox(width: 15.w),
+            SizedBox(width: 10.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -257,48 +253,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      cryptoAmount,
-                      style: TextStyle(
-                        color: Color(0x7FEDF7FF),
-                        fontSize: 14.sp,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(width: 5.w),
-                    Text(
-                      percentageChange,
-                      style: TextStyle(
-                        color: Color(0xFF05CA77),
-                        fontSize: 12.sp,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                  ],
+                Text(
+                  cryptoAmount,
+                  style: TextStyle(
+                    color: Color(0x7FEDF7FF),
+                    fontSize: 14.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w500,
+                  ),
                 )
               ],
             ),
             Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  "К счёту",
-                  style: TextStyle(
-                    color: Color(0x7FEDF7FF),
-                    fontSize: 12.sp,
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(width: 5.w),
-                Icon(Icons.arrow_forward_outlined, size: 20, color: Color(0x7FEDF7FF))
-              ],
-            ),
           ],
         ),
         if (includeDivider) ... [

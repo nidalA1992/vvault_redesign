@@ -6,7 +6,12 @@
     final String img_path;
     final Function(BuildContext)? onPressed;
 
-    const Name({Key? key, this.text, this.onPressed, this.img_path = ''}) : super(key: key);
+    const Name({
+      Key? key,
+      this.text,
+      this.onPressed,
+      this.img_path = ''
+    }) : super(key: key);
 
     @override
     Widget build(BuildContext context) {
