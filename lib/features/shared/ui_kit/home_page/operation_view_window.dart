@@ -102,7 +102,7 @@ class OperationViewWindow {
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w600,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
