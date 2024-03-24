@@ -12,7 +12,7 @@ class P2Pinstance extends StatelessWidget {
   final String currency;
   final String lower_limit;
   final String upper_limit;
-  final List<String> banks;
+  final List<dynamic> banks;
   final bool buyOrder;
   final Function(BuildContext) onPressed;
 
@@ -37,6 +37,7 @@ class P2Pinstance extends StatelessWidget {
 
     return Column(
       children: [
+        SizedBox(height: 20.h,),
         Container(
           width: 350.w,
           height: 1.50.h,
@@ -121,18 +122,18 @@ class P2Pinstance extends StatelessWidget {
             ),
             SizedBox(width: 20.w,),
             Text(
-              '${lower_limit} ${currency} - ${upper_limit} ${currency}',
+              '${lower_limit.length > 6 ? lower_limit.substring(0, 6) : lower_limit} ${currency} - ${upper_limit.length > 6 ? upper_limit.substring(0, 6) : upper_limit} ${currency}',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFFEDF7FF),
                 fontSize: 10.sp,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w500,
+                overflow: TextOverflow.ellipsis
               ),
             )
           ],
         ),
-        SizedBox(height: 10.h,),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -196,7 +197,7 @@ class P2Pinstance extends StatelessWidget {
     );
   }
 
-  String formatBankNames(List<String> names) {
+  String formatBankNames(List<dynamic> names) {
     final StringBuffer buffer = StringBuffer();
     for (int i = 0; i < names.length; i++) {
       if (i > 0) {

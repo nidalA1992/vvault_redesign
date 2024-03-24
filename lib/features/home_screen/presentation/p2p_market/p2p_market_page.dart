@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/sell_extended.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
@@ -28,10 +30,22 @@ class _P2PMarketState extends State<P2PMarket> {
   int _selectedValutaItemIndex = -1;
   String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
-    final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
+  final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
+
+  @override
+  void initState() {
+    _loadData();
+    super.initState();
+  }
+
+  Future<void> _loadData() async {
+    await Provider.of<OrderProvider>(context, listen: false).loadOrders();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final orders = Provider.of<OrderProvider>(context).orders;
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -239,7 +253,7 @@ class _P2PMarketState extends State<P2PMarket> {
                       Builder(
                         builder: (context) {
                           if (isPurchaseSelected) {
-                            return buyOrders();
+                            return buyOrders(orders);
                           } else {
                             return sellOrders();
                           }
@@ -255,22 +269,23 @@ class _P2PMarketState extends State<P2PMarket> {
     );
   }
 
-  Widget buyOrders() {
+  Widget buyOrders(List<dynamic> orders) {
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.zero,
-        itemCount: 1,
+        itemCount: orders.length,
         itemBuilder: (context, index) {
+          final order = orders[index];
           return P2Pinstance(
-            login: 'JohnDoe123',
+            login: "diehie",
             like_percentage: '95%',
             order_quantity: '120',
             success_percentage: '98',
-            price: '5000',
-            currency: 'USD',
-            lower_limit: '100',
-            upper_limit: '10000',
-            banks: ['Сбер', 'Тинькофф', 'Совкомбанк', 'УралСиб'],
+            price: order['order']['price'],
+            currency: order['order']['maker_currency'],
+            lower_limit: order['order']['lower'],
+            upper_limit: order['order']['upper'],
+            banks: order['order']['banks'],
             buyOrder: true,
             onPressed: (context) {
               Navigator.push(

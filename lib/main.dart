@@ -13,6 +13,7 @@ import 'package:vvault_redesign/features/home_screen/presentation/home_page/home
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/new_order_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/p2p_market_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
 
 void main() {
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => SignInProvider()),
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),
