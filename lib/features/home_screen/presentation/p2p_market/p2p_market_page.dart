@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -255,7 +258,7 @@ class _P2PMarketState extends State<P2PMarket> {
                           if (isPurchaseSelected) {
                             return buyOrders(orders);
                           } else {
-                            return sellOrders();
+                            return sellOrders(orders);
                           }
                         },
                       ),
@@ -269,60 +272,75 @@ class _P2PMarketState extends State<P2PMarket> {
     );
   }
 
+  // String _loadUsername(Future<String> username) async {
+  //   _usrnm = await username[]
+  // }
+
   Widget buyOrders(List<dynamic> orders) {
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.zero,
         itemCount: orders.length,
         itemBuilder: (context, index) {
-          final order = orders[index];
-          return P2Pinstance(
-            login: "diehie",
-            like_percentage: '95%',
-            order_quantity: '120',
-            success_percentage: '98',
-            price: order['order']['price'],
-            currency: order['order']['maker_currency'],
-            lower_limit: order['order']['lower'],
-            upper_limit: order['order']['upper'],
-            banks: order['order']['banks'],
-            buyOrder: true,
-            onPressed: (context) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BuyExtended())
-              );
-            },
-          );
+          if (orders[index]['order']['maker_currency_type'] != 'crypto') {
+            return Container();
+          } else {
+            final order = orders[index];
+            final _username = Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']);
+            print('test1 ${_username}');
+            return P2Pinstance(
+              login: _username.toString(),
+              like_percentage: '95%',
+              order_quantity: '120',
+              success_percentage: '98',
+              price: order['order']['price'],
+              currency: order['order']['maker_currency'],
+              lower_limit: order['order']['lower'],
+              upper_limit: order['order']['upper'],
+              banks: order['order']['banks'],
+              buyOrder: true,
+              onPressed: (context) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BuyExtended())
+                );
+              },
+            );
+          }
         },
       ),
     );
   }
 
-  Widget sellOrders() {
+  Widget sellOrders(List<dynamic> orders) {
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.zero,
-        itemCount: 1,
+        itemCount: orders.length,
         itemBuilder: (context, index) {
-          return P2Pinstance(
-            login: 'JohnDoe123',
-            like_percentage: '95%',
-            order_quantity: '120',
-            success_percentage: '98',
-            price: '1000000',
-            currency: 'USD',
-            lower_limit: '100',
-            upper_limit: '10000',
-            banks: ['Сбер', 'Тинькофф', 'Совкомбанк', 'УралСиб'],
-            buyOrder: false,
-            onPressed: (context) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SellExtended())
-              );
-            },
-          );
+          if (orders[index]['order']['maker_currency_type'] == 'crypto') {
+            return Container();
+          } else {
+            final order = orders[index];
+            return P2Pinstance(
+              login: "diehie",
+              like_percentage: '95%',
+              order_quantity: '120',
+              success_percentage: '98',
+              price: order['order']['price'],
+              currency: order['order']['maker_currency'],
+              lower_limit: order['order']['lower'],
+              upper_limit: order['order']['upper'],
+              banks: order['order']['banks'],
+              buyOrder: true,
+              onPressed: (context) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BuyExtended())
+                );
+              },
+            );
+          }
         },
       ),
     );
