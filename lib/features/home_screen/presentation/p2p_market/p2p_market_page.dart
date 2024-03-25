@@ -15,7 +15,7 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/sel
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_order_instance.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/p2p_payment_methods_button.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class P2PMarket extends StatefulWidget {
   const P2PMarket({super.key});
@@ -34,6 +34,21 @@ class _P2PMarketState extends State<P2PMarket> {
   String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
   final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async{
+    await Provider.of<OrderProvider>(context, listen: false).loadOrders();
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    await Future.delayed(Duration(milliseconds: 1000));
+    if(mounted)
+      setState(() {
+
+      });
+    _refreshController.loadComplete();
+  }
 
   @override
   void initState() {
@@ -157,7 +172,7 @@ class _P2PMarketState extends State<P2PMarket> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Image.asset("assets/bitcoin-btc-logo 1.png"),
+                                  SvgPicture.asset("assets/bitcoin-btc-logo 1.svg"),
                                   Text(
                                     selectedCurrency,
                                     style: TextStyle(
@@ -278,90 +293,104 @@ class _P2PMarketState extends State<P2PMarket> {
 
   Widget buyOrders(List<dynamic> orders) {
     return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          if (orders[index]['order']['maker_currency_type'] != 'crypto') {
-            return SizedBox.shrink();
-          } else {
-            final order = orders[index];
-            return FutureBuilder<String>(
-              future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return P2Pinstance(
-                    login: snapshot.data ?? 'N/A',
-                    like_percentage: '95%',
-                    order_quantity: '120',
-                    success_percentage: '98',
-                    price: order['order']['price'],
-                    currency: order['order']['maker_currency'],
-                    lower_limit: order['order']['lower'],
-                    upper_limit: order['order']['upper'],
-                    banks: order['order']['banks'],
-                    buyOrder: true,
-                    onPressed: (context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BuyExtended()),
-                      );
-                    },
-                  );
-                }
-              },
-            );
-          }
-        },
+      child: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        enablePullDown: true,
+        enablePullUp: false,
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            if (orders[index]['order']['maker_currency_type'] != 'crypto') {
+              return SizedBox.shrink();
+            } else {
+              final order = orders[index];
+              return FutureBuilder<String>(
+                future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return P2Pinstance(
+                      login: snapshot.data ?? 'N/A',
+                      like_percentage: '95%',
+                      order_quantity: '120',
+                      success_percentage: '98',
+                      price: order['order']['price'],
+                      currency: order['order']['maker_currency'],
+                      lower_limit: order['order']['lower'],
+                      upper_limit: order['order']['upper'],
+                      banks: order['order']['banks'],
+                      buyOrder: true,
+                      onPressed: (context) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => BuyExtended()),
+                        );
+                      },
+                    );
+                  }
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
 
   Widget sellOrders(List<dynamic> orders) {
     return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          if (orders[index]['order']['maker_currency_type'] == 'crypto') {
-            return SizedBox.shrink();
-          } else {
-            final order = orders[index];
-            return FutureBuilder<String>(
-              future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return P2Pinstance(
-                    login: snapshot.data ?? 'N/A',
-                    like_percentage: '95%',
-                    order_quantity: '120',
-                    success_percentage: '98',
-                    price: order['order']['price'],
-                    currency: order['order']['maker_currency'],
-                    lower_limit: order['order']['lower'],
-                    upper_limit: order['order']['upper'],
-                    banks: order['order']['banks'],
-                    buyOrder: false,
-                    onPressed: (context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BuyExtended()),
-                      );
-                    },
-                  );
-                }
-              },
-            );
-          }
-        },
+      child: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        enablePullDown: true,
+        enablePullUp: false,
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            if (orders[index]['order']['maker_currency_type'] == 'crypto') {
+              return SizedBox.shrink();
+            } else {
+              final order = orders[index];
+              return FutureBuilder<String>(
+                future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return P2Pinstance(
+                      login: snapshot.data ?? 'N/A',
+                      like_percentage: '95%',
+                      order_quantity: '120',
+                      success_percentage: '98',
+                      price: order['order']['price'],
+                      currency: order['order']['maker_currency'],
+                      lower_limit: order['order']['lower'],
+                      upper_limit: order['order']['upper'],
+                      banks: order['order']['banks'],
+                      buyOrder: false,
+                      onPressed: (context) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SellExtended()),
+                        );
+                      },
+                    );
+                  }
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }

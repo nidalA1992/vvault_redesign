@@ -92,6 +92,7 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                           setState(() {
                             selectedIndex = index;
                           });
+                          Navigator.pop(context, widget.options[index]);
                         },
                         child: Container(
                           width: 350.w,
