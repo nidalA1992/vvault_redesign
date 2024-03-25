@@ -3,7 +3,6 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/dat
 
 class OrderProvider with ChangeNotifier {
   List<dynamic> _orders = [];
-  List<dynamic> _logins = [];
   final OrdersService _apiService = OrdersService();
   List<dynamic> get orders => _orders;
 
@@ -13,10 +12,7 @@ class OrderProvider with ChangeNotifier {
         'sortby': 'created_at',
         'ascending': 'true',
       };
-
       _orders = await _apiService.fetchOrders(queryParams);
-      _logins = await _apiService.fetchUserStats();
-
       notifyListeners();
     } catch (e) {
       print(e);
@@ -27,8 +23,7 @@ class OrderProvider with ChangeNotifier {
    Future<String> fetchUserStats(String userId) async {
     try {
       final user_name =  await _apiService.fetchUserStats(userId);
-      print("test2 ${user_name['user_name']}");
-      return user_name['user_name'].toString();
+      return user_name['user_name'];
     } catch (e) {
       print(e);
       rethrow;

@@ -283,27 +283,36 @@ class _P2PMarketState extends State<P2PMarket> {
         itemCount: orders.length,
         itemBuilder: (context, index) {
           if (orders[index]['order']['maker_currency_type'] != 'crypto') {
-            return Container();
+            return SizedBox.shrink();
           } else {
             final order = orders[index];
-            final _username = Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']);
-            print('test1 ${_username}');
-            return P2Pinstance(
-              login: _username.toString(),
-              like_percentage: '95%',
-              order_quantity: '120',
-              success_percentage: '98',
-              price: order['order']['price'],
-              currency: order['order']['maker_currency'],
-              lower_limit: order['order']['lower'],
-              upper_limit: order['order']['upper'],
-              banks: order['order']['banks'],
-              buyOrder: true,
-              onPressed: (context) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BuyExtended())
-                );
+            return FutureBuilder<String>(
+              future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return P2Pinstance(
+                    login: snapshot.data ?? 'N/A',
+                    like_percentage: '95%',
+                    order_quantity: '120',
+                    success_percentage: '98',
+                    price: order['order']['price'],
+                    currency: order['order']['maker_currency'],
+                    lower_limit: order['order']['lower'],
+                    upper_limit: order['order']['upper'],
+                    banks: order['order']['banks'],
+                    buyOrder: true,
+                    onPressed: (context) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BuyExtended()),
+                      );
+                    },
+                  );
+                }
               },
             );
           }
@@ -332,7 +341,7 @@ class _P2PMarketState extends State<P2PMarket> {
               lower_limit: order['order']['lower'],
               upper_limit: order['order']['upper'],
               banks: order['order']['banks'],
-              buyOrder: true,
+              buyOrder: false,
               onPressed: (context) {
                 Navigator.push(
                     context,
