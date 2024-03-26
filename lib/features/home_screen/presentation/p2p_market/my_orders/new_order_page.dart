@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_buy_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_sell_order_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar_without_avatar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
@@ -157,6 +158,7 @@ class _CreateOrderState extends State<CreateOrder> {
 
   Widget _createBuyContent() {
     final orderProvider = Provider.of<BuyOrderProvider>(context, listen: false);
+    final _banks = Provider.of<BanksListProvider>(context).banks;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,7 +404,7 @@ class _CreateOrderState extends State<CreateOrder> {
               context: context,
               builder: (BuildContext context) {
                 return OrdersBottomSheet(
-                  options: _paymentMethods,
+                  options: _banks,
                   title: 'Выберите банк',
                   searchText: 'Поиск',
                 );
@@ -531,6 +533,7 @@ class _CreateOrderState extends State<CreateOrder> {
                 };
                 orderProvider.createBuyOrder(orderData);
               }
+              Navigator.pop(context);
             },
             child: CustomButton(text: "Создать",
                 clr: Color(0xFF0066FF),
@@ -920,6 +923,7 @@ class _CreateOrderState extends State<CreateOrder> {
                 };
                 orderProvider.createSellOrder(orderData);
               }
+              Navigator.pop(context);
             },
             child: CustomButton(text: "Создать",
                 clr: Color(0xFF0066FF),

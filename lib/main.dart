@@ -9,6 +9,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/auth/temp_sign_in_page.dart';
 import 'package:vvault_redesign/features/home_screen/auth/temp_sign_in_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_in_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/new_order_page.dart';
@@ -16,7 +17,9 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/p2p
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_buy_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_sell_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
 
 void main() {
@@ -38,6 +41,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BuyOrderProvider()),
         ChangeNotifierProvider(create: (context) => SellOrderProvider()),
         ChangeNotifierProvider(create: (context) => BanksListProvider()),
+        ChangeNotifierProvider(create: (context) => UpdateOrderProvider()),
+        ChangeNotifierProvider(create: (context) => FiatCurrenciesListProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),
@@ -56,7 +61,7 @@ class MyApp extends StatelessWidget {
             home: child,
           );
         },
-        child: SignInScreen(),
+        child: SignInPage(),
       ),
     );
   }

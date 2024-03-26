@@ -27,7 +27,7 @@ class OrdersService {
     }
   }
 
-  Future<Map<String, dynamic>> fetchUserStats(String? id) async {
+  Future<Map<String, dynamic>> fetchUserStats(String id) async {
     final token = await fss.read(key: 'token');
     final uri = Uri.https('users.api.dev.wault.pro', '/api/users/stat/$id');
     final response = await http.get(uri, headers: {

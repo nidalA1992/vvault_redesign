@@ -12,6 +12,7 @@ class CustomTextField extends StatefulWidget {
   final bool isHidden;
   final bool isEditable;
   final Function(BuildContext)? onPressed;
+  
   const CustomTextField({Key? key, required this.hintText, this.isHidden = true, this.isEditable = false, this.onPressed}) : super(key: key);
 
   @override

@@ -18,4 +18,18 @@ class BanksListProvider with ChangeNotifier {
     }
   }
 
+  Map<String, dynamic> _userme = {};
+  Map<String, dynamic> get userme => _userme;
+
+  Future<void> loadUserMe() async {
+    try {
+      _userme = await _apiService.fetchUserMe();
+      print({"test1": _userme});
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
 }

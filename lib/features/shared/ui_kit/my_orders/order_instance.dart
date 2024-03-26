@@ -8,7 +8,7 @@ class OrderInstance extends StatefulWidget {
   final String price;
   final String titleCurrency;
   final String priceCurrency;
-  final List<String> banks;
+  final List<dynamic> banks;
   bool isActive;
   final bool isBuy;
   final String lowerLimit;
@@ -99,7 +99,7 @@ class _OrderInstanceState extends State<OrderInstance> {
             ),
             Spacer(),
             Text(
-              widget.price,
+              formatLimit(widget.price),
               style: TextStyle(
                 color: Color(0xFFEDF7FF),
                 fontSize: 16.sp,
@@ -133,7 +133,7 @@ class _OrderInstanceState extends State<OrderInstance> {
             ),
             Spacer(),
             Text(
-              '${widget.lowerLimit} ${widget.priceCurrency} — ${widget.upperLimit} ${widget.priceCurrency}',
+              '${formatLimit(widget.lowerLimit)} ${widget.priceCurrency} — ${formatLimit(widget.upperLimit)} ${widget.priceCurrency}',
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: Color(0xFFEDF7FF),
@@ -198,4 +198,9 @@ class _OrderInstanceState extends State<OrderInstance> {
       ],
     );
   }
+
+  String formatLimit(String limit) {
+    return limit.length > 10 ? limit.substring(0, 10) : limit;
+  }
+
 }

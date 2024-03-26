@@ -4,18 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/order_instance.dart';
 
 class EditOrderPage extends StatefulWidget {
   final String price;
   final String titleCurrency;
   final String priceCurrency;
-  final List<String> banks;
+  final List<dynamic> banks;
   final String lowerLimit;
   final String upperLimit;
+  final String comment;
+  final String orderID;
 
   EditOrderPage({
     Key? key,
@@ -24,7 +30,9 @@ class EditOrderPage extends StatefulWidget {
     required this.banks,
     required this.titleCurrency,
     required this.lowerLimit,
-    required this.upperLimit
+    required this.upperLimit,
+    required this.comment,
+    required this.orderID
   }) : super(key: key);
 
   @override
@@ -32,11 +40,17 @@ class EditOrderPage extends StatefulWidget {
 }
 
 class _EditOrderPageState extends State<EditOrderPage> {
-  TextEditingController comments = TextEditingController();
   bool isFixed = true;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController commentsController = TextEditingController(text: widget.comment);
+    List<dynamic> banks = widget.banks;
+    final _banks = Provider.of<BanksListProvider>(context).banks;
+
+    final updateOrderProvider = Provider.of<UpdateOrderProvider>(context, listen: false);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -133,7 +147,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    widget.price,
+                                    formatLimit(widget.price),
                                     style: TextStyle(
                                       color: Color(0x7FEDF7FF),
                                       fontSize: 16.sp,
@@ -236,32 +250,52 @@ class _EditOrderPageState extends State<EditOrderPage> {
                           ),
                         ),
                         SizedBox(height: 20.h,),
-                        Container(
-                          width: 350.w,
-                          height: 45.h,
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          decoration: ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-                              borderRadius: BorderRadius.circular(5.r),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Выбрано 2 банка',
-                                style: TextStyle(
-                                  color: Color(0xFFEDF7FF),
-                                  fontSize: 16.sp,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w500,
-                                ),
+                        GestureDetector(
+                          onTap: () async {
+                            final chosenBank = await showModalBottomSheet<String>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return OrdersBottomSheet(
+                                  options: _banks,
+                                  title: 'Выберите банк',
+                                  searchText: 'Поиск',
+                                );
+                              },
+                            );
+
+                            if (chosenBank != null && !banks.contains(chosenBank)) {
+                              setState(() {
+                                banks.add(chosenBank);
+                              });
+                            }
+                          },
+                          child: Container(
+                            width: 350.w,
+                            height: 45.h,
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
+                                borderRadius: BorderRadius.circular(5.r),
                               ),
-                              SvgPicture.asset("assets/search_icon.svg")
-                            ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Выбрано ${banks.length} банка',
+                                  style: TextStyle(
+                                    color: Color(0xFFEDF7FF),
+                                    fontSize: 16.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SvgPicture.asset("assets/search_icon.svg")
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: 10.h,),
@@ -295,11 +329,11 @@ class _EditOrderPageState extends State<EditOrderPage> {
                             ),
                           ),
                           child: TextField(
-                            controller: comments,
+                            controller: commentsController,
                             maxLength: 300,
                             maxLines: null,
                             decoration: InputDecoration(
-                              labelText: 'Напишите Ваши условия',
+                              labelText: "Напишите Ваши условия",
                               labelStyle: TextStyle(
                                 color: Color(0xFF8A929A),
                                 fontSize: 16.sp,
@@ -326,17 +360,38 @@ class _EditOrderPageState extends State<EditOrderPage> {
                           ),
                         ),
                         SizedBox(height: 30.h,),
-                        CustomButton(text: "Сохранить",
-                            onPressed: (context) {
-                          print("dkakdk");
+                        Form(
+                          key: _formKey,
+                          child: GestureDetector(
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                final orderData = {
+                                  "active": true,
+                                  "conditions": {
+                                    "comment": commentsController.text,
+                                    "lower": "2",
+                                    "upper": "4"
+                                  },
+                                  "price": {
+                                    "type": "exchange",
+                                    "unit_cost": "5"
+                                  }
+                                };
+                                updateOrderProvider.updateOrder(orderData, widget.orderID);
+                              }
+                              Navigator.pop(context);
                             },
-                            clr: Color(0xFF0066FF)
+                            child: CustomButton(text: "Сохранить",
+                                onPressed: (context) {
+                              print("dkakdk");
+                                },
+                                clr: Color(0xFF0066FF)
+                            ),
+                          ),
                         ),
                         SizedBox(height: 10.h,),
                         CustomButton(text: "Удалить",
-                            onPressed: (context) {
-                              print("dkakdk");
-                            },
                             clr: Color(0xFF0E2241)
                         ),
                         SizedBox(height: 20.h,)
@@ -368,7 +423,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            lower ? widget.lowerLimit : widget.upperLimit,
+            lower ? formatLimit(widget.lowerLimit) : formatLimit(widget.upperLimit),
             style: TextStyle(
               color: Color(0x7FEDF7FF),
               fontSize: 16.sp,
@@ -425,6 +480,10 @@ class _EditOrderPageState extends State<EditOrderPage> {
         ),
       ),
     );
+  }
+
+  String formatLimit(String limit) {
+    return limit.length > 6 ? limit.substring(0, 6) : limit;
   }
 
   void removeLabel(int index) {

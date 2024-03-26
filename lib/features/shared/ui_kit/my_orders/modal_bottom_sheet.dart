@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart'; // Make sure you have this import for SVG icons
+import 'package:flutter_svg/svg.dart';
 
 class OrdersBottomSheet extends StatefulWidget {
   final List<String> options;
@@ -94,8 +94,8 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                           setState(() {
                             selectedIndex = index;
                           });
-                          widget.onSelected!(widget.options[index]);
-                          Navigator.pop(context);
+                          widget.onSelected?.call(widget.options[index]);
+                          Navigator.pop(context, widget.options[index]);
                         },
                         child: Container(
                           width: 350.w,

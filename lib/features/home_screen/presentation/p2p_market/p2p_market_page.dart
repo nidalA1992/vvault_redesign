@@ -11,6 +11,7 @@ import 'package:vvault_redesign/features/home_screen/presentation/home_page/home
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/sell_extended.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
@@ -28,17 +29,18 @@ class P2PMarket extends StatefulWidget {
 class _P2PMarketState extends State<P2PMarket> {
   bool isPurchaseSelected = true;
   final List<String> _items = ['BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH'];
-  final List<String> _itemsValutas = ['RUB', 'KZT', 'USD', 'UZS', 'TRY', 'UAH', 'TJA', 'ETH'];
-  int _selectedCurrencyItemIndex = -1;
   String selectedCurrency = 'BTC';
-  int _selectedValutaItemIndex = -1;
-  String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   String? selectedBank;
+  String? selectedFiatCurrency = "USD";
 
   void loadBanksList() async {
     await Provider.of<BanksListProvider>(context, listen: false).loadBanks();
+  }
+
+  void loadFiatCurrencies() async {
+    await Provider.of<FiatCurrenciesListProvider>(context, listen: false).loadFiatCurrencies();
   }
 
   void _onRefresh() async{
@@ -59,6 +61,7 @@ class _P2PMarketState extends State<P2PMarket> {
   void initState() {
     _loadData();
     loadBanksList();
+    loadFiatCurrencies();
     super.initState();
   }
 
@@ -70,6 +73,7 @@ class _P2PMarketState extends State<P2PMarket> {
   Widget build(BuildContext context) {
     final orders = Provider.of<OrderProvider>(context).orders;
     final banks = Provider.of<BanksListProvider>(context).banks;
+    final fiatCurrencies = Provider.of<FiatCurrenciesListProvider>(context).fiatCurrencies;
 
     return Scaffold(
       body: Stack(
@@ -220,9 +224,14 @@ class _P2PMarketState extends State<P2PMarket> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return OrdersBottomSheet(
-                                    options: _itemsValutas,
+                                    options: fiatCurrencies,
                                     title: 'Выберите валюту',
                                     searchText: "Поиск валют",
+                                    onSelected: (String fiatCur) {
+                                      setState(() {
+                                        selectedFiatCurrency = fiatCur;
+                                      });
+                                    },
                                   );
                                 },
                               );
@@ -231,7 +240,7 @@ class _P2PMarketState extends State<P2PMarket> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  selectedValuta,
+                                  selectedFiatCurrency.toString(),
                                   style: TextStyle(
                                     color: Color(0xFF8A929A),
                                     fontSize: 12.sp,
@@ -308,6 +317,10 @@ class _P2PMarketState extends State<P2PMarket> {
         ? orders
         : orders.where((order) => order['order']['banks'].contains(selectedBank)).toList();
 
+    filteredOrders = selectedFiatCurrency == null
+        ? filteredOrders
+        : filteredOrders.where((order) => order['order']['maker_currency'].contains(selectedFiatCurrency)).toList();
+
     return Expanded(
       child: SmartRefresher(
         controller: _refreshController,
@@ -360,6 +373,14 @@ class _P2PMarketState extends State<P2PMarket> {
   }
 
   Widget sellOrders(List<dynamic> orders) {
+    List<dynamic> filteredOrders = selectedBank == null
+        ? orders
+        : orders.where((order) => order['order']['banks'].contains(selectedBank)).toList();
+
+    filteredOrders = selectedFiatCurrency == null
+        ? filteredOrders
+        : filteredOrders.where((order) => order['order']['maker_currency'].contains(selectedFiatCurrency)).toList();
+
     return Expanded(
       child: SmartRefresher(
         controller: _refreshController,
@@ -369,12 +390,12 @@ class _P2PMarketState extends State<P2PMarket> {
         enablePullUp: false,
         child: ListView.builder(
           padding: EdgeInsets.zero,
-          itemCount: orders.length,
+          itemCount: filteredOrders.length,
           itemBuilder: (context, index) {
-            if (orders[index]['order']['maker_currency_type'] == 'crypto') {
+            if (filteredOrders[index]['order']['maker_currency_type'] == 'crypto') {
               return SizedBox.shrink();
             } else {
-              final order = orders[index];
+              final order = filteredOrders[index];
               return FutureBuilder<String>(
                 future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
                 builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
