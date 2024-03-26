@@ -6,11 +6,13 @@ class OrdersBottomSheet extends StatefulWidget {
   final List<String> options;
   final String title;
   final String searchText;
+  final Function(String)? onSelected;
 
   const OrdersBottomSheet({
     Key? key,
     required this.options,
     required this.searchText,
+    this.onSelected,
     this.title = 'Выберите опцию',
   }) : super(key: key);
 
@@ -66,7 +68,7 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
               ),
               child: Row(
                 children: [
-                  SvgPicture.asset("assets/search_icon.svg"), // Ensure this path is correct
+                  SvgPicture.asset("assets/search_icon.svg"),
                   SizedBox(width: 10.w),
                   Text(
                     widget.searchText,
@@ -92,7 +94,8 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                           setState(() {
                             selectedIndex = index;
                           });
-                          Navigator.pop(context, widget.options[index]);
+                          widget.onSelected!(widget.options[index]);
+                          Navigator.pop(context);
                         },
                         child: Container(
                           width: 350.w,

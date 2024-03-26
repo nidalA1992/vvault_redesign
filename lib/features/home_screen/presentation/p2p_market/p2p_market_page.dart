@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/sell_extended.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
@@ -33,8 +34,12 @@ class _P2PMarketState extends State<P2PMarket> {
   int _selectedValutaItemIndex = -1;
   String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
-  final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  String? selectedBank;
+
+  void loadBanksList() async {
+    await Provider.of<BanksListProvider>(context, listen: false).loadBanks();
+  }
 
   void _onRefresh() async{
     await Provider.of<OrderProvider>(context, listen: false).loadOrders();
@@ -53,6 +58,7 @@ class _P2PMarketState extends State<P2PMarket> {
   @override
   void initState() {
     _loadData();
+    loadBanksList();
     super.initState();
   }
 
@@ -63,6 +69,7 @@ class _P2PMarketState extends State<P2PMarket> {
   @override
   Widget build(BuildContext context) {
     final orders = Provider.of<OrderProvider>(context).orders;
+    final banks = Provider.of<BanksListProvider>(context).banks;
 
     return Scaffold(
       body: Stack(
@@ -242,9 +249,14 @@ class _P2PMarketState extends State<P2PMarket> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return OrdersBottomSheet(
-                                    options: _paymentMethods,
+                                    options: banks,
                                     title: 'Выберите банк',
                                     searchText: 'Поиск',
+                                    onSelected: (String bank) {
+                                      setState(() {
+                                        selectedBank = bank;
+                                      });
+                                    },
                                   );
                                 },
                               );
@@ -292,6 +304,10 @@ class _P2PMarketState extends State<P2PMarket> {
   // }
 
   Widget buyOrders(List<dynamic> orders) {
+    List<dynamic> filteredOrders = selectedBank == null
+        ? orders
+        : orders.where((order) => order['order']['banks'].contains(selectedBank)).toList();
+
     return Expanded(
       child: SmartRefresher(
         controller: _refreshController,
@@ -301,12 +317,12 @@ class _P2PMarketState extends State<P2PMarket> {
         enablePullUp: false,
         child: ListView.builder(
           padding: EdgeInsets.zero,
-          itemCount: orders.length,
+          itemCount: filteredOrders.length,
           itemBuilder: (context, index) {
-            if (orders[index]['order']['maker_currency_type'] != 'crypto') {
+            if (filteredOrders[index]['order']['maker_currency_type'] != 'crypto') {
               return SizedBox.shrink();
             } else {
-              final order = orders[index];
+              final order = filteredOrders[index];
               return FutureBuilder<String>(
                 future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
                 builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
