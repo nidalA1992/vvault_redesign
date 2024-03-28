@@ -10,14 +10,15 @@ class BuySellField extends StatefulWidget {
   final String hint_txt;
   final bool isBuy;
   final Function(BuildContext)? onPressed;
-
+  final String? fiat;
+  final TextEditingController textController;
   const BuySellField({
     Key? key,
     this.text,
     this.onPressed,
     this.imgPath = 'assets/edit_icon.svg',
     required this.hint_txt,
-    required this.isBuy,
+    required this.isBuy, required this.fiat, required this.textController,
   }) : super(key: key);
 
   @override
@@ -25,22 +26,21 @@ class BuySellField extends StatefulWidget {
 }
 
 class _BuySellFieldState extends State<BuySellField> {
-  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     if (widget.text != null && widget.text!.isNotEmpty) {
-      _controller.text = widget.text!;
+      widget.textController.text = widget.text!;
     }
-    _controller.addListener(() {
+    widget.textController.addListener(() {
       setState(() {});
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.textController.dispose();
     super.dispose();
   }
 
@@ -57,7 +57,7 @@ class _BuySellFieldState extends State<BuySellField> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _controller.text.isEmpty
+          widget.textController.text.isEmpty
               ? Row(
                 children: [
                   SvgPicture.asset(widget.imgPath),
@@ -67,7 +67,7 @@ class _BuySellFieldState extends State<BuySellField> {
               : SizedBox.shrink(),
           Expanded(
             child: TextField(
-              controller: _controller,
+              controller:  widget.textController,
               textAlign: TextAlign.start,
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
@@ -90,7 +90,7 @@ class _BuySellFieldState extends State<BuySellField> {
           ),
           Spacer(),
           Text(
-            'RUB',
+            '${widget.fiat}',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,

@@ -20,7 +20,7 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-   Future<String> fetchUserStats(String userId) async {
+  Future<String> fetchUserStats(String userId) async {
     try {
       final user_name =  await _apiService.fetchUserStats(userId);
       return user_name['user_name'];
