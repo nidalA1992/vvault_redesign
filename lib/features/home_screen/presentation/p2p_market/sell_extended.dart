@@ -10,7 +10,14 @@ import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_converter.da
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
 
 class SellExtended extends StatefulWidget {
-  const SellExtended({super.key});
+  String? fiat;
+  String? crypto;
+  String? cost;
+  List<dynamic> banks;
+  String? comments;
+  String? unitCost;
+
+  SellExtended({super.key, required this.fiat, required this.crypto, required this.banks, required this.comments, required this.unitCost, required this.cost});
 
   @override
   State<SellExtended> createState() => _SellExtendedState();
@@ -44,7 +51,7 @@ class _SellExtendedState extends State<SellExtended> {
                   ),
                   Spacer(),
                   Text(
-                    'Продажа USDT',
+                    'Продажа ${widget.crypto}',
                     style: TextStyle(
                       color: Color(0xFFEDF7FF),
                       fontSize: 16.sp,
@@ -55,7 +62,7 @@ class _SellExtendedState extends State<SellExtended> {
                 ],
               ),
               SizedBox(height: 20.h,),
-              BuySellConverterField(isBuy: false,),
+              BuySellConverterField(isBuy: false, price: '${widget.cost}', fiat: widget.fiat, crypto: widget.crypto),
               SizedBox(height: 10.h,),
               GestureDetector(
                 onTap: () {
@@ -63,7 +70,7 @@ class _SellExtendedState extends State<SellExtended> {
                     context: context,
                     builder: (BuildContext context) {
                       return OrdersBottomSheet(
-                        options: _paymentMethods,
+                        options: widget.banks,
                         title: 'Выберите криптовалюту',
                         searchText: "Поиск монет",
                       );
@@ -99,11 +106,11 @@ class _SellExtendedState extends State<SellExtended> {
                 ),
               ),
               SizedBox(height: 10.h,),
-              BuySellField(isBuy: true, hint_txt: "Я заплачу",),
+              BuySellField(isBuy: true, hint_txt: "Я заплачу",fiat: '${widget.fiat}', textController: TextEditingController(),),
               SizedBox(height: 10.h,),
-              BuySellField(isBuy: true, hint_txt: "Я получу",),
+              BuySellField(isBuy: true, hint_txt: "Я получу",fiat: '${widget.crypto}', textController: TextEditingController(),),
               SizedBox(height: 10.h,),
-              BuySellButton(txt: "Продать", isBuy: false),
+              BuySellButton(txt: "Продать", isBuy: false, sellerCurrency: '', sellerLogin: '', amount: '', requisiteId: '', sellerBank: '', requisite: '', comment: '', orderId: '',),
               SizedBox(height: 20.h,),
               Text(
                 'Способ оплаты',
@@ -116,7 +123,7 @@ class _SellExtendedState extends State<SellExtended> {
               ),
               SizedBox(height: 10.h,),
               Text(
-                'Сбер, Тинькофф, Совкомбанк, Тинькофф, УралСиб',
+                widget.banks.join(", "),
                 style: TextStyle(
                   color: Color(0xFF8A929A),
                   fontSize: 14.sp,
@@ -142,7 +149,7 @@ class _SellExtendedState extends State<SellExtended> {
               ),
               SizedBox(height: 10.h,),
               Text(
-                'Куча слов про сделку я не работаю со скамерами и прочими говнюками!\n\nПрошу заметить что я честный трейдер и если вы обманите меня то будете иметь дело с моими братанами. ',
+                widget.comments!,
                 style: TextStyle(
                   color: Color(0x7FEDF7FF),
                   fontSize: 14.sp,
