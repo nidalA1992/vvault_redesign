@@ -138,6 +138,13 @@ class _BuyExtendedState extends State<BuyExtended> {
               SizedBox(height: 10.h,),
               BuySellField(isBuy: true, hint_txt: "Я получу", fiat: widget.crypto, textController: _makerController,),
               SizedBox(height: 10.h,),
+              ElevatedButton(
+                onPressed: () {
+                  // Access the controller text here
+                  print(_takerController.text);
+                },
+                child: Text("Print Controller Text"),
+              ),
               BuySellButton(
                 txt: "Купить", 
                 isBuy: true, 

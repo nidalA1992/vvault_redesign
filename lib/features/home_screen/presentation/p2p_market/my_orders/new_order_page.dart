@@ -9,6 +9,7 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_buy_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_sell_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar_without_avatar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
@@ -36,6 +37,18 @@ class _CreateOrderState extends State<CreateOrder> {
   final _formKey = GlobalKey<FormState>();
   String _makerCurrency = 'RUB';
   String _takerCurrency = 'USDT';
+  String selectedCoin = "USDT";
+  String selectedFiatCoin = 'RUB';
+
+  void loadFiatCurrencies() async {
+    await Provider.of<FiatCurrenciesListProvider>(context, listen: false).loadFiatCurrencies();
+  }
+
+  @override
+  void initState() {
+    loadFiatCurrencies();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +172,7 @@ class _CreateOrderState extends State<CreateOrder> {
   Widget _createBuyContent() {
     final orderProvider = Provider.of<BuyOrderProvider>(context, listen: false);
     final _banks = Provider.of<BanksListProvider>(context).banks;
+    final fiatCurrencies = Provider.of<FiatCurrenciesListProvider>(context).fiatCurrencies;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,33 +193,52 @@ class _CreateOrderState extends State<CreateOrder> {
                   ),
                 ),
                 SizedBox(height: 10.h,),
-                Container(
-                  width: 170.w,
-                  height: 56.h,
-                  padding: EdgeInsets.symmetric(horizontal: 25.w),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-                      borderRadius: BorderRadius.circular(5.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'USDT',
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 16.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OrdersBottomSheet(
+                          options: fiatCurrencies,
+                          title: 'Выберите валюту',
+                          searchText: "Поиск валют",
+                          onSelected: (String fiatCur) {
+                            setState(() {
+                              selectedCoin = fiatCur;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    width: 170.w,
+                    height: 56.h,
+                    padding: EdgeInsets.symmetric(horizontal: 25.w),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
+                        borderRadius: BorderRadius.circular(5.r),
                       ),
-                      Spacer(),
-                      Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          selectedCoin,
+                          style: TextStyle(
+                            color: Color(0x7FEDF7FF),
+                            fontSize: 16.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -223,33 +256,52 @@ class _CreateOrderState extends State<CreateOrder> {
                   ),
                 ),
                 SizedBox(height: 10.h,),
-                Container(
-                  width: 170.w,
-                  height: 56.h,
-                  padding: EdgeInsets.symmetric(horizontal: 25.w),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-                      borderRadius: BorderRadius.circular(5.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'RUB',
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 16.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OrdersBottomSheet(
+                          options: fiatCurrencies,
+                          title: 'Выберите валюту',
+                          searchText: "Поиск валют",
+                          onSelected: (String fiatCur) {
+                            setState(() {
+                              selectedFiatCoin = fiatCur;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    width: 170.w,
+                    height: 56.h,
+                    padding: EdgeInsets.symmetric(horizontal: 25.w),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
+                        borderRadius: BorderRadius.circular(5.r),
                       ),
-                      Spacer(),
-                      Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          selectedFiatCoin,
+                          style: TextStyle(
+                            color: Color(0x7FEDF7FF),
+                            fontSize: 16.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -318,7 +370,7 @@ class _CreateOrderState extends State<CreateOrder> {
             SizedBox(width: 10.w,),
             GestureDetector(
               onTap: () {
-                _typeOfPrice(context, isFixed);
+                _typeOfPrice(context);
               },
               child: Container(
                 width: 90.w,
@@ -335,7 +387,9 @@ class _CreateOrderState extends State<CreateOrder> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset("assets/lock_icon.svg"),
+                    SvgPicture.asset(
+                        isFixed ? "assets/lock_icon.svg" : "assets/percent_gray.svg"
+                    ),
                     Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
                   ],
                 ),
@@ -525,9 +579,9 @@ class _CreateOrderState extends State<CreateOrder> {
                     'banks': banks,
                   },
                   'price': {
-                    'maker_currency': _makerCurrency,
-                    'taker_currency': _takerCurrency,
-                    'type': 'frozen',
+                    'maker_currency': selectedFiatCoin,
+                    'taker_currency': selectedCoin,
+                    'type': isFixed ? 'frozen' : 'unfrozen',
                     'unit_cost': unitCostController.text,
                   }
                 };
@@ -547,6 +601,7 @@ class _CreateOrderState extends State<CreateOrder> {
 
   Widget _createSellContent() {
     final orderProvider = Provider.of<SellOrderProvider>(context, listen: false);
+    final fiatCurrencies = Provider.of<FiatCurrenciesListProvider>(context).fiatCurrencies;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -567,33 +622,52 @@ class _CreateOrderState extends State<CreateOrder> {
                   ),
                 ),
                 SizedBox(height: 10.h,),
-                Container(
-                  width: 170.w,
-                  height: 56.h,
-                  padding: EdgeInsets.symmetric(horizontal: 25.w),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-                      borderRadius: BorderRadius.circular(5.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'USDT',
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 16.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OrdersBottomSheet(
+                          options: fiatCurrencies,
+                          title: 'Выберите валюту',
+                          searchText: "Поиск валют",
+                          onSelected: (String fiatCur) {
+                            setState(() {
+                              selectedCoin = fiatCur;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    width: 170.w,
+                    height: 56.h,
+                    padding: EdgeInsets.symmetric(horizontal: 25.w),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
+                        borderRadius: BorderRadius.circular(5.r),
                       ),
-                      Spacer(),
-                      Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          selectedCoin,
+                          style: TextStyle(
+                            color: Color(0x7FEDF7FF),
+                            fontSize: 16.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -611,33 +685,52 @@ class _CreateOrderState extends State<CreateOrder> {
                   ),
                 ),
                 SizedBox(height: 10.h,),
-                Container(
-                  width: 170.w,
-                  height: 56.h,
-                  padding: EdgeInsets.symmetric(horizontal: 25.w),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-                      borderRadius: BorderRadius.circular(5.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'RUB',
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 16.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OrdersBottomSheet(
+                          options: fiatCurrencies,
+                          title: 'Выберите валюту',
+                          searchText: "Поиск валют",
+                          onSelected: (String fiatCur) {
+                            setState(() {
+                              selectedFiatCoin = fiatCur;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    width: 170.w,
+                    height: 56.h,
+                    padding: EdgeInsets.symmetric(horizontal: 25.w),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
+                        borderRadius: BorderRadius.circular(5.r),
                       ),
-                      Spacer(),
-                      Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'RUB',
+                          style: TextStyle(
+                            color: Color(0x7FEDF7FF),
+                            fontSize: 16.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -706,7 +799,7 @@ class _CreateOrderState extends State<CreateOrder> {
             SizedBox(width: 10.w,),
             GestureDetector(
               onTap: () {
-                _typeOfPrice(context, isFixed);
+                _typeOfPrice(context);
               },
               child: Container(
                 width: 90.w,
@@ -723,7 +816,9 @@ class _CreateOrderState extends State<CreateOrder> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset("assets/lock_icon.svg"),
+                    SvgPicture.asset(
+                        isFixed ? "assets/lock_icon.svg" : "assets/percent_gray.svg"
+                    ),
                     Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
                   ],
                 ),
@@ -1027,8 +1122,8 @@ class _CreateOrderState extends State<CreateOrder> {
     });
   }
 
-  Future<void> _typeOfPrice(BuildContext context, bool isFixed) async {
-    final String? result = await showModalBottomSheet<String> (
+  Future<void> _typeOfPrice(BuildContext context) async {
+    final bool? result = await showModalBottomSheet<bool> (
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(22.0),
         ),
@@ -1074,9 +1169,7 @@ class _CreateOrderState extends State<CreateOrder> {
                           SizedBox(height: 20.h,),
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                isFixed = false;
-                              });
+                              Navigator.pop(context, false);
                             },
                             child: Container(
                               width: 350.w,
@@ -1088,7 +1181,7 @@ class _CreateOrderState extends State<CreateOrder> {
                               ),
                               child: Row(
                                 children: [
-                                  SvgPicture.asset("assets/percent.svg"),
+                                  SvgPicture.asset("assets/percent_gray.svg"),
                                   SizedBox(width: 10.w,),
                                   Text(
                                     'Плавающая цена',
@@ -1110,9 +1203,7 @@ class _CreateOrderState extends State<CreateOrder> {
                           SizedBox(height: 10.h,),
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                isFixed = true;
-                              });
+                              Navigator.pop(context, true);
                             },
                             child: Container(
                               width: 350.w,
@@ -1151,6 +1242,11 @@ class _CreateOrderState extends State<CreateOrder> {
           );
         }
     );
+    if (result != null) {
+      setState(() {
+        isFixed = result;
+      });
+    }
   }
 
 }

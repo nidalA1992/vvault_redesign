@@ -29,15 +29,13 @@ class P2PMarket extends StatefulWidget {
 class _P2PMarketState extends State<P2PMarket> {
   bool isPurchaseSelected = true;
   final List<String> _items = ['BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH'];
-  final List<String> _itemsValutas = ['RUB', 'KZT', 'USD', 'UZS', 'TRY', 'UAH', 'TJA', 'ETH'];
-  int _selectedCurrencyItemIndex = -1;
   String selectedCurrency = 'BTC';
-  int _selectedValutaItemIndex = -1;
   String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   String? selectedBank;
   String? selectedFiatCurrency = "USD";
+  String? enteredPrice;
 
   void loadBanksList() async {
     await Provider.of<BanksListProvider>(context, listen: false).loadBanks();
@@ -48,7 +46,7 @@ class _P2PMarketState extends State<P2PMarket> {
   }
 
   void _onRefresh() async{
-    await Provider.of<OrderProvider>(context, listen: false).loadOrders();
+    await Provider.of<OrderProvider>(context, listen: false).loadOrders(price: enteredPrice);
     _refreshController.refreshCompleted();
   }
 
@@ -70,7 +68,7 @@ class _P2PMarketState extends State<P2PMarket> {
   }
 
   Future<void> _loadData() async {
-    await Provider.of<OrderProvider>(context, listen: false).loadOrders();
+    await Provider.of<OrderProvider>(context, listen: false).loadOrders(price: enteredPrice);
   }
 
   @override
@@ -130,6 +128,7 @@ class _P2PMarketState extends State<P2PMarket> {
                           GestureDetector(
                             onTap: () => setState(() {
                               isPurchaseSelected = !isPurchaseSelected;
+                              enteredPrice = null;
                             }),
                             child: Container(
                               width: 199.75.w,
@@ -495,95 +494,102 @@ class _P2PMarketState extends State<P2PMarket> {
   }
 
   Future<void> _bottomSheetEnterPrice(BuildContext context) async {
-    final String? result = await showModalBottomSheet<String> (
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22.0),
-        ),
-        useRootNavigator: true,
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return FractionallySizedBox(
-              child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Container(
-                      width: 390.w,
-                      height: 180.h,
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                        bottom: 30,
+    final String? result = await showModalBottomSheet<String>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(22.0),
+      ),
+      useRootNavigator: true,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        String tempEnteredPrice = enteredPrice ?? "";
+        return FractionallySizedBox(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                width: 390.w,
+                height: 190.h,
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  left: 20,
+                  right: 20,
+                  bottom: 30,
+                ),
+                decoration: ShapeDecoration(
+                  color: Color(0xFF1D2126),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Сумма',
+                      style: TextStyle(
+                        color: Color(0x7FEDF7FF),
+                        fontSize: 16.sp,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
                       ),
+                    ),
+                    SizedBox(height: 20.h,),
+                    Container(
+                      width: 349.w,
+                      height: 51.h,
+                      padding: EdgeInsets.only(left: 15.w, right: 15.w),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF1D2126),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                        ),
+                        color: Color(0xFF272D35),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
                       ),
-                      child: Column(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            'Сумма',
-                            style: TextStyle(
-                              color: Color(0x7FEDF7FF),
-                              fontSize: 16.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: TextField(
+                              controller: TextEditingController(text: tempEnteredPrice),
+                              onChanged: (value) {
+                                tempEnteredPrice = value;
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Введите сумму',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF8A929A),
+                                  fontSize: 14.sp,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ),
-                          SizedBox(height: 20.h,),
-                          Container(
-                            width: 349.w,
-                            height: 51.h,
-                            padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                            decoration: ShapeDecoration(
-                              color: Color(0xFF272D35),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Введите сумму',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xFF8A929A),
-                                    fontSize: 14.sp,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  'RUB',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
                         ],
                       ),
-                    );
-                  }
-              )
-          );
-        }
+                    ),
+                    SizedBox(height: 20.h,),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
+    setState(() {
+      enteredPrice = result;
+      _loadData();
+    });
   }
 
 }

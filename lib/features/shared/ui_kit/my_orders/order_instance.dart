@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
 
 class OrderInstance extends StatefulWidget {
   final String price;
   final String titleCurrency;
   final String priceCurrency;
   final List<dynamic> banks;
-  bool isActive;
+  final bool isActive;
   final bool isBuy;
   final String lowerLimit;
   final String upperLimit;
+  final String? comment;
+  final String? orderID;
   final Function(BuildContext)? onPressed;
 
   OrderInstance({
@@ -25,7 +29,9 @@ class OrderInstance extends StatefulWidget {
     required this.titleCurrency,
     required this.isBuy,
     required this.lowerLimit,
-    required this.upperLimit
+    required this.upperLimit,
+    this.comment,
+    this.orderID
   }) : super(key: key);
 
   @override
@@ -34,11 +40,21 @@ class OrderInstance extends StatefulWidget {
 
 class _OrderInstanceState extends State<OrderInstance> {
   int selectedIndex = 0;
+  late bool isActive;
+
+  @override
+  void initState() {
+    super.initState();
+    isActive = widget.isActive;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final updateOrderActivityProvider = Provider.of<UpdateOrderActivityProvider>(context, listen: false);
+
     return Column(
       children: [
+        SizedBox(height: 10.h,),
         Row(
           children: [
             Text(
@@ -60,7 +76,7 @@ class _OrderInstanceState extends State<OrderInstance> {
               width: 104.w,
               height: 34.h,
               decoration: ShapeDecoration(
-                color: widget.isActive ? Color(0x3305CA77) : Color(0xFF941B29),
+                color: isActive ? Color(0x3305CA77) : Color(0xFF941B29),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.r),
                 ),
@@ -71,10 +87,10 @@ class _OrderInstanceState extends State<OrderInstance> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    widget.isActive ? 'Активно' : 'Неактивно',
+                    isActive ? 'Активно' : 'Неактивно',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: widget.isActive ? Color(0xFF05CA77) : Colors.white,
+                      color: isActive ? Color(0xFF05CA77) : Colors.white,
                       fontSize: 14.sp,
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w600,
@@ -175,17 +191,22 @@ class _OrderInstanceState extends State<OrderInstance> {
             Transform.scale(
               scale: 0.8,
               child: CupertinoSwitch(
-                value: widget.isActive!,
+                value: isActive!,
                 onChanged: (bool value) {
                   setState(() {
-                    widget.isActive = value;
+                    isActive = value;
+                    final orderData = {
+                      "active": value
+                    };
+                    print("order id karap otrm ${widget.orderID.toString()}");
+                    updateOrderActivityProvider.updateOrderActivity(orderData, widget.orderID.toString());
                   });
                 },
                 activeColor: Color(0xFF0066FF),
               ),
             ),
             Text(
-              widget.isActive ? 'Выключить' : "Включить",
+             isActive ? 'Выключить' : "Включить",
               style: TextStyle(
                 color: Color(0xFF8A929A),
                 fontSize: 16.sp,
@@ -194,6 +215,12 @@ class _OrderInstanceState extends State<OrderInstance> {
               ),
             ),
           ],
+        ),
+        SizedBox(height: 10.h,),
+        Container(
+          width: 350.w,
+          height: 1.50.h,
+          color: Color(0xFF1D2126),
         ),
       ],
     );

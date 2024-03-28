@@ -11,9 +11,16 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool isHidden;
   final bool isEditable;
+  final TextEditingController? controller;
   final Function(BuildContext)? onPressed;
   
-  const CustomTextField({Key? key, required this.hintText, this.isHidden = true, this.isEditable = false, this.onPressed}) : super(key: key);
+  const CustomTextField({Key? key,
+    required this.hintText,
+    this.isHidden = true,
+    this.isEditable = false,
+    this.onPressed,
+    this.controller,
+  }) : super(key: key);
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -54,6 +61,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         children: [
           Expanded(
             child: TextField(
+              controller: widget.controller,
               obscureText: _isHidden,
               style: TextStyle(
                 color: Color(0xFFEDF7FF),

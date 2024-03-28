@@ -170,7 +170,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
                             SizedBox(width: 10.w,),
                             GestureDetector(
                               onTap: () {
-                                _typeOfPrice(context, isFixed);
+                                _typeOfPrice(context);
                               },
                               child: Container(
                                 width: 90.w,
@@ -187,7 +187,9 @@ class _EditOrderPageState extends State<EditOrderPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    SvgPicture.asset("assets/lock_icon.svg"),
+                                    SvgPicture.asset(
+                                        isFixed ? "assets/lock_icon.svg" : "assets/percent_gray.svg"
+                                    ),
                                     Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
                                   ],
                                 ),
@@ -383,9 +385,6 @@ class _EditOrderPageState extends State<EditOrderPage> {
                               Navigator.pop(context);
                             },
                             child: CustomButton(text: "Сохранить",
-                                onPressed: (context) {
-                              print("dkakdk");
-                                },
                                 clr: Color(0xFF0066FF)
                             ),
                           ),
@@ -492,8 +491,8 @@ class _EditOrderPageState extends State<EditOrderPage> {
     });
   }
 
-  Future<void> _typeOfPrice(BuildContext context, bool isFixed) async {
-    final String? result = await showModalBottomSheet<String> (
+  Future<void> _typeOfPrice(BuildContext context) async {
+    final bool? result = await showModalBottomSheet<bool> (
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(22.0),
         ),
@@ -539,9 +538,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
                           SizedBox(height: 20.h,),
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                isFixed = false;
-                              });
+                              Navigator.pop(context, false);
                             },
                             child: Container(
                               width: 350.w,
@@ -553,7 +550,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
                               ),
                               child: Row(
                                 children: [
-                                  SvgPicture.asset("assets/percent.svg"),
+                                  SvgPicture.asset("assets/percent_gray.svg"),
                                   SizedBox(width: 10.w,),
                                   Text(
                                     'Плавающая цена',
@@ -575,9 +572,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
                           SizedBox(height: 10.h,),
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                isFixed = true;
-                              });
+                              Navigator.pop(context, true);
                             },
                             child: Container(
                               width: 350.w,
@@ -616,6 +611,11 @@ class _EditOrderPageState extends State<EditOrderPage> {
           );
         }
     );
+    if (result != null) {
+      setState(() {
+        isFixed = result;
+      });
+    }
   }
 
 }

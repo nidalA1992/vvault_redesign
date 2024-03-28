@@ -1,8 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_in_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_textfield.dart';
+import 'package:vvault_redesign/main.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -12,8 +17,13 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<SignInProvider>(context, listen: false);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -41,9 +51,40 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     SizedBox(height: 70.h,),
-                    CustomTextField(hintText: 'Логин (Никнейм, почта, номер)', isHidden: false),
+                    CustomTextField(
+                        hintText: 'Логин (Никнейм, почта, номер)',
+                        isHidden: false,
+                        controller: emailController,
+                    ),
                     SizedBox(height: 15.h,),
-                    CustomTextField(hintText: 'Пароль*')
+                    CustomTextField(
+                        hintText: 'Пароль*',
+                        controller: passwordController,
+                    ),
+                    SizedBox(height: 300.h,),
+                    GestureDetector(
+                      onTap: () async {
+                        try {
+                          await userProvider.signIn(
+                            emailController.text,
+                            passwordController.text,
+                          );
+                          if (mounted) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => NavBar()),
+                                  (Route<dynamic> route) => false,
+                            );
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: CustomButton(
+                          text: "Войти",
+                          clr: Color(0xFF0066FF),
+                      ),
+                    )
                   ],
                 ),
               )

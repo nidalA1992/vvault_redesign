@@ -6,12 +6,20 @@ class OrderProvider with ChangeNotifier {
   final OrdersService _apiService = OrdersService();
   List<dynamic> get orders => _orders;
 
-  Future<void> loadOrders() async {
+  Future<void> loadOrders({String? price, bool? isMyOrders}) async {
+    bool effectiveIsMyOrders = isMyOrders ?? false;
+
+    print("testing filter ${price}");
     try {
       final queryParams = {
         'sortby': 'created_at',
         'ascending': 'true',
       };
+
+      if (price != null) {
+        queryParams['price'] = price;
+      }
+
       _orders = await _apiService.fetchOrders(queryParams);
       notifyListeners();
     } catch (e) {
@@ -19,6 +27,7 @@ class OrderProvider with ChangeNotifier {
       throw e;
     }
   }
+
 
   Future<String> fetchUserStats(String userId) async {
     try {
@@ -29,5 +38,4 @@ class OrderProvider with ChangeNotifier {
       rethrow;
     }
   }
-
 }

@@ -7,8 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/auth/temp_sign_in_page.dart';
-import 'package:vvault_redesign/features/home_screen/auth/temp_sign_in_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_in_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_in_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
@@ -20,6 +19,7 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/pro
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/confidentiality_page/change_mail/change_mail_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
@@ -52,7 +52,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserRequisiteProvider()),
         ChangeNotifierProvider(create: (context) => OrderInfoProvider()),
         ChangeNotifierProvider(create: (context) => DealProvider()),
-        ChangeNotifierProvider(create: (context) => NotificationProvider())
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        ChangeNotifierProvider(create: (context) => UpdateOrderActivityProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
             home: child,
           );
         },
-        child: SignInScreen(),
+        child: SignInPage(),
       ),
     );
   }

@@ -3,15 +3,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
-class UpdateOrderService {
+class UpdateOrderActivityService {
   final String baseUrl = 'https://exchange.api.dev.wault.pro';
   FlutterSecureStorage fss = FlutterSecureStorage();
 
-
-  Future<Map<String, dynamic>> updateOrder(Map<String, dynamic> orderData, String id) async {
+  Future<Map<String, dynamic>> updateOrderActivity(Map<String, dynamic> orderData, String id) async {
     final token = await fss.read(key: 'token');
     final response = await http.post(
-      Uri.parse('$baseUrl/api/exchange/orders/${id}'),
+      Uri.parse('$baseUrl/api/exchange/orders/activity/$id'),
       headers: {
         'Cookie': '$token',
         'Content-Type': 'application/json',
@@ -28,7 +27,7 @@ class UpdateOrderService {
         throw Exception('Response does not contain data: ${response.body}');
       }
     } else {
-      throw Exception('Failed to update an order: ${response.body}');
+      throw Exception('Failed to update an order\'s activity: ${response.body}');
     }
   }
 

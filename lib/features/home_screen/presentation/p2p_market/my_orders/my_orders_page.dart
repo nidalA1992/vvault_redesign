@@ -23,7 +23,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   Future<void> _loadData() async {
-    await Provider.of<OrderProvider>(context, listen: false).loadOrders();
+    await Provider.of<OrderProvider>(context, listen: false).loadOrders(isMyOrders: true);
   }
 
   void loadUserMe() async {
@@ -87,7 +87,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 20.h,),
+                SizedBox(height: 10.h,),
                 _myOrders(orders, userme),
                 SizedBox(height: 20.h,),
                 CustomButton(text: "Создать объявление",
@@ -154,6 +154,8 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                       isBuy: order['order']['maker_currency_type'] == 'crypto',
                       lowerLimit: order['order']['lower'],
                       upperLimit: order['order']['upper'],
+                      comment: order['order']['comment'],
+                      orderID: order['order']['id'],
                     );
                 }
                 },

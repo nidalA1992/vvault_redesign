@@ -27,20 +27,6 @@ class BuySellField extends StatefulWidget {
 }
 
 class _BuySellFieldState extends State<BuySellField> {
-
-  @override
-  void initState() {
-    super.initState();
-    widget.textController.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -31,27 +31,27 @@ class BuySellButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         isBuy ? {
-        dealProvider.startDeal(orderId, dealData),
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => BuyExtended2(
-                  dealNumber: "174573",
-                  onPressed: (context) {
-                    Navigator.pop(context);
-                  },
-                  sellerAmount: "$amount",
-                  sellerCurrency: "$sellerCurrency",
-                  sellerLogin: "$sellerLogin",
-                  requisiteId: '$requisiteId', sellerBank: '${sellerBank}',
-                  requisite: '$requisite',
-                  comment: '$comment',
-                  orderId: '$orderId}',
-                )
-            )
-        ),
-        print("lemur2253 ${amount}")
-      } : Navigator.push(
+          dealProvider.startDeal(orderId, dealData),
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BuyExtended2(
+                    dealNumber: "174573",
+                    onPressed: (context) {
+                      Navigator.pop(context);
+                    },
+                    sellerAmount: "$amount",
+                    sellerCurrency: "$sellerCurrency",
+                    sellerLogin: "$sellerLogin",
+                    requisiteId: '$requisiteId', sellerBank: '${sellerBank}',
+                    requisite: '$requisite',
+                    comment: '$comment',
+                    orderId: '$orderId}',
+                  )
+              )
+          ),
+          print("lemur2253 ${amount}")
+        } : Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => SellExtended2(

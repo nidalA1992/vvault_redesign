@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:vvault_redesign/features/home_screen/auth/temp_sign_in_service.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/authorization/data/sign_in_service.dart';
 
 class SignInProvider with ChangeNotifier {
   String? _apiKey;
