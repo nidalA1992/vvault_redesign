@@ -4,9 +4,11 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/confirmed_deal_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/deal_canceled_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_banks.dart';
@@ -16,6 +18,7 @@ import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/timer.dart';
 
 import '../../../shared/ui_kit/confirmation_window.dart';
+import 'provider/notify_deal/notify_deal_provider.dart';
 
 class BuyExtended2 extends StatefulWidget {
   final String dealNumber;
@@ -23,6 +26,11 @@ class BuyExtended2 extends StatefulWidget {
   final String sellerAmount;
   final String sellerLogin;
   final String sellerCurrency;
+  final String requisiteId;
+  final String sellerBank;
+  final String requisite;
+  final String comment;
+  final String orderId;
 
   const BuyExtended2({
     Key? key,
@@ -30,7 +38,9 @@ class BuyExtended2 extends StatefulWidget {
     required this.onPressed,
     required this.sellerAmount,
     required this.sellerLogin,
-    required this.sellerCurrency
+    required this.sellerCurrency,
+    required this.requisiteId,
+    required this.sellerBank, required this.requisite, required this.comment, required this.orderId
   }) : super(key: key);
 
   @override
@@ -42,6 +52,7 @@ class _BuyExtended2State extends State<BuyExtended2> {
 
   @override
   Widget build(BuildContext context) {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -96,14 +107,14 @@ class _BuyExtended2State extends State<BuyExtended2> {
                 ),
                 SizedBox(height: 20.h,),
                 ExtendableBanksList(
-                    banks: ["Сбербанк"],
-                    price: "363 928",
-                    currency: "RUB",
+                    banks: ["${widget.sellerBank}"],
+                    price: "${widget.sellerAmount}",
+                    currency: "${widget.sellerCurrency}",
                     onPressed: (context) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                     },
-                    bank_requis: "6529 0736 9087 1639",
-                    comment: "Куча слов про сделку я не работаю со скамерами и прочими говнюками!"
+                    bank_requis: "${widget.requisite}",
+                    comment: widget.comment
                 ),
                 Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent, ),
@@ -170,7 +181,7 @@ class _BuyExtended2State extends State<BuyExtended2> {
                 ),
                 SizedBox(height: 10.h,),
                 Text(
-                  'Куча слов про сделку я не работаю со скамерами и прочими говнюками!',
+                 widget.comment,
                   style: TextStyle(
                     color: Color(0x7FEDF7FF),
                     fontSize: 14.sp,
@@ -206,7 +217,8 @@ class _BuyExtended2State extends State<BuyExtended2> {
                       content: 'Вы точно хотите отменить сделку?',
                       confirmButtonText: 'Подтвердить',
                       cancelButtonText: 'Отмена',
-                      onConfirm: () {
+                      onConfirm: () async {
+                        await notificationProvider.notifyTransfer(widget.requisiteId);
                         Navigator.push(context, MaterialPageRoute(builder: (context) => CanceledDealPage()));
                       },
                     ).showConfirmationDialog(context);

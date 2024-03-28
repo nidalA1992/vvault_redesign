@@ -18,9 +18,15 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/pro
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_sell_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/settings_page/confidentiality_page/change_mail/change_mail_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
+
+import 'features/home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
+import 'features/home_screen/presentation/p2p_market/provider/notify_deal/notify_deal_provider.dart';
+import 'features/home_screen/presentation/p2p_market/provider/user_requisite_list/user_requisite_provider.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -43,6 +49,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BanksListProvider()),
         ChangeNotifierProvider(create: (context) => UpdateOrderProvider()),
         ChangeNotifierProvider(create: (context) => FiatCurrenciesListProvider()),
+        ChangeNotifierProvider(create: (context) => UserRequisiteProvider()),
+        ChangeNotifierProvider(create: (context) => OrderInfoProvider()),
+        ChangeNotifierProvider(create: (context) => DealProvider()),
+        ChangeNotifierProvider(create: (context) => NotificationProvider())
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),

@@ -29,7 +29,11 @@ class P2PMarket extends StatefulWidget {
 class _P2PMarketState extends State<P2PMarket> {
   bool isPurchaseSelected = true;
   final List<String> _items = ['BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH'];
+  final List<String> _itemsValutas = ['RUB', 'KZT', 'USD', 'UZS', 'TRY', 'UAH', 'TJA', 'ETH'];
+  int _selectedCurrencyItemIndex = -1;
   String selectedCurrency = 'BTC';
+  int _selectedValutaItemIndex = -1;
+  String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   String? selectedBank;
@@ -349,8 +353,8 @@ class _P2PMarketState extends State<P2PMarket> {
                       like_percentage: '95%',
                       order_quantity: '120',
                       success_percentage: '98',
-                      price: order['order']['price'],
-                      currency: order['order']['maker_currency'],
+                      price: double.parse(order['order']['price']).toInt().toString(),
+                      currency: order['order']['taker_currency'],
                       lower_limit: order['order']['lower'],
                       upper_limit: order['order']['upper'],
                       banks: order['order']['banks'],
@@ -358,7 +362,16 @@ class _P2PMarketState extends State<P2PMarket> {
                       onPressed: (context) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => BuyExtended()),
+                          MaterialPageRoute(builder: (context) => BuyExtended(
+                            banks: order['order']['banks'],
+                            cost: double.parse(order['order']['price']).toInt().toString(),
+                            fiat: order['order']['taker_currency'],
+                            comments: order['order']['comment'],
+                            crypto: order['order']['maker_currency'],
+                            unitCost: (double.parse(order['order']['upper']) / 90).toInt().toString(),
+                            orderId: order['order']['id'],
+                            login: snapshot.data ?? 'N/A',
+                          )),
                         );
                       },
                     );
@@ -418,7 +431,14 @@ class _P2PMarketState extends State<P2PMarket> {
                       onPressed: (context) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SellExtended()),
+                          MaterialPageRoute(builder: (context) => SellExtended(
+                            banks: order['order']['banks'],
+                            cost: double.parse(order['order']['price']).toInt().toString(),
+                            fiat: order['order']['taker_currency'],
+                            comments: order['order']['comment'],
+                            crypto: order['order']['maker_currency'],
+                            unitCost: (double.parse(order['order']['upper']) / 90).toInt().toString(),
+                          )),
                         );
                       },
                     );

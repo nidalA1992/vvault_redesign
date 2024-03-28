@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/user_requisite_list/user_requisite_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_button.dart';
@@ -10,17 +13,49 @@ import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_converter.da
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
 
 class BuyExtended extends StatefulWidget {
-  const BuyExtended({super.key});
+
+  String? fiat;
+  String? crypto;
+  String? cost;
+  List<dynamic> banks;
+  String? comments;
+  String? unitCost;
+  String? orderId;
+  String? login;
+
+  BuyExtended({super.key, required this.banks, required this.cost, required this.fiat, required this.comments, required this.crypto, required this.unitCost, required this.orderId, required this.login});
 
   @override
   State<BuyExtended> createState() => _BuyExtendedState();
 }
 
 class _BuyExtendedState extends State<BuyExtended> {
-  final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
+  
+  TextEditingController _takerController = TextEditingController();
+  TextEditingController _makerController = TextEditingController();
+
+  @override
+  void initState() {
+    _loadData();
+    super.initState();
+  }
+
+  void _loadData(){
+    Provider.of<OrderInfoProvider>(context, listen: false).loadOrderDetails(widget.orderId!);
+  }
+
+  List<String> _requisites = [];
+  List<String> _requisitesId = [];
+  String requisite = '';
+  String comment = '';
 
   @override
   Widget build(BuildContext context) {
+    final orderDetails = Provider.of<OrderInfoProvider>(context).orderDetails;
+    _requisites.add(orderDetails['requisites'][0]['bank']);
+    _requisitesId.add(orderDetails['requisites'][0]['id']);
+    requisite = orderDetails['requisites'][0]['requisite'];
+    comment = orderDetails['requisites'][0]['comment'];
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -44,7 +79,7 @@ class _BuyExtendedState extends State<BuyExtended> {
                   ),
                   Spacer(),
                   Text(
-                    'Покупка USDT',
+                    'Покупка ${widget.crypto}',
                     style: TextStyle(
                       color: Color(0xFFEDF7FF),
                       fontSize: 16.sp,
@@ -55,7 +90,7 @@ class _BuyExtendedState extends State<BuyExtended> {
                 ],
               ),
               SizedBox(height: 20.h,),
-              BuySellConverterField(isBuy: true,),
+              BuySellConverterField(isBuy: true, unitCost: widget.unitCost, price: widget.cost, fiat: widget.fiat, crypto: widget.crypto,),
               SizedBox(height: 10.h,),
               GestureDetector(
                 onTap: () {
@@ -63,8 +98,8 @@ class _BuyExtendedState extends State<BuyExtended> {
                     context: context,
                     builder: (BuildContext context) {
                       return OrdersBottomSheet(
-                        options: _paymentMethods,
-                        title: 'Выберите криптовалюту',
+                        options: _requisites,
+                        title: 'Выберите Реквизиты',
                         searchText: "Поиск монет",
                       );
                     },
@@ -99,11 +134,21 @@ class _BuyExtendedState extends State<BuyExtended> {
                 ),
               ),
               SizedBox(height: 10.h,),
-              BuySellField(isBuy: true, hint_txt: "Я заплачу",),
+              BuySellField(isBuy: true, hint_txt: "Я заплачу",fiat: widget.fiat, textController: _takerController,),
               SizedBox(height: 10.h,),
-              BuySellField(isBuy: true, hint_txt: "Я получу",),
+              BuySellField(isBuy: true, hint_txt: "Я получу", fiat: widget.crypto, textController: _makerController,),
               SizedBox(height: 10.h,),
-              BuySellButton(txt: "Купить", isBuy: true),
+              BuySellButton(
+                txt: "Купить", 
+                isBuy: true, 
+                sellerCurrency: '${widget.fiat}', 
+                sellerLogin: '${widget.login}',
+                amount: '${_takerController.text}', 
+                requisiteId: '${_requisitesId[0]}',
+                sellerBank: '${_requisites[0]}',
+                requisite: '$requisite',
+                comment: '${widget.comments}',
+                orderId: '${widget.orderId}',),
               SizedBox(height: 20.h,),
               Text(
                 'Способ оплаты',
@@ -116,7 +161,7 @@ class _BuyExtendedState extends State<BuyExtended> {
               ),
               SizedBox(height: 10.h,),
               Text(
-                'Сбер, Тинькофф, Совкомбанк, Тинькофф, УралСиб',
+                widget.banks.join(', '),
                 style: TextStyle(
                   color: Color(0xFF8A929A),
                   fontSize: 14.sp,
@@ -142,7 +187,7 @@ class _BuyExtendedState extends State<BuyExtended> {
               ),
               SizedBox(height: 10.h,),
               Text(
-                'Куча слов про сделку я не работаю со скамерами и прочими говнюками!\n\nПрошу заметить что я честный трейдер и если вы обманите меня то будете иметь дело с моими братанами. ',
+                '${widget.comments}',
                 style: TextStyle(
                   color: Color(0x7FEDF7FF),
                   fontSize: 14.sp,
