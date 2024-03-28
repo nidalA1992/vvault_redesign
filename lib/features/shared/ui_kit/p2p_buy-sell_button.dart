@@ -22,16 +22,10 @@ class BuySellButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dealProvider = Provider.of<DealProvider>(context, listen: false);
-    print("lemur ${amount}");
-    final dealData = {
-      "amount": amount,
-      "requisite_id": requisiteId, // ID выбранного реквизита
-    };
-    print("ouushh ${dealData}");
+    String _amount = amount;
     return GestureDetector(
       onTap: () {
         isBuy ? {
-        dealProvider.startDeal(orderId, dealData),
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -40,16 +34,20 @@ class BuySellButton extends StatelessWidget {
                   onPressed: (context) {
                     Navigator.pop(context);
                   },
-                  sellerAmount: "$amount",
+                  sellerAmount: _amount,
                   sellerCurrency: "$sellerCurrency",
                   sellerLogin: "$sellerLogin",
                   requisiteId: '$requisiteId', sellerBank: '${sellerBank}',
                   requisite: '$requisite',
                   comment: '$comment',
-                  orderId: '$orderId}',
+                  orderId: '$orderId',
                 )
-            )
+            ),
         ),
+          dealProvider.startDeal(orderId, {
+          "amount": amount,
+          "requisite_id": requisiteId, // ID выбранного реквизита
+          }),
         print("lemur2253 ${amount}")
       } : Navigator.push(
             context,
