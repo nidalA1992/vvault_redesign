@@ -5,9 +5,13 @@ class BuySellConverterField extends StatelessWidget {
   final String? text;
   final String img_path;
   final bool isBuy;
+  final String? price;
+  final String? fiat;
+  final String? crypto;
+  final String? unitCost;
   final Function(BuildContext)? onPressed;
 
-  const BuySellConverterField({Key? key, this.text, this.onPressed, this.img_path = '', required this.isBuy}) : super(key: key);
+  const BuySellConverterField({Key? key, this.text, this.onPressed, this.img_path = '', required this.isBuy, required this.price, this.fiat, this.crypto, this.unitCost}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,7 @@ class BuySellConverterField extends StatelessWidget {
                 Opacity(
                   opacity: 0.90,
                   child: Text(
-                    '92',
+                    '$price',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: isBuy ? Color(0xFF14A86A) : Color(0xFFCD2E30),
@@ -74,7 +78,7 @@ class BuySellConverterField extends StatelessWidget {
                 ),
                 SizedBox(width: 10.w,),
                 Text(
-                  'RUB',
+                  '$fiat',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF8A929A),
@@ -85,7 +89,7 @@ class BuySellConverterField extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                  '550',
+                  '$unitCost',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF8A929A),
@@ -96,7 +100,7 @@ class BuySellConverterField extends StatelessWidget {
                 ),
                 SizedBox(width: 10.w,),
                 Text(
-                  'USDT',
+                  '$crypto',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF8A929A),

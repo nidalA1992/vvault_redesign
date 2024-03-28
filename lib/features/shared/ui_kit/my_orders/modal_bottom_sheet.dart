@@ -3,12 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class OrdersBottomSheet extends StatefulWidget {
-  final List<String> options;
+  final List<dynamic> options;
   final String title;
   final String searchText;
   final Function(String)? onSelected;
+  // List<String> banks;
 
-  const OrdersBottomSheet({
+  OrdersBottomSheet({
     Key? key,
     required this.options,
     required this.searchText,
