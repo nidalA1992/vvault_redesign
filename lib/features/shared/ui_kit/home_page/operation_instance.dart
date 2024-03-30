@@ -68,8 +68,8 @@ class OperationInstance extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 30.w,
-              height: 30.h,
+              width: 35.w,
+              height: 35.h,
               decoration: ShapeDecoration(
                 color: clr,
                 shape: CircleBorder(),

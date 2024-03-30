@@ -106,7 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           onPressed: (context) {
                             Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => EditRequisitePage(requisite: "123"))
+                                MaterialPageRoute(builder: (context) => RequisitesPage())
                             );
                           },
                           txt: "Реквизиты"),

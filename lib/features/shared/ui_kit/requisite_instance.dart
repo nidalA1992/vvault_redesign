@@ -5,10 +5,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RequisiteInstance extends StatelessWidget {
   final String bankName;
-  final List<String> requisites;
-  final Function(BuildContext) onPressed;
+  final List<Map<String, String>> requisites;
+  final Function(BuildContext, Map<String, String>) onRequisitePressed;
 
-  const RequisiteInstance({Key? key, required this.bankName, required this.onPressed, required this.requisites}) : super(key: key);
+  const RequisiteInstance({
+    Key? key,
+    required this.bankName,
+    required this.requisites,
+    required this.onRequisitePressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +39,19 @@ class RequisiteInstance extends StatelessWidget {
             return Column(
               children: [
                 GestureDetector(
-                  onTap: () => onPressed(context),
+                  onTap: () => onRequisitePressed(context, requisites[index]),
                   child: Container(
                     width: 350.w,
                     height: 54.h,
                     padding: EdgeInsets.all(17.r),
                     decoration: ShapeDecoration(
                       color: Color(0xFF1D2126),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)), // Use ScreenUtil for borderRadius if needed
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.r)),
                     ),
                     child: Row(
                       children: [
                         Text(
-                          requisites[index],
+                          requisites[index]['requisite'] ?? '',
                           style: TextStyle(
                             color: Color(0xFFEDF7FF),
                             fontSize: 16.sp,
@@ -55,7 +60,7 @@ class RequisiteInstance extends StatelessWidget {
                           ),
                         ),
                         Spacer(),
-                        Icon(Icons.arrow_right_alt_outlined, color: Color(0x7FEDF7FF),)
+                        Icon(Icons.arrow_forward_outlined, color: Color(0x7FEDF7FF),)
                       ],
                     ),
                   ),

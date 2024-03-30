@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/edit_requisites.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/new_requisite_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/provider/requisites_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/requisite_instance.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class RequisitesPage extends StatefulWidget {
   const RequisitesPage({super.key});
@@ -13,26 +19,61 @@ class RequisitesPage extends StatefulWidget {
 }
 
 class _RequisitesPageState extends State<RequisitesPage> {
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    _loadData();
+    super.initState();
+  }
+
+  void _loadData() async {
+    await Provider.of<RequisitesListProvider>(context, listen: false).loadRequisites();
+    _refreshController.refreshCompleted();
+  }
+
+  List<RequisiteInstance> _createRequisiteInstances(List<Map<String, dynamic>> requisites) {
+    Map<String, List<Map<String, String>>> groupedRequisites = {};
+    for (var requisite in requisites) {
+      groupedRequisites.putIfAbsent(requisite['bank'], () => []).add({'requisite': requisite['requisite'], 'comment': requisite['comment']});
+    }
+
+    List<RequisiteInstance> requisiteInstances = [];
+    for (var entry in groupedRequisites.entries) {
+      RequisiteInstance instance = RequisiteInstance(
+        bankName: entry.key,
+        requisites: entry.value,
+        onRequisitePressed: (context, requisite) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => EditRequisitePage(requisite: requisite['requisite'], comment: requisite['comment'])));
+        },
+      );
+      requisiteInstances.add(instance);
+    }
+
+    return requisiteInstances;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final requisites = Provider.of<RequisitesListProvider>(context).requisites;
+    List<RequisiteInstance> requisiteInstances = _createRequisiteInstances(requisites.cast<Map<String, dynamic>>());
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
           Container(
               width: double.infinity,
-              height: 0.3.sh,
               padding: const EdgeInsets.only(
                 top: 20,
                 left: 20,
                 right: 20,
               ),
-              decoration: BoxDecoration(color: Color(0xFF1D2126)),
+              decoration: BoxDecoration(color: Color(0xFF141619)),
               child: Padding(
                 padding: EdgeInsets.only(top: 40),
                 child: Column(
                   children: [
-                    CustomAppBar(img_path: "assets/avatar.png", username: "diehie"),
                     SizedBox(height: 20.h,),
                     Row(
                       children: [
@@ -54,45 +95,36 @@ class _RequisitesPageState extends State<RequisitesPage> {
                         )
                       ],
                     ),
+                    SizedBox(height: 20.h,),
+                    Container(
+                      width: 350.w,
+                      height: 1.50.h,
+                      color: Color(0xFF1D2126),
+                    ),
+                    SizedBox(height: 20.h,),
+                    Expanded(
+                      child: SmartRefresher(
+                        controller: _refreshController,
+                        onRefresh: _loadData,
+                        child: ListView(
+                          children: [
+                            for (var instance in requisiteInstances) instance,
+                          ],
+                        ),
+                      ),
+                    ),
+                    CustomButton(
+                        text: "Добавить реквизиты",
+                        clr: Color(0xFF0066FF),
+                        onPressed: (context) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => NewRequisitePage()));
+                        },
+                    ),
+                    SizedBox(height: 20.h,)
                   ],
                 ),
               )
           ),
-          Positioned(
-              top: 160,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  color: Color(0xFF141619),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RequisiteInstance(
-                            bankName: "bankName",
-                            requisites: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
-                          onPressed: (context) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )
-          )
         ],
       ),
     );

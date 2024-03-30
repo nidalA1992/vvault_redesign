@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/all_money_1value_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_wallet_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_user_wallets_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/home_page/operation_instance.dart';
 
@@ -12,8 +17,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  void loadAllMoney() async {
+    await Provider.of<AllMoneyProvider>(context, listen: false).fetchAllMoney("RUB");
+  }
+
+  void loadWallets() async {
+    await Provider.of<WalletProvider>(context, listen: false).loadWallets();
+  }
+
+  @override
+  void initState() {
+    loadAllMoney();
+    loadWallets();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final allmoney = Provider.of<AllMoneyProvider>(context).allMoney;
+    final _wallets = Provider.of<WalletProvider>(context).wallets;
+    final createWallet = Provider.of<WalletCreationProvider>(context, listen: false);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -39,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            '320.05 ₽',
+                            '${allmoney} ₽',
                             style: TextStyle(
                               color: Color(0xFFEDF7FF),
                               fontSize: 36.sp,
@@ -124,9 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 30.h,),
                       customCryptoWidget(
                         img: "assets/etherium.png",
-                        cryptoName: "Etherium",
-                        cryptoAmount: "1.0023 ETH",
-                        percentageChange: "+0.23%",
+                        cryptoName: _wallets[0]['currency'],
+                        cryptoAmount: _wallets[0]['balance'],
                         includeDivider: false,
                       ),
                       SizedBox(height: 30.h,),
@@ -159,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           username: "diehie",
                           quantity: "7800",
                           currency: "USDT"
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -213,7 +237,6 @@ class _HomeScreenState extends State<HomeScreen> {
     required String img,
     required String cryptoName,
     required String cryptoAmount,
-    required String percentageChange,
     required bool includeDivider,
   }) {
     return Column(

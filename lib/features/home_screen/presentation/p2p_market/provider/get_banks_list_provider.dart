@@ -24,7 +24,6 @@ class BanksListProvider with ChangeNotifier {
   Future<void> loadUserMe() async {
     try {
       _userme = await _apiService.fetchUserMe();
-      print({"test1": _userme});
       notifyListeners();
     } catch (e) {
       print(e);

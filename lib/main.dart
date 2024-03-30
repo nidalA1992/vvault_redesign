@@ -10,7 +10,11 @@ import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_in_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_in_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/all_money_1value_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_wallet_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_user_wallets_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/provider/my_deals_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/new_order_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/p2p_market_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_buy_order_provider.dart';
@@ -22,6 +26,8 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/pro
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/confidentiality_page/change_mail/change_mail_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/provider/new_requisite_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/provider/requisites_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
 
 import 'features/home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
@@ -54,6 +60,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => DealProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
         ChangeNotifierProvider(create: (context) => UpdateOrderActivityProvider()),
+        ChangeNotifierProvider(create: (context) => NewRequisiteProvider()),
+        ChangeNotifierProvider(create: (context) => RequisitesListProvider()),
+        ChangeNotifierProvider(create: (context) => AllMoneyProvider()),
+        ChangeNotifierProvider(create: (context) => WalletProvider()),
+        ChangeNotifierProvider(create: (context) => WalletCreationProvider()),
+        ChangeNotifierProvider(create: (context) => DealListProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),

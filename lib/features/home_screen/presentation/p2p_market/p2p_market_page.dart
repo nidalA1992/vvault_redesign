@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/my_deals_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
@@ -34,7 +35,7 @@ class _P2PMarketState extends State<P2PMarket> {
   TextEditingController searchController1 = TextEditingController();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   String? selectedBank;
-  String? selectedFiatCurrency = "USD";
+  String? selectedFiatCurrency = "RUB";
   String? enteredPrice;
 
   void loadBanksList() async {
@@ -97,7 +98,11 @@ class _P2PMarketState extends State<P2PMarket> {
                     CustomAppBar(img_path: "assets/avatar.png", username: "diehie", isP2P: true,
                       onPressedOrders: (context) {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
-                      },),
+                      },
+                      onPressedDeals: (context) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyDealsPage()));
+                      },
+                    ),
                   ],
                 ),
               )
@@ -322,7 +327,7 @@ class _P2PMarketState extends State<P2PMarket> {
 
     filteredOrders = selectedFiatCurrency == null
         ? filteredOrders
-        : filteredOrders.where((order) => order['order']['maker_currency'].contains(selectedFiatCurrency)).toList();
+        : filteredOrders.where((order) => order['order']['taker_currency'].contains(selectedFiatCurrency)).toList();
 
     return Expanded(
       child: SmartRefresher(

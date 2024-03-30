@@ -11,6 +11,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool isHidden;
   final bool isEditable;
+  final bool isRequisite;
   final TextEditingController? controller;
   final Function(BuildContext)? onPressed;
   
@@ -18,6 +19,7 @@ class CustomTextField extends StatefulWidget {
     required this.hintText,
     this.isHidden = true,
     this.isEditable = false,
+    this.isRequisite = false,
     this.onPressed,
     this.controller,
   }) : super(key: key);
@@ -49,13 +51,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     return Container(
       width: 370.w,
-      height: 60.h,
+      height: widget.isRequisite ? 54.h : 60.h,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
           side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
           borderRadius: BorderRadius.circular(5.r),
         ),
+        color: widget.isRequisite ? Color(0xFF1D2126) : Colors.transparent
       ),
       child: Row(
         children: [
