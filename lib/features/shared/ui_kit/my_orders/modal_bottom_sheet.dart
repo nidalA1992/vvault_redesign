@@ -24,6 +24,7 @@ class OrdersBottomSheet extends StatefulWidget {
 class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
   int selectedIndex = -1;
 
+
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
@@ -96,7 +97,7 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                             selectedIndex = index;
                           });
                           widget.onSelected?.call(widget.options[index]);
-                          Navigator.pop(context, widget.options[index]);
+                          Navigator.pop(context, index);
                         },
                         child: Container(
                           width: 350.w,

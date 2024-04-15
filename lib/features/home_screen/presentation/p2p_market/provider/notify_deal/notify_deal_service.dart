@@ -12,7 +12,7 @@ class NotifyDealService {
   Future<Map<String, dynamic>> notifyTransfer(String id) async {
     final token = await fss.read(key: 'token');
     final response = await http.post(
-      Uri.parse('$baseUrl/api/exchange/deals/$id/notify'), // Примерный путь, проверьте документацию API
+      Uri.parse('$baseUrl/api/exchange/deals/$id'), // Примерный путь, проверьте документацию API
       headers: {
         'Cookie': token!,
         'Content-Type': 'application/json',
@@ -21,6 +21,7 @@ class NotifyDealService {
     );
 
     if (response.statusCode == 200) {
+      print(json.decode(response.body)['error']);
       print(json.decode(response.body));
       return json.decode(response.body)['data'];
     } else {

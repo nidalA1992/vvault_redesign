@@ -3,55 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_buy_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_sell_extended.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
 
 import '../../home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
 
 class BuySellButton extends StatelessWidget {
   final String txt;
   final bool isBuy;
-  final String sellerCurrency;
-  final String sellerLogin;
-  final String amount;
-  final String requisiteId;
-  final String sellerBank;
-  final String requisite;
-  final String comment;
-  final String orderId;
-  const BuySellButton({Key? key, required this.txt, required this.isBuy, required this.sellerCurrency, required this.sellerLogin, required this.amount, required this.requisiteId, required this.sellerBank, required this.requisite, required this.comment, required this.orderId}) : super(key: key);
+  final Function()? onTap;
+  const BuySellButton({Key? key, required this.txt, required this.isBuy, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final dealProvider = Provider.of<DealProvider>(context, listen: false);
-    print("lemur ${amount}");
-    final dealData = {
-      "amount": amount,
-      "requisite_id": requisiteId, // ID выбранного реквизита
-    };
-    print("ouushh ${dealData}");
     return GestureDetector(
-      onTap: () {
-        isBuy ? {
-          dealProvider.startDeal(orderId, dealData),
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BuyExtended2(
-                    dealNumber: "174573",
-                    onPressed: (context) {
-                      Navigator.pop(context);
-                    },
-                    sellerAmount: "$amount",
-                    sellerCurrency: "$sellerCurrency",
-                    sellerLogin: "$sellerLogin",
-                    requisiteId: '$requisiteId', sellerBank: '${sellerBank}',
-                    requisite: '$requisite',
-                    comment: '$comment',
-                    orderId: '$orderId}',
-                  )
-              )
-          ),
-          print("lemur2253 ${amount}")
-        } : Navigator.push(
+      onTap: isBuy ? onTap : (){
+        Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => SellExtended2(

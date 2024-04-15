@@ -3,6 +3,16 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/dat
 
 class OrderProvider with ChangeNotifier {
   List<dynamic> _orders = [];
+
+  String? fiat = '';
+  String? crypto = '';
+  String? cost = '';
+  List<dynamic> banks = [];
+  String? comments = '';
+  String? unitCost = '';
+  String? orderId = '';
+  String? login = '';
+  String? makerId = '';
   final OrdersService _apiService = OrdersService();
   List<dynamic> get orders => _orders;
 
