@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_service.dart';
 
 class OrderInfoProvider with ChangeNotifier {
+
+
+  String? sellerCurrency = '';
+  String? sellerLogin = '';
+  String? amount = '';
+  String? requisiteId = '';
+  String? sellerBank = '';
+  String? requisite = '';
+  String? comment = '';
+  String? orderId = '';
+  String? makerCurrency = '';
+
+
   final OrderInfoService _apiService = OrderInfoService();
 
   Map<String, dynamic> _orderDetails = {};

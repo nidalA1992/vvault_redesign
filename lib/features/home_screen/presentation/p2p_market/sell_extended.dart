@@ -24,6 +24,7 @@ class SellExtended extends StatefulWidget {
 }
 
 class _SellExtendedState extends State<SellExtended> {
+
   final List<String> _paymentMethods = ['Sberbank', 'Ziraat', 'Garanti'];
 
   @override
@@ -110,7 +111,7 @@ class _SellExtendedState extends State<SellExtended> {
               SizedBox(height: 10.h,),
               BuySellField(isBuy: true, hint_txt: "Я получу",fiat: '${widget.crypto}', textController: TextEditingController(),),
               SizedBox(height: 10.h,),
-              BuySellButton(txt: "Продать", isBuy: false, sellerCurrency: '', sellerLogin: '', amount: '', requisiteId: '', sellerBank: '', requisite: '', comment: '', orderId: '',),
+              BuySellButton(txt: "Продать", isBuy: false),
               SizedBox(height: 20.h,),
               Text(
                 'Способ оплаты',

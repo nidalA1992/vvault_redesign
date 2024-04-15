@@ -42,11 +42,11 @@ class _BuySellFieldState extends State<BuySellField> {
         children: [
           widget.textController.text.isEmpty
               ? Row(
-                children: [
-                  SvgPicture.asset(widget.imgPath),
-                  SizedBox(width: 10.w,)
-                ],
-              )
+            children: [
+              SvgPicture.asset(widget.imgPath),
+              SizedBox(width: 10.w,)
+            ],
+          )
               : SizedBox.shrink(),
           Expanded(
             child: TextField(

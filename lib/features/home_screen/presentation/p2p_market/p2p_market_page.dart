@@ -95,7 +95,7 @@ class _P2PMarketState extends State<P2PMarket> {
                 padding: EdgeInsets.only(top: 40),
                 child: Column(
                   children: [
-                    CustomAppBar(img_path: "assets/avatar.png", username: "diehie", isP2P: true,
+                    CustomAppBar(img_path: "assets/avatar.png", isP2P: true,
                       onPressedOrders: (context) {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
                       },
@@ -357,24 +357,26 @@ class _P2PMarketState extends State<P2PMarket> {
                       like_percentage: '95%',
                       order_quantity: '120',
                       success_percentage: '98',
-                      price: double.parse(order['order']['price']).toInt().toString(),
+                      price: order['order']['price'],
                       currency: order['order']['taker_currency'],
                       lower_limit: order['order']['lower'],
                       upper_limit: order['order']['upper'],
                       banks: order['order']['banks'],
                       buyOrder: true,
                       onPressed: (context) {
+                        var orderProvider = Provider.of<OrderProvider>(context, listen: false);
+                        orderProvider.makerId = order['order']['maker'];
+                        orderProvider.banks = order['order']['banks'];
+                        orderProvider.cost =  order['order']['price'];
+                        orderProvider.fiat =  order['order']['taker_currency'];
+                        orderProvider.comments = order['order']['comment'];
+                        orderProvider.crypto =  order['order']['maker_currency'];
+                        orderProvider.unitCost = order['order']['upper'];
+                        orderProvider.login = snapshot.data ?? 'N/A';
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => BuyExtended(
-                            banks: order['order']['banks'],
-                            cost: double.parse(order['order']['price']).toInt().toString(),
-                            fiat: order['order']['taker_currency'],
-                            comments: order['order']['comment'],
-                            crypto: order['order']['maker_currency'],
-                            unitCost: (double.parse(order['order']['upper']) / 90).toInt().toString(),
                             orderId: order['order']['id'],
-                            login: snapshot.data ?? 'N/A',
                           )),
                         );
                       },

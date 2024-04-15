@@ -7,7 +7,11 @@ class CustomAppBarWithoutAva extends StatelessWidget {
   final String txt;
   final Function(BuildContext)? onPressedNotifications;
 
-  const CustomAppBarWithoutAva({Key? key, required this.txt, this.onPressedNotifications}) : super(key: key);
+  const CustomAppBarWithoutAva({
+    Key? key, 
+    required this.txt, 
+    this.onPressedNotifications,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -44,8 +44,6 @@ class _MyDealsPageState extends State<MyDealsPage> {
   @override
   Widget build(BuildContext context) {
     final deals = Provider.of<DealListProvider>(context).deals;
-    print("nurali ${deals}");
-    print(deals[0]['id']);
 
     return Scaffold(
       body: Container(
@@ -120,12 +118,13 @@ class _MyDealsPageState extends State<MyDealsPage> {
             return DealInstance(
               makerCurrency: deal['maker_currency'],
               takerCurrency: deal['taker_currency'],
-              amount: deal['taker_get'],
-              quantity: deal['taker_give'],
+              amount: deal['taker_give'],
+              quantity: deal['taker_get'],
               price: deal['price'],
               id: deal['id'],
               data: deal['created_at'],
               status: deal['status'],
+              req: deal['requisite_id']
             );
           },
         ),

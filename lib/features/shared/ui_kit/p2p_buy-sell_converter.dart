@@ -62,11 +62,12 @@ class BuySellConverterField extends StatelessWidget {
             ),
             SizedBox(height: 5.h,),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Opacity(
                   opacity: 0.90,
                   child: Text(
-                    '$price',
+                    '${formatLimit(price.toString())}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: isBuy ? Color(0xFF14A86A) : Color(0xFFCD2E30),
@@ -76,7 +77,7 @@ class BuySellConverterField extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 10.w,),
+                SizedBox(width: 5.w,),
                 Text(
                   '$fiat',
                   textAlign: TextAlign.center,
@@ -89,7 +90,7 @@ class BuySellConverterField extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                  '$unitCost',
+                  '${formatLimit(unitCost.toString())}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF8A929A),
@@ -98,9 +99,9 @@ class BuySellConverterField extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(width: 10.w,),
+                SizedBox(width: 5.w,),
                 Text(
-                  '$crypto',
+                  '${crypto}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF8A929A),
@@ -115,4 +116,9 @@ class BuySellConverterField extends StatelessWidget {
         )
     );
   }
+
+  String formatLimit(String limit) {
+    return limit.length > 8 ? limit.substring(0, 8) : limit;
+  }
+
 }

@@ -18,9 +18,21 @@ class OperationInstance extends StatelessWidget {
 
   Color _getColorFromType(String type) {
     switch (type) {
-      case 'incoming':
-        return Color(0xFF05CA77);
-      case 'outgoing':
+      case 'deal':
+        return Color(0xFFE93349);
+      case 'payment':
+        return Color(0xFFE93349);
+      case 'exchange':
+        return Color(0xFF14A769);
+      case 'withdraw':
+        return Color(0xFF0066FF);
+      case 'deposit':
+        return Color(0xFF0066FF);
+      case 'transfer':
+        return Color(0xFFE93349);
+      case 'freezing':
+        return Color(0xFFE93349);
+      case 'payment_deal':
         return Color(0xFFE93349);
       default:
         return Color(0xFF0066FF);
@@ -29,14 +41,22 @@ class OperationInstance extends StatelessWidget {
 
   String _getImagePath(String type) {
     switch (type) {
-      case 'incoming':
-        return "assets/arrow-right.svg";
-      case 'outgoing':
-        return "assets/arrow-left.svg";
-      case 'buy':
+      case 'deal':
+        return "assets/users.svg";
+      case 'payment':
         return "assets/download_icon.svg";
-      case 'sell':
+      case 'exchange':
         return "assets/vyvesti_icon.svg";
+      case 'withdraw':
+        return "assets/ver2_upload.svg";
+      case 'deposit':
+        return "assets/download_icon.svg";
+      case 'transfer':
+        return "assets/arrow-right.svg";
+      case 'freezing':
+        return "assets/vyvesti_icon.svg";
+      case 'payment_deal':
+        return "assets/download_icon.svg";
       default:
         return "something is wrong";
     }
@@ -44,14 +64,22 @@ class OperationInstance extends StatelessWidget {
 
   String _getTitle(String type) {
     switch (type) {
-      case 'incoming':
-        return "Входящий перевод";
-      case 'outgoing':
+      case 'deal':
+        return "Покупка криптовалюты Р2Р";
+      case 'payment':
+        return "Оплата через Senpay";
+      case 'exchange':
+        return "assets/vyvesti_icon.svg";
+      case 'withdraw':
+        return "Вывод средств через Blockchain";
+      case 'deposit':
+        return "Поступление через Blokchain";
+      case 'transfer':
         return "Исходящий перевод";
-      case 'buy':
-        return "Покупка криптовалюты";
-      case 'sell':
-        return "Продажа криптовалюты";
+      case 'freezing':
+        return "assets/vyvesti_icon.svg";
+      case 'payment_deal':
+        return "Платеж через SenPay";
       default:
         return "something is wrong";
     }
@@ -107,7 +135,7 @@ class OperationInstance extends StatelessWidget {
             ),
             Spacer(),
             Text(
-              quantity,
+              formatLimit(quantity),
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: Color(0xFFEDF7FF),
@@ -116,7 +144,7 @@ class OperationInstance extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(width: 5.w,),
+            SizedBox(width: 3.w,),
             Text(
               currency,
               textAlign: TextAlign.center,
@@ -135,7 +163,13 @@ class OperationInstance extends StatelessWidget {
           height: 1.50.h,
           color: Color(0xFF1D2126),
         ),
+        SizedBox(height: 10.h,)
       ],
     );
   }
+
+  String formatLimit(String limit) {
+    return limit.length > 10 ? limit.substring(0, 5) : limit;
+  }
+
 }

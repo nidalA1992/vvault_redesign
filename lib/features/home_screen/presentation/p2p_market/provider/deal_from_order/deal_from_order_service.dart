@@ -5,7 +5,6 @@ import 'dart:convert';
 class DealFromOrderService {
   final String baseUrl = 'https://exchange.api.dev.wault.pro';
   FlutterSecureStorage fss = FlutterSecureStorage();
-
   Future<Map<String, dynamic>> startDeal(String orderId, Map<String, dynamic> dealData) async {
     final token = await fss.read(key: 'token');
     print("testttt ${json.encode(dealData)}");

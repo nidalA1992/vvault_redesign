@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/deal_canceled_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/spor_page.dart';
@@ -12,21 +13,17 @@ import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_banks.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/timer.dart';
 
 import '../../../shared/ui_kit/confirmation_window.dart';
+import 'provider/order_info/order_info_provider.dart';
+import 'provider/orders_list_provider.dart';
 
 class ConfirmedDealPage extends StatefulWidget {
   final String dealNumber;
   final Function(BuildContext)? onPressed;
-  final String sellerAmount;
-  final String sellerLogin;
-  final String sellerCurrency;
 
   const ConfirmedDealPage({
     Key? key,
     required this.dealNumber,
     required this.onPressed,
-    required this.sellerAmount,
-    required this.sellerLogin,
-    required this.sellerCurrency
   }) : super(key: key);
 
   @override
@@ -34,10 +31,21 @@ class ConfirmedDealPage extends StatefulWidget {
 }
 
 class _ConfirmedDealPageState extends State<ConfirmedDealPage> {
+
   bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
+    var orderProvider = Provider.of<OrderProvider>(context, listen: false);
+    final orderInfoProvider = Provider.of<OrderInfoProvider>(context, listen: false);
+    String? crypto = orderInfoProvider.makerCurrency;
+    String? login = orderProvider.login;
+    String? sellerAmount = orderInfoProvider.amount;
+    String? sellerLogin =  orderInfoProvider.sellerLogin;
+    String? sellerCurrency = orderInfoProvider.sellerCurrency;
+    String? sellerBank = orderInfoProvider.sellerBank;
+    String? sellerReq = orderInfoProvider.requisite;
+    String? comment = orderInfoProvider.comment;
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -92,14 +100,14 @@ class _ConfirmedDealPageState extends State<ConfirmedDealPage> {
                 ),
                 SizedBox(height: 20.h,),
                 ExtendableBanksList(
-                  banks: ["Сбербанк"],
-                    price: "363 928",
-                    currency: "RUB",
+                  banks: ["$sellerBank"],
+                    price: "$sellerAmount",
+                    currency: "$crypto",
                     onPressed: (context) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                     },
-                    bank_requis: "6529 0736 9087 1639",
-                    comment: "Куча слов про сделку я не работаю со скамерами и прочими говнюками!"
+                    bank_requis: "$sellerReq",
+                    comment: "$comment"
                 ),
                 Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent, ),
@@ -124,7 +132,7 @@ class _ConfirmedDealPageState extends State<ConfirmedDealPage> {
                       Align(
                         alignment:Alignment.centerLeft,
                         child: Text(
-                          'Количество: ${widget.sellerAmount} ${widget.sellerCurrency}',
+                          'Количество: ${sellerAmount} ${crypto}',
                           style: TextStyle(
                             color: Color(0xFFEDF7FF),
                             fontSize: 14.sp,
@@ -136,7 +144,7 @@ class _ConfirmedDealPageState extends State<ConfirmedDealPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Продавец: ${widget.sellerLogin}',
+                          'Продавец: ${login}',
                           style: TextStyle(
                             color: Color(0xFFEDF7FF),
                             fontSize: 14.sp,
@@ -166,7 +174,7 @@ class _ConfirmedDealPageState extends State<ConfirmedDealPage> {
                 ),
                 SizedBox(height: 10.h,),
                 Text(
-                  'Куча слов про сделку я не работаю со скамерами и прочими говнюками!',
+                  '$comment',
                   style: TextStyle(
                     color: Color(0x7FEDF7FF),
                     fontSize: 14.sp,
@@ -191,9 +199,9 @@ class _ConfirmedDealPageState extends State<ConfirmedDealPage> {
                                     onPressed: (context) {
                                       Navigator.pop(context);
                                     },
-                                    sellerAmount: widget.sellerAmount,
-                                    sellerLogin: widget.sellerLogin,
-                                    sellerCurrency: widget.sellerCurrency)));
+                                    sellerAmount: sellerAmount!,
+                                    sellerLogin: sellerLogin!,
+                                    sellerCurrency: sellerCurrency!)));
                           },
                         ).showConfirmationDialog(context);
                       },

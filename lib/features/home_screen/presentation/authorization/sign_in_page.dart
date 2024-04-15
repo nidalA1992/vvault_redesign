@@ -38,54 +38,56 @@ class _SignInPageState extends State<SignInPage> {
               ),
               decoration: BoxDecoration(color: Color(0xFF141619)),
               child: Padding(
-                padding: EdgeInsets.only(top: 120),
-                child: Column(
-                  children: [
-                    Text(
-                      'Вход',
-                      style: TextStyle(
-                        color: Color(0xFFEDF7FF),
-                        fontSize: 36.sp,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w700,
+                padding: EdgeInsets.only(top: 120.h),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Вход',
+                        style: TextStyle(
+                          color: Color(0xFFEDF7FF),
+                          fontSize: 36.sp,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 70.h,),
-                    CustomTextField(
-                        hintText: 'Логин (Никнейм, почта, номер)',
-                        isHidden: false,
-                        controller: emailController,
-                    ),
-                    SizedBox(height: 15.h,),
-                    CustomTextField(
-                        hintText: 'Пароль*',
-                        controller: passwordController,
-                    ),
-                    SizedBox(height: 300.h,),
-                    GestureDetector(
-                      onTap: () async {
-                        try {
-                          await userProvider.signIn(
-                            emailController.text,
-                            passwordController.text,
-                          );
-                          if (mounted) {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (context) => NavBar()),
-                                  (Route<dynamic> route) => false,
+                      SizedBox(height: 70.h,),
+                      CustomTextField(
+                          hintText: 'Логин (Никнейм, почта, номер)',
+                          isHidden: false,
+                          controller: emailController,
+                      ),
+                      SizedBox(height: 15.h,),
+                      CustomTextField(
+                          hintText: 'Пароль*',
+                          controller: passwordController,
+                      ),
+                      SizedBox(height: 300.h,),
+                      GestureDetector(
+                        onTap: () async {
+                          try {
+                            await userProvider.signIn(
+                              emailController.text,
+                              passwordController.text,
                             );
+                            if (mounted) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => NavBar()),
+                                    (Route<dynamic> route) => false,
+                              );
+                            }
+                          } catch (e) {
+                            print(e);
                           }
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                      child: CustomButton(
-                          text: "Войти",
-                          clr: Color(0xFF0066FF),
-                      ),
-                    )
-                  ],
+                        },
+                        child: CustomButton(
+                            text: "Войти",
+                            clr: Color(0xFF0066FF),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               )
           ),

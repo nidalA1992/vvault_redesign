@@ -39,7 +39,7 @@ class _ConfidentialityPageState extends State<ConfidentialityPage> {
                 padding: EdgeInsets.only(top: 40),
                 child: Column(
                   children: [
-                    CustomAppBar(img_path: "assets/avatar.png", username: "diehie"),
+                    CustomAppBar(img_path: "assets/avatar.png"),
                     SizedBox(height: 20.h,),
                     Row(
                       children: [

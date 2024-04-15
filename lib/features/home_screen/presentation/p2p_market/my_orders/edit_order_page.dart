@@ -68,7 +68,7 @@ class _EditOrderPageState extends State<EditOrderPage> {
                 padding: EdgeInsets.only(top: 40),
                 child: Column(
                   children: [
-                    CustomAppBar(img_path: "assets/avatar.png", username: "diehie", isP2P: true,
+                    CustomAppBar(img_path: "assets/avatar.png", isP2P: true,
                       onPressedOrders: (context) {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
                       },),

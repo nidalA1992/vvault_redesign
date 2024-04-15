@@ -11,14 +11,20 @@ import 'package:vvault_redesign/features/home_screen/presentation/authorization/
 import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_in_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/all_money_1value_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/check_balance_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_wallet_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_user_wallets_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transaction_history_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transfer_currency_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/wallet_by_currency_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/provider/my_deals_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/new_order_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/p2p_market_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_buy_order_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_sell_order_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_info/deal_info_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
@@ -66,17 +72,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WalletProvider()),
         ChangeNotifierProvider(create: (context) => WalletCreationProvider()),
         ChangeNotifierProvider(create: (context) => DealListProvider()),
+        ChangeNotifierProvider(create: (context) => DealInfoProvider()),
+        ChangeNotifierProvider(create: (context) => CheckBalanceProvider()),
+        ChangeNotifierProvider(create: (context) => WalletByCurrencyProvider()),
+        ChangeNotifierProvider(create: (context) => TransferCurrencyProvider()),
+        ChangeNotifierProvider(create: (context) => TransactionHistoryProvider()),
+        ChangeNotifierProvider(create: (context) => CryptoCurrenciesListProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),
         minTextAdapt: true,
         splitScreenMode: true,
-        // Use builder only if you need to use library outside ScreenUtilInit context
         builder: (_ , child) {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'First Method',
-            // You can use the library anywhere in the app even in theme
             theme: ThemeData(
               primarySwatch: Colors.blue,
               textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),

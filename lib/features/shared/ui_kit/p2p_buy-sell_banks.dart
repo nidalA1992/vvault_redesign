@@ -69,7 +69,7 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
                               ),
                               Spacer(),
                               Text(
-                                widget.price,
+                                formatLimit(widget.price),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16.sp,
@@ -177,4 +177,9 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
       ),
     );
   }
+
+  String formatLimit(String limit) {
+    return limit.length > 10 ? limit.substring(0, 10) : limit;
+  }
+
 }
