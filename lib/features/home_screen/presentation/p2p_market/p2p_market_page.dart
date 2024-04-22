@@ -373,6 +373,8 @@ class _P2PMarketState extends State<P2PMarket> {
                         orderProvider.crypto =  order['order']['maker_currency'];
                         orderProvider.unitCost = order['order']['upper'];
                         orderProvider.login = snapshot.data ?? 'N/A';
+                        orderProvider.upper = order['order']['upper'];
+                        orderProvider.lower = order['order']['lower'];
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => BuyExtended(
@@ -438,12 +440,15 @@ class _P2PMarketState extends State<P2PMarket> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => SellExtended(
+                            orderId: order['order']['id'],
+                            lower: order['order']['lower'],
+                            login: snapshot.data ?? 'N/A',
                             banks: order['order']['banks'],
                             cost: double.parse(order['order']['price']).toInt().toString(),
                             fiat: order['order']['taker_currency'],
                             comments: order['order']['comment'],
                             crypto: order['order']['maker_currency'],
-                            unitCost: (double.parse(order['order']['upper']) / 90).toInt().toString(),
+                            unitCost: order['order']['upper'],
                           )),
                         );
                       },

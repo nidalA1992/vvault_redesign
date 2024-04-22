@@ -16,22 +16,7 @@ class BuySellButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isBuy ? onTap : (){
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SellExtended2(
-                  dealNumber: "174573",
-                  onPressed: (context) {
-                    Navigator.pop(context);
-                  },
-                  sellerAmount: "6 500",
-                  sellerCurrency: "USDT",
-                  sellerLogin: "umpalumpa137",
-                )
-            )
-        );
-      },
+      onTap: isBuy ? onTap : onTap,
       child: Container(
         width: 349.w,
         height: 44.h,

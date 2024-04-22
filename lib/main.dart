@@ -37,6 +37,7 @@ import 'package:vvault_redesign/features/home_screen/presentation/settings_page/
 import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
 
 import 'features/home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
+import 'features/home_screen/presentation/p2p_market/provider/get_my_requisites/my_requisite_provider.dart';
 import 'features/home_screen/presentation/p2p_market/provider/notify_deal/notify_deal_provider.dart';
 import 'features/home_screen/presentation/p2p_market/provider/user_requisite_list/user_requisite_provider.dart';
 
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TransferCurrencyProvider()),
         ChangeNotifierProvider(create: (context) => TransactionHistoryProvider()),
         ChangeNotifierProvider(create: (context) => CryptoCurrenciesListProvider()),
+        ChangeNotifierProvider(create: (context) => RequisitesProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),

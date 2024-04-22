@@ -16,7 +16,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
   @override
   void initState() {
     super.initState();
-    remaining = Duration(minutes: 14, seconds: 59);
+    remaining = Duration(minutes: 4, seconds: 59);
     startTimer();
   }
 

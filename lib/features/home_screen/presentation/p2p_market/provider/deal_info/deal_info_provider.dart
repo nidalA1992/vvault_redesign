@@ -28,6 +28,7 @@ class DealInfoProvider with ChangeNotifier {
         final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
         dealDetail = DealDetail.fromJson(jsonData['data']['deal']);
         errorMessage = null;
+        notifyListeners();
       } else {
         errorMessage = 'Failed to load data: ${response.statusCode}';
       }
@@ -38,4 +39,28 @@ class DealInfoProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> approveDeal(String id) async {
+    final url = 'https://exchange.api.dev.wault.pro/api/exchange/deals/$id/approve';
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Cookie': authToken,
+          'Content-Type': 'application/json'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        print(jsonData);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to approve deal: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('Error approving deal: $e');
+    }
+  }
+
 }

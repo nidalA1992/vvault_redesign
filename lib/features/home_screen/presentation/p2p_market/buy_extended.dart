@@ -34,6 +34,11 @@ class _BuyExtendedState extends State<BuyExtended> {
   double usdToRubRate = 93.50;
   bool isTakerActive = false;
   bool isMakerActive = false;
+  List<String> _requisites = [];
+  List<String> _requisitesId = [];
+  String requisite = '';
+  String comment = '';
+  int? selectedIndex = 0;
 
   @override
   void initState() {
@@ -84,12 +89,6 @@ class _BuyExtendedState extends State<BuyExtended> {
   }
 
 
-  List<String> _requisites = [];
-  List<String> _requisitesId = [];
-  String requisite = '';
-  String comment = '';
-  int? selectedIndex = 0;
-
 
     @override
   Widget build(BuildContext context) {
@@ -102,14 +101,22 @@ class _BuyExtendedState extends State<BuyExtended> {
     String? comments = orderProvider.comments;
     String? unitCost = orderProvider.unitCost;
     String? login = orderProvider.login;
+    String? lower = orderProvider.lower;
+    String? upper = orderProvider.upper;
+
+    // Очищаем списки прямо здесь, перед их обновлением на основе новых данных
+    _requisites.clear();
+    _requisitesId.clear();
+
     final orderDetails = Provider.of<OrderInfoProvider>(context).orderDetails;
 
     if (orderDetails != null && orderDetails.containsKey('requisites') && orderDetails['requisites'].isNotEmpty) {
-      _requisites.add(orderDetails['requisites'][0]['bank']);
-      _requisitesId.add(orderDetails['requisites'][0]['id']);
+      for (var req in orderDetails['requisites']) {
+        _requisites.add(req['bank']);
+        _requisitesId.add(req['id']);
+      }
       requisite = orderDetails['requisites'][0]['requisite'];
       comment = orderDetails['requisites'][0]['comment'];
-    } else {
     }
 
     if (orderDetails.isEmpty || !orderDetails.containsKey('requisites')) {
@@ -205,9 +212,9 @@ class _BuyExtendedState extends State<BuyExtended> {
                   ),
                 ),
                 SizedBox(height: 10.h,),
-                BuySellField(isBuy: true, hint_txt: "Я заплачу",fiat: fiat, textController: takerController,),
+              BuySellField(isBuy: true, hint_txt: "Я заплачу",fiat: fiat, textController: takerController, maxLimit: double.parse(upper!), minLimit: double.parse(lower!),),
                 SizedBox(height: 10.h,),
-                BuySellField(isBuy: true, hint_txt: "Я получу", fiat: crypto, textController: _makerController,),
+                BuySellField(isBuy: true, hint_txt: "Я получу", fiat: crypto, textController: _makerController, maxLimit: double.parse(upper) / usdToRubRate, minLimit: double.parse(lower) / usdToRubRate,),
                 SizedBox(height: 10.h,),
                 BuySellButton(
                   txt: "Купить",
@@ -228,6 +235,9 @@ class _BuyExtendedState extends State<BuyExtended> {
                         "amount": _makerController.text,
                         "requisite_id": orderInfoProvider.requisiteId,
                       };
+
+
+                      print(orderInfoProvider.requisiteId);
 
                       final dealProvider = Provider.of<DealProvider>(context, listen: false);
                       await dealProvider.startDeal(widget.orderId!, dealData);

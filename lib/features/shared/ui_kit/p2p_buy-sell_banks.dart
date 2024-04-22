@@ -8,6 +8,7 @@ class ExtendableBanksList extends StatefulWidget {
   final String bank_requis;
   final String comment;
   final List<String> banks;
+  final bool? isBuy;
   final Function(BuildContext)? onPressed;
 
   const ExtendableBanksList({
@@ -17,7 +18,7 @@ class ExtendableBanksList extends StatefulWidget {
     required this.onPressed,
     required this.bank_requis,
     required this.comment,
-    required this.banks,
+    required this.banks, this.isBuy = true,
   }) : super(key: key);
 
   @override
@@ -59,7 +60,7 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
                           Row(
                             children: [
                               Text(
-                                'Переведите',
+                                widget.isBuy! ? 'Переведите' : 'Получите',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16.sp,

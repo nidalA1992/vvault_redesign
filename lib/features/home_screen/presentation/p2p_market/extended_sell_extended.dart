@@ -4,9 +4,11 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/confirmed_deal_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/deal_canceled_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_info/deal_info_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_banks.dart';
@@ -23,14 +25,18 @@ class SellExtended2 extends StatefulWidget {
   final String sellerAmount;
   final String sellerLogin;
   final String sellerCurrency;
-
+  final String bank;
+  final String requisite;
+  final String comment;
+  final String makerAmount;
+  final String deal_id;
   const SellExtended2({
     Key? key,
     required this.dealNumber,
     required this.onPressed,
     required this.sellerAmount,
     required this.sellerLogin,
-    required this.sellerCurrency
+    required this.sellerCurrency, required this.bank, required this.requisite, required this.comment, required this.makerAmount, required this.deal_id
   }) : super(key: key);
 
   @override
@@ -96,14 +102,14 @@ class _SellExtended2State extends State<SellExtended2> {
                 ),
                 SizedBox(height: 20.h,),
                 ExtendableBanksList(
-                    banks: ["Сбербанк"],
-                    price: "363 928",
+                    banks: [widget.bank,],
+                    price: widget.makerAmount,
                     currency: "RUB",
                     onPressed: (context) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                     },
-                    bank_requis: "6529 0736 9087 1639",
-                    comment: "Куча слов про сделку я не работаю со скамерами и прочими говнюками!"
+                    bank_requis: widget.requisite,
+                    comment: widget.comment
                 ),
                 Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent, ),
@@ -170,7 +176,7 @@ class _SellExtended2State extends State<SellExtended2> {
                 ),
                 SizedBox(height: 10.h,),
                 Text(
-                  'Куча слов про сделку я не работаю со скамерами и прочими говнюками!',
+                  widget.comment,
                   style: TextStyle(
                     color: Color(0x7FEDF7FF),
                     fontSize: 14.sp,
@@ -178,6 +184,22 @@ class _SellExtended2State extends State<SellExtended2> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                CustomButton(text: 'Платеж получен', clr: Color(0xFF0066FF), onPressed: (context){
+                  ConfirmationWindow(
+                    content: 'Вы точно получили ${widget.makerAmount} RUB \nот пользователя ${widget.sellerLogin}?',
+                    confirmButtonText: 'Подтвердить',
+                    cancelButtonText: 'Отмена',
+                    onConfirm: () async {
+                      final provider = Provider.of<DealInfoProvider>(context, listen: false);
+                      await provider.approveDeal(widget.deal_id);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+                          ModalRoute.withName('/') // Replace this with your root screen's route name (usually '/')
+                      );
+                    },
+                  ).showConfirmationDialog(context);
+                },)
               ],
             ),
           )

@@ -13,6 +13,8 @@ class OrderProvider with ChangeNotifier {
   String? orderId = '';
   String? login = '';
   String? makerId = '';
+  String? upper = '';
+  String? lower = '';
   final OrdersService _apiService = OrdersService();
   List<dynamic> get orders => _orders;
 

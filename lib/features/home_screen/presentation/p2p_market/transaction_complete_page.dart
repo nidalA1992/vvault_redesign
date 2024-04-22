@@ -26,7 +26,8 @@ class _TransactionCompleteScreenState extends State<TransactionCompleteScreen> {
     super.initState();
     _subscription = Stream.periodic(Duration(seconds: 5)).listen((_) {
       final provider = Provider.of<DealInfoProvider>(context, listen: false);
-      provider.fetchDealDetail(widget.dealId); // Вызываем запрос для обновления данных
+      provider.fetchDealDetail(widget.dealId);
+      print(provider.dealDetail?.status);// Вызываем запрос для обновления данных
     });
   }
 
@@ -53,7 +54,7 @@ class _TransactionCompleteScreenState extends State<TransactionCompleteScreen> {
           } else if (provider.dealDetail != null && provider.dealDetail!.status == "approved") {
             return _buildContent(widget.cost, context);
           } else {
-            return Center(child: Text("Transaction not approved",
+            return Center(child: Text("Transaction is ${provider.dealDetail?.status}",
               style: TextStyle(color: Colors.white, fontSize: 18),
             ));
           }
@@ -80,7 +81,7 @@ class _TransactionCompleteScreenState extends State<TransactionCompleteScreen> {
         ),
         SizedBox(height: 12.h),
         Text(
-          'На ваш счёт зачислено\n${cost} USDT',
+          'На ваш счёт зачислено\n${cost} RUB',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18.sp,
