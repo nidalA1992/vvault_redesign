@@ -17,6 +17,9 @@ import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sh
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/order_instance.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_payment_methods_button.dart';
 
+import '../provider/get_my_requisites/my_requisite.dart';
+import '../provider/get_my_requisites/my_requisite_provider.dart';
+
 class CreateOrder extends StatefulWidget {
 
   CreateOrder({Key? key,}) : super(key: key);
@@ -33,7 +36,10 @@ class _CreateOrderState extends State<CreateOrder> {
   bool isFixed = true;
   List<String> banks = [];
   bool isBuy = true;
-  final List<String> _paymentMethods = ['МТС_Банк'];
+  String mySelectedRequisite = '';
+
+  String selectedRequisiteId = '';
+  String selectedPaymentMethod = "Выберите способ оплаты";
   final _formKey = GlobalKey<FormState>();
   String _makerCurrency = 'RUB';
   String _takerCurrency = 'USDT';
@@ -47,11 +53,15 @@ class _CreateOrderState extends State<CreateOrder> {
   @override
   void initState() {
     loadFiatCurrencies();
+    Provider.of<RequisitesProvider>(context, listen: false).fetchRequisites();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    List<MyRequisite> requisites = Provider.of<RequisitesProvider>(context).requisites;
+
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -602,7 +612,7 @@ class _CreateOrderState extends State<CreateOrder> {
   Widget _createSellContent() {
     final orderProvider = Provider.of<SellOrderProvider>(context, listen: false);
     final fiatCurrencies = Provider.of<FiatCurrenciesListProvider>(context).fiatCurrencies;
-
+    List<MyRequisite> requisites = Provider.of<RequisitesProvider>(context).requisites;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -887,19 +897,25 @@ class _CreateOrderState extends State<CreateOrder> {
               context: context,
               builder: (BuildContext context) {
                 return OrdersBottomSheet(
-                  options: _paymentMethods,
+                  options: requisites.map((requisite) => requisite.bank).toList(),
                   title: 'Выберите банк',
                   searchText: 'Поиск',
+                    onSelected: (selectedId) {
+                      var selectedRequisite = requisites.firstWhere(
+                              (requisite) => requisite.bank == requisite.bank,
+                          orElse: () => MyRequisite(bank: '', comment: '', id: '', requisite: '', userId: '')
+                      );
+                      setState(() {
+                        selectedPaymentMethod = selectedRequisite.bank; // Используем имя банка как пример
+                        selectedRequisiteId = selectedRequisite.id;
+                        mySelectedRequisite = selectedRequisite.requisite;
+                        print(selectedRequisiteId);
+                      });
+                    }
                 );
               },
             );
-
-            if (chosenBank != null && !banks.contains(chosenBank)) {
-              setState(() {
-                banks.add(chosenBank);
-              });
-            }
-          },
+            },
           child: Container(
             width: 350.w,
             height: 56.h,
@@ -916,7 +932,7 @@ class _CreateOrderState extends State<CreateOrder> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Выберите способ оплаты',
+                  selectedPaymentMethod,
                   style: TextStyle(
                     color: Color(0xFF8A929A),
                     fontSize: 16.sp,
@@ -1006,7 +1022,7 @@ class _CreateOrderState extends State<CreateOrder> {
                   },
                   'payment_details': {
                     'requisiteIDs': [
-                      'e867af9b-ed46-490f-84c5-641ab0ad4a61'
+                      selectedRequisiteId,
                     ]
                   },
                   'price': {

@@ -40,12 +40,16 @@ class _BuySellFieldState extends State<BuySellField> {
   @override
   void initState() {
     super.initState();
-    widget.textController.addListener(_validateInput);
+    if(widget.minLimit != null && widget.maxLimit != null){
+      widget.textController.addListener(_validateInput);
+    }
   }
 
   @override
   void dispose() {
-    widget.textController.removeListener(_validateInput);
+    if(widget.minLimit != null && widget.maxLimit != null){
+      widget.textController.removeListener(_validateInput);
+    }
     super.dispose();
   }
 
@@ -121,7 +125,7 @@ class _BuySellFieldState extends State<BuySellField> {
             color: Color(0xFF8A929A),
           ),
           GestureDetector(
-            onTap: () => widget.textController.text = widget.maxLimit.toString(),
+            // onTap: () => widget.textController.text = widget.maxLimit.toString(),
             child: Text(
               'Все',
               textAlign: TextAlign.center,
