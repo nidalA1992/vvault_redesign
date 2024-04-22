@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/my_deals_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/my_orders_page.dart';
@@ -29,8 +30,7 @@ class P2PMarket extends StatefulWidget {
 
 class _P2PMarketState extends State<P2PMarket> {
   bool isPurchaseSelected = true;
-  final List<String> _items = ['BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH', 'BTC', 'ETH'];
-  String selectedCurrency = 'BTC';
+  String selectedCurrency = 'USDT';
   String selectedValuta = 'KZT';
   TextEditingController searchController1 = TextEditingController();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
@@ -44,6 +44,10 @@ class _P2PMarketState extends State<P2PMarket> {
 
   void loadFiatCurrencies() async {
     await Provider.of<FiatCurrenciesListProvider>(context, listen: false).loadFiatCurrencies();
+  }
+
+  void loadCryptoCurrencies() async {
+    await Provider.of<CryptoCurrenciesListProvider>(context, listen: false).loadCryptoCurrencies();
   }
 
   void _onRefresh() async{
@@ -65,6 +69,7 @@ class _P2PMarketState extends State<P2PMarket> {
     _loadData();
     loadBanksList();
     loadFiatCurrencies();
+    loadCryptoCurrencies();
     super.initState();
   }
 
@@ -77,6 +82,7 @@ class _P2PMarketState extends State<P2PMarket> {
     final orders = Provider.of<OrderProvider>(context).orders;
     final banks = Provider.of<BanksListProvider>(context).banks;
     final fiatCurrencies = Provider.of<FiatCurrenciesListProvider>(context).fiatCurrencies;
+    final cryptoCurrencies = Provider.of<CryptoCurrenciesListProvider>(context).cryptoCurrencies;
 
     return Scaffold(
       body: Stack(
@@ -172,7 +178,7 @@ class _P2PMarketState extends State<P2PMarket> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return OrdersBottomSheet(
-                                    options: _items,
+                                    options: cryptoCurrencies,
                                     title: 'Выберите криптовалюту',
                                     searchText: "Поиск монет",
                                   );
@@ -191,7 +197,7 @@ class _P2PMarketState extends State<P2PMarket> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SvgPicture.asset("assets/bitcoin-btc-logo 1.svg"),
+                                  SvgPicture.asset("assets/crypto logo.svg"),
                                   Text(
                                     selectedCurrency,
                                     style: TextStyle(
