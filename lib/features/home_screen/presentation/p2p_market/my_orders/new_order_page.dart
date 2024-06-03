@@ -471,6 +471,9 @@ class _CreateOrderState extends State<CreateOrder> {
                   options: _banks,
                   title: 'Выберите банк',
                   searchText: 'Поиск',
+                  onSelected: (selectedBank) {
+                    Navigator.pop(context, selectedBank);  // Ensure this is correct context
+                  },
                 );
               },
             );

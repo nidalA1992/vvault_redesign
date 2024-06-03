@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/confirmed_deal_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/deal_canceled_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/p2p_market_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_info/deal_info_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
@@ -194,7 +195,7 @@ class _SellExtended2State extends State<SellExtended2> {
                       await provider.approveDeal(widget.deal_id);
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+                          MaterialPageRoute(builder: (BuildContext context) => P2PMarket()),
                           ModalRoute.withName('/') // Replace this with your root screen's route name (usually '/')
                       );
                     },

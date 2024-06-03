@@ -5,7 +5,13 @@ class MyRequisite {
   final String requisite;
   final String userId;
 
-  MyRequisite({required this.bank, required this.comment, required this.id, required this.requisite, required this.userId});
+  MyRequisite({
+    required this.bank,
+    required this.comment,
+    required this.id,
+    required this.requisite,
+    required this.userId,
+  });
 
   factory MyRequisite.fromJson(Map<String, dynamic> json) {
     return MyRequisite(

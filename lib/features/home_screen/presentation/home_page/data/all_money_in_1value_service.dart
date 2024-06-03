@@ -2,8 +2,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:vvault_redesign/features/shared/constants/urls.dart';
+
 class AllMoneyService {
-  final String baseUrl = 'wallet.api.dev.wault.pro';
+  final String baseUrl = Urls.walletsBaseUrl;
 
   FlutterSecureStorage fss = FlutterSecureStorage();
 

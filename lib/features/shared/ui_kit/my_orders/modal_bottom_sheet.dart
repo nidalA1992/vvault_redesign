@@ -6,8 +6,7 @@ class OrdersBottomSheet extends StatefulWidget {
   final List<dynamic> options;
   final String title;
   final String searchText;
-  final Function(String)? onSelected;
-  // List<String> banks;
+  final ValueChanged<String>? onSelected;
 
   OrdersBottomSheet({
     Key? key,
@@ -23,7 +22,6 @@ class OrdersBottomSheet extends StatefulWidget {
 
 class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
   int selectedIndex = -1;
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +94,9 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                           setState(() {
                             selectedIndex = index;
                           });
-                          widget.onSelected?.call(widget.options[index]);
-                          Navigator.pop(context, index);
+                          if (widget.onSelected != null) {
+                            widget.onSelected!(widget.options[index]);
+                          }
                         },
                         child: Container(
                           width: 350.w,
@@ -126,7 +125,7 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10.h,)
+                      SizedBox(height: 10.h)
                     ],
                   );
                 },

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UserRequisiteService {
-  final String baseUrl = 'https://exchange.api.dev.wault.pro';
+  final String baseUrl = 'https://exchange.api.tdev.wault.pro';
   FlutterSecureStorage fss = FlutterSecureStorage();
 
   Future<List<dynamic>> fetchRequisites() async {

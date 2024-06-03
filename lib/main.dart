@@ -8,16 +8,21 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_in_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_up_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_in_page.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_up_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/all_money_1value_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/check_balance_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_payment_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_wallet_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_user_wallets_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/notifications_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transaction_history_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transfer_currency_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/wallet_by_currency_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/withdraw_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/provider/my_deals_list_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/new_order_page.dart';
@@ -80,6 +85,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TransactionHistoryProvider()),
         ChangeNotifierProvider(create: (context) => CryptoCurrenciesListProvider()),
         ChangeNotifierProvider(create: (context) => RequisitesProvider()),
+        ChangeNotifierProvider(create: (context) => SignUpProvider()),
+        ChangeNotifierProvider(create: (context) => NotificationsProvider()),
+        ChangeNotifierProvider(create: (context) => WithdrawProvider()),
+        ChangeNotifierProvider(create: (context) => PaymentProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),

@@ -16,7 +16,7 @@ class DealInfoProvider with ChangeNotifier {
   Future<void> fetchDealDetail(String id) async {
     isLoading = true;
     notifyListeners();
-    final url = 'https://exchange.api.dev.wault.pro/api/exchange/deals/$id';
+    final url = 'https://exchange.api.tdev.wault.pro/api/exchange/deals/$id';
     authToken = (await fss.read(key: 'token'))!;
     try {
       final response = await http.get(
@@ -41,7 +41,8 @@ class DealInfoProvider with ChangeNotifier {
   }
 
   Future<void> approveDeal(String id) async {
-    final url = 'https://exchange.api.dev.wault.pro/api/exchange/deals/$id/approve';
+    final url = 'https://exchange.api.tdev.wault.pro/api/exchange/deals/$id/approve';
+    authToken = (await fss.read(key: 'token'))!;
     try {
       final response = await http.post(
         Uri.parse(url),

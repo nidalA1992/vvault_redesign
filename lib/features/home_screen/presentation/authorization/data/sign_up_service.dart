@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:vvault_redesign/features/shared/constants/urls.dart';
 
-class SignInService {
-  final String baseUrl = Urls.usersBaseUrl;
+class SignUpService {
+  final String baseUrl = 'https://users.api.tdev.wault.pro';
 
   FlutterSecureStorage fss = FlutterSecureStorage();
 
-  Future<Map<String, dynamic>> signIn(Map<String, String> userData) async {
+  Future<Map<String, dynamic>> signUp(Map<String, String> userData) async {
     final response = await http.post(
-      Uri.https(baseUrl, '/api/users/sign/in'),
+      Uri.parse('$baseUrl/api/users/sign/up'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -20,10 +19,10 @@ class SignInService {
 
     if (response.statusCode == 200) {
       final token = response.headers['set-cookie'];
-      fss.write(key: 'token', value: token);json.decode(response.body)['data'];
+      fss.write(key: 'token', value: token);
       return json.decode(response.body)['data'];
     } else {
-      throw Exception('Failed to sign in: ${json.decode(response.body)['error']['message']}');
+      throw Exception('Failed to sign up: ${json.decode(response.body)['error']['message']}');
     }
   }
 }

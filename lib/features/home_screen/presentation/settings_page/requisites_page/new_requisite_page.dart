@@ -113,8 +113,8 @@ class _NewRequisitePageState extends State<NewRequisitePage> {
                     ),
                     SizedBox(height: 10.h,),
                     GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet<void>(
+                      onTap: () async {
+                        final chosenBank = await showModalBottomSheet<String>(
                           context: context,
                           builder: (BuildContext context) {
                             return OrdersBottomSheet(
@@ -129,6 +129,12 @@ class _NewRequisitePageState extends State<NewRequisitePage> {
                             );
                           },
                         );
+
+                        if (chosenBank != null) {
+                          setState(() {
+                            selectedBank = chosenBank;
+                          });
+                        }
                       },
                       child: Container(
                         width: 350.w,

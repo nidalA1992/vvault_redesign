@@ -7,7 +7,7 @@ class NotifyDealService {
 
   final fss = FlutterSecureStorage();
 
-  final String baseUrl = 'https://exchange.api.dev.wault.pro';
+  final String baseUrl = 'https://exchange.api.tdev.wault.pro';
 
   Future<Map<String, dynamic>> notifyTransfer(String id) async {
     final token = await fss.read(key: 'token');

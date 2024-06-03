@@ -85,7 +85,6 @@ class _TransferPageState extends State<TransferPage> {
     });
   }
 
-
   void loadCryptoCurrencies() async {
     await Provider.of<CryptoCurrenciesListProvider>(context, listen: false).loadCryptoCurrencies();
   }

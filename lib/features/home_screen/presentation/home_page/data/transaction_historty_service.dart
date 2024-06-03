@@ -2,8 +2,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:vvault_redesign/features/shared/constants/urls.dart';
+
 class TransactionHistoryService {
-  final String baseUrl = 'wallet.api.dev.wault.pro';
+  final String baseUrl = Urls.walletsBaseUrl;
   final FlutterSecureStorage fss = FlutterSecureStorage();
 
   Future<List<dynamic>> fetchTransactions({bool ascending = true, String? filter, int offset = 0, int limit = 10}) async {

@@ -1,13 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/check_balance_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/wallet_by_currency_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/bill_confirmation_window.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_textfield.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
@@ -15,17 +17,23 @@ import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/transfer_confirmation_window.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/withdraw_confirmation_window.dart';
 
-class ReplenishPage extends StatefulWidget {
-  const ReplenishPage({super.key});
+class BillPage extends StatefulWidget {
+  const BillPage({super.key});
 
   @override
-  State<ReplenishPage> createState() => _ReplenishPageState();
+  State<BillPage> createState() => _BillPageState();
 }
 
-class _ReplenishPageState extends State<ReplenishPage> {
+class _BillPageState extends State<BillPage> {
   String selectedCoin = "USDT";
   TextEditingController idController = TextEditingController();
   TextEditingController makerController = TextEditingController();
+  String? currentError;
+  double usdToRubRate = 1/93.50;
+  bool isMakerActive = false;
+  bool isTakerActive = false;
+  TextEditingController takerController = TextEditingController();
+  Timer? _debouncer;
 
   void loadCryptoCurrencies() async {
     await Provider.of<CryptoCurrenciesListProvider>(context, listen: false).loadCryptoCurrencies();
@@ -35,44 +43,66 @@ class _ReplenishPageState extends State<ReplenishPage> {
     await Provider.of<WalletByCurrencyProvider>(context, listen: false).fetchWallet("USDT");
   }
 
+  void _onMakerChanged() {
+    if (_debouncer?.isActive ?? false) _debouncer!.cancel();
+    _debouncer = Timer(const Duration(milliseconds: 300), () {
+      if (isTakerActive) return;
+      double makerValue = double.tryParse(makerController.text) ?? 0.0;
+      double takerValue = makerValue * usdToRubRate;
+      setState(() {
+        takerController.text = takerValue.toStringAsFixed(2);
+      });
+    });
+  }
+
   @override
   void initState() {
     loadCryptoCurrencies();
     loadWalletByCurrency();
+    makerController.addListener(() {
+      isMakerActive = true;
+      _onMakerChanged();
+      isMakerActive = false;
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    takerController.dispose();
+    makerController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final cryptoCurrencies = Provider.of<CryptoCurrenciesListProvider>(context).cryptoCurrencies;
     final walletByCurrency = Provider.of<WalletByCurrencyProvider>(context).wallet;
-    final checkBalance = Provider.of<CheckBalanceProvider>(context, listen: false);
 
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
           Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(
-              top: 20,
-              left: 20,
-              right: 20,
-            ),
-            decoration: BoxDecoration(color: Color(0xFF141619)),
-            child: Padding(
-              padding: EdgeInsets.only(top: 50.h),
-              child: SingleChildScrollView(
+              width: double.infinity,
+              padding: const EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+              ),
+              decoration: BoxDecoration(color: Color(0xFF141619)),
+              child: Padding(
+                padding: EdgeInsets.only(top: 50.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(Icons.arrow_back_outlined, color: Color(0x7FEDF7FF)),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.arrow_back_outlined, color: Color(0x7FEDF7FF))
                         ),
                         SizedBox(width: 10.w,),
                         Text(
@@ -179,119 +209,138 @@ class _ReplenishPageState extends State<ReplenishPage> {
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.w500,
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ],
-                        ),
+                        )
                       ],
                     ),
                     SizedBox(height: 20.h,),
-                    Center(
-                      child: Text(
-                        "Минимальная сумма к пополнению - 200 USDT",
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 14.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.h,),
-                    Center(
-                      child: Text(
-                        walletByCurrency['address'] ?? "Unknown",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFFEDF7FF),
-                          fontSize: 15.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.h,),
-                    Center(
-                      child: Text(
-                        'Ваш адрес USDT в сети TRC-20',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 14.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30.h,),
-                    Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SvgPicture.asset("assets/qr_borders.svg", height: 250.h),
-                          QrImageView(
-                            foregroundColor: Colors.white,
-                            data: walletByCurrency['id'].toString(),
-                            version: QrVersions.auto,
-                            size: 220.sp,
-                            gapless: false,
-                            errorStateBuilder: (cxt, err) {
-                              return Container(
-                                child: Center(
-                                  child: Text(
-                                    "Something went wrong...",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Сумма в валюте',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600,
                           ),
+                        ),
+                        SvgPicture.asset("assets/Vector 49.svg"),
+                        Text(
+                          'Сумма в криптовалюте',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 14.sp,
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 20.h,),
+                    Container(
+                      width: 350.w,
+                      height: 51.h,
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF272D35),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          makerController.text.isEmpty
+                              ? Row(
+                            children: [
+                              SvgPicture.asset("assets/edit_icon.svg"),
+                              SizedBox(width: 10.w,)
+                            ],
+                          )
+                              : SizedBox.shrink(),
+                          Expanded(
+                            child: TextField(
+                              controller: makerController,
+                              textAlign: TextAlign.start,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              onChanged: (value) {
+                                if (!isTakerActive) {
+                                  setState(() {
+                                    _onMakerChanged();
+                                  });
+                                }
+                              },
+                              style: TextStyle(
+                                color: Color(0xFF8A929A),
+                                fontSize: 14.sp,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w500,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Сумма",
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF8A929A),
+                                ),
+                                errorText: currentError,
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            '~ ${takerController.text} $selectedCoin',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Container(
+                            height: 20.h,
+                            width: 1.w,
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            color: Color(0xFF8A929A),
+                          ),
+                          GestureDetector(
+                            // onTap: () => widget.textController.text = widget.maxLimit.toString(),
+                            child: Text(
+                              '$selectedCoin',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),
-                    SizedBox(height: 30.h,),
-                    Center(
-                      child: Text(
-                        'После отправки средств проверьте баланс',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0x7FEDF7FF),
-                          fontSize: 14.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10.h,),
-                    CustomButton(text: "Скопировать адрес",
-                      onPressed: (context) {
-                        Clipboard.setData(ClipboardData(text: walletByCurrency['address'] ?? "Unknown"))
-                            .then((_) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: Color(0xFF262C35),
-                              content: Text("Copied to clipboard!"),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        });
-                      },
-                      clr: Color(0xFF262C35),
-                      img_path: "assets/copy_icon.svg",
-                    ),
-                    SizedBox(height: 10.h,),
-                    CustomButton(text: "Проверить баланс",
-                      onPressed: (context) {
-                        checkBalance.checkBalance("USDT");
-                      },
-                      clr: Color(0xFF0066FF),
+                    Spacer(),
+                    CustomButton(text: "Получить ссылку на оплату",
+                        onPressed: (context) {
+                          BillConfirmationWindow(
+                            idUser: idController.text,
+                            amountRub: makerController.text,
+                            amountCrypto: takerController.text,
+                            crypto: selectedCoin,
+                          ).showConfirmationDialog(context);
+                        },
+                        clr: Color(0xFF0066FF)
                     ),
                     SizedBox(height: 47.h,)
                   ],
                 ),
-              ),
-            ),
+              )
           ),
         ],
       ),
@@ -302,4 +351,5 @@ class _ReplenishPageState extends State<ReplenishPage> {
     if (limit == null) return 'Not set';
     return limit.length > 10 ? limit.substring(0, 10) : limit;
   }
+
 }

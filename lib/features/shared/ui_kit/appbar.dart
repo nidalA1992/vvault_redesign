@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +23,7 @@ class CustomAppBar extends StatefulWidget {
     this.onPressedNotifications,
     this.onPressedOrders,
     this.onPressedDeals,
-    this.onPressedScanQR
+    this.onPressedScanQR,
   }) : super(key: key);
 
   @override
@@ -30,7 +31,6 @@ class CustomAppBar extends StatefulWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-
   void loadUserMe() async {
     await Provider.of<BanksListProvider>(context, listen: false).loadUserMe();
   }
@@ -74,7 +74,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            if (widget.id_user != null) ... [
+            if (widget.id_user != null) ...[
               SizedBox(height: 5.h,),
               Row(
                 children: [
@@ -109,25 +109,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                   ),
                 ],
-              )
-            ]
+              ),
+            ],
           ],
         ),
         Spacer(),
-        if (widget.isP2P) ... [
+        if (widget.isP2P) ...[
           GestureDetector(
-              onTap: () => widget.onPressedDeals!(context),
-              child: SvgPicture.asset("assets/users.svg")
+            onTap: () => widget.onPressedDeals!(context),
+            child: SvgPicture.asset("assets/users.svg"),
           ),
           SizedBox(width: 15.w,),
           GestureDetector(
-              onTap: () => widget.onPressedOrders!(context),
-              child: SvgPicture.asset("assets/file-minus.svg")
+            onTap: () => widget.onPressedOrders!(context),
+            child: SvgPicture.asset("assets/file-minus.svg"),
           ),
         ],
         SizedBox(width: 15.w,),
-        if (widget.onPressedScanQR != null) ... [
-          SvgPicture.asset('assets/qr-scan-svgrepo-com 1.svg'),
+        if (widget.onPressedScanQR != null) ...[
+          GestureDetector(
+            onTap: () => widget.onPressedScanQR!(context),
+            child: SvgPicture.asset('assets/qr-scan-svgrepo-com 1.svg'),
+          ),
           SizedBox(width: 15.w,),
         ],
         GestureDetector(
@@ -141,6 +144,4 @@ class _CustomAppBarState extends State<CustomAppBar> {
   String formatLimit(String id) {
     return id.length > 8 ? '...${id.substring(id.length - 8)}' : id;
   }
-
-
 }

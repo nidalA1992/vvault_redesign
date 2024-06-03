@@ -2,9 +2,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:vvault_redesign/features/shared/constants/urls.dart';
+
 
 class BuyOrderService {
-  final String baseUrl = 'https://exchange.api.dev.wault.pro';
+  final String baseUrl = Urls.exchangeBaseUrl;
   FlutterSecureStorage fss = FlutterSecureStorage();
 
 
@@ -12,7 +14,7 @@ class BuyOrderService {
     final token = await fss.read(key: 'token');
     print(token);
     final response = await http.post(
-      Uri.parse('$baseUrl/api/exchange/orders/create/buy'),
+      Uri.https(baseUrl, '/api/exchange/orders/create/buy'),
       headers: {
         'Cookie': '$token',
         'Content-Type': 'application/json',

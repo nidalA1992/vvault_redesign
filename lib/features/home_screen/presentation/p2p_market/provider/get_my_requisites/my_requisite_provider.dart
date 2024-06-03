@@ -9,19 +9,17 @@ class RequisitesProvider with ChangeNotifier {
   List<MyRequisite> get requisites => _requisites;
   FlutterSecureStorage fss = FlutterSecureStorage();
 
-
   Future<void> fetchRequisites() async {
-
     var token = await fss.read(key: 'token');
-
     final response = await http.get(
-      Uri.parse('https://exchange.api.dev.wault.pro/api/exchange/requisites'),
+      Uri.parse('https://exchange.api.tdev.wault.pro/api/exchange/requisites'),
       headers: {'Cookie': '$token'},
     );
 
     if (response.statusCode == 200) {
       List<dynamic> requisitesJson = jsonDecode(response.body)['data'];
       _requisites = requisitesJson.map((json) => MyRequisite.fromJson(json)).toList();
+      print('Fetched Requisites: $_requisites'); // Debugging print
       notifyListeners();
     } else {
       throw Exception('Failed to load requisites');

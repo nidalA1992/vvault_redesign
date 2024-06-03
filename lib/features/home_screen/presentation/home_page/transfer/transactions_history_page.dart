@@ -25,7 +25,7 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
   String? selectedType;
   bool ascendingSelected = false;
 
-  Future<void> _loadData({bool ascending = true, String? filter}) async {
+  Future<void> _loadData({bool ascending = false, String? filter}) async {
     await Provider.of<TransactionHistoryProvider>(context, listen: false)
         .loadTransactions(ascending: ascending, filter: filter);
     List<dynamic> transactions =
@@ -136,9 +136,12 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
       sections.addAll(
           transactions.map((transaction) => OperationInstance(
             type: transaction['Type'],
-            username: transaction['To'],  // Adjust if necessary
+            username: transaction['From'],
             quantity: transaction['GiveAmount'],
             currency: transaction['Currency'],
+            walletAdress: transaction['data']['wallet_address'] ?? '',
+            tx_hash: transaction['data']['tx_hash'] ?? '',
+            dateTime: transaction['UpdatedAt'],
           )).toList()
       );
     });

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class DealsService {
-  final String baseUrl = 'exchange.api.dev.wault.pro';
+  final String baseUrl = 'exchange.api.tdev.wault.pro';
 
   FlutterSecureStorage fss = FlutterSecureStorage();
 
