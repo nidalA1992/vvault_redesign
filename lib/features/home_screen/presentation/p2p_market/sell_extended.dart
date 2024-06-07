@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_sell_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
+import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_info/deal_info_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_my_requisites/my_requisite.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_my_requisites/my_requisite_provider.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
@@ -90,8 +91,13 @@ class _SellExtendedState extends State<SellExtended> {
     // Fetch requisites from provider
     List<MyRequisite> requisites = Provider.of<RequisitesProvider>(context).requisites;
 
+    // Filter requisites to only include those that match the banks in widget.banks
+    List<MyRequisite> filteredRequisites = requisites.where((requisite) {
+      return widget.banks.contains(requisite.bank);
+    }).toList();
+
     // Debugging print
-    print('Requisites in build: $requisites');
+    print('Filtered Requisites: $filteredRequisites');
 
     return Scaffold(
       body: Container(
@@ -112,7 +118,7 @@ class _SellExtendedState extends State<SellExtended> {
                 ),
                 Spacer(),
                 Text(
-                  'Продажа ${widget.crypto}',
+                  'Продажа ${widget.crypto ?? ''}', // Add null check
                   style: TextStyle(
                     color: Color(0xFFEDF7FF),
                     fontSize: 16.sp,
@@ -125,10 +131,10 @@ class _SellExtendedState extends State<SellExtended> {
             SizedBox(height: 20.h),
             BuySellConverterField(
               isBuy: false,
-              price: '${widget.cost}',
-              fiat: widget.crypto,
-              crypto: widget.fiat,
-              unitCost: widget.unitCost,
+              price: '${widget.cost ?? ''}', // Add null check
+              fiat: widget.crypto ?? '',
+              crypto: widget.fiat ?? '',
+              unitCost: widget.unitCost ?? '',
             ),
             SizedBox(height: 10.h),
             GestureDetector(
@@ -137,11 +143,11 @@ class _SellExtendedState extends State<SellExtended> {
                   context: context,
                   builder: (BuildContext context) {
                     return OrdersBottomSheet(
-                      options: requisites.map((requisite) => requisite.bank).toList(),
+                      options: filteredRequisites.map((requisite) => requisite.bank).toList(),
                       title: 'Выберите банк',
                       searchText: "Поиск банка",
                       onSelected: (selectedBank) {
-                        var selectedRequisite = requisites.firstWhere(
+                        var selectedRequisite = filteredRequisites.firstWhere(
                               (requisite) => requisite.bank == selectedBank,
                           orElse: () => MyRequisite(bank: '', comment: '', id: '', requisite: '', userId: ''),
                         );
@@ -194,7 +200,7 @@ class _SellExtendedState extends State<SellExtended> {
             BuySellField(
               isBuy: true,
               hint_txt: "Я заплачу",
-              fiat: '${widget.fiat}',
+              fiat: '${widget.fiat ?? ''}', // Add null check
               textController: makerController,
               minLimit: double.parse(widget.lower!) / usdToRubRate,
               maxLimit: double.parse(widget.unitCost!) / usdToRubRate,
@@ -203,7 +209,7 @@ class _SellExtendedState extends State<SellExtended> {
             BuySellField(
               isBuy: true,
               hint_txt: "Я получу",
-              fiat: '${widget.crypto}',
+              fiat: '${widget.crypto ?? ''}', // Add null check
               textController: takerController,
               minLimit: double.parse(widget.lower!),
               maxLimit: double.parse(widget.unitCost!),
@@ -218,26 +224,38 @@ class _SellExtendedState extends State<SellExtended> {
                   "requisite_id": selectedRequisiteId,
                 };
                 final dealProvider = Provider.of<DealProvider>(context, listen: false);
-                await dealProvider.startDeal(widget.orderId, dealData);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SellExtended2(
-                      dealNumber: "174573",
-                      onPressed: (context) {
-                        Navigator.pop(context);
-                      },
-                      sellerAmount: makerController.text,
-                      sellerCurrency: "USDT",
-                      sellerLogin: widget.login!,
-                      bank: selectedPaymentMethod,
-                      requisite: mySelectedRequisite,
-                      comment: widget.comments!,
-                      makerAmount: takerController.text,
-                      deal_id: dealProvider.dealDetails['deal_id'],
+                final response = await dealProvider.startDeal(widget.orderId, dealData);
+
+                if (response['data'] != null && response['data']['deal_id'] != null) {
+                  String dealId = response['data']['deal_id'];
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                        create: (_) => DealInfoProvider(),
+                        child: SellExtended2(
+                          dealNumber: "174573",
+                          onPressed: (context) {
+                            Navigator.pop(context);
+                          },
+                          sellerAmount: makerController.text,
+                          sellerCurrency: "USDT",
+                          sellerLogin: widget.login ?? '', // Add null check
+                          bank: selectedPaymentMethod,
+                          requisite: mySelectedRequisite,
+                          comment: widget.comments ?? '', // Add null check
+                          makerAmount: takerController.text,
+                          deal_id: dealId, // Correctly pass dealId
+                        ),
+                      ),
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  // Handle error case, for example show a snackbar with the error message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(response['error']['message'] ?? 'Error creating deal')),
+                  );
+                }
               },
               txt: "Продать",
               isBuy: false,
@@ -280,7 +298,7 @@ class _SellExtendedState extends State<SellExtended> {
             ),
             SizedBox(height: 10.h),
             Text(
-              widget.comments!,
+              widget.comments ?? '', // Add null check
               style: TextStyle(
                 color: Color(0x7FEDF7FF),
                 fontSize: 14.sp,

@@ -31,13 +31,19 @@ class SellExtended2 extends StatefulWidget {
   final String comment;
   final String makerAmount;
   final String deal_id;
+
   const SellExtended2({
     Key? key,
     required this.dealNumber,
     required this.onPressed,
     required this.sellerAmount,
     required this.sellerLogin,
-    required this.sellerCurrency, required this.bank, required this.requisite, required this.comment, required this.makerAmount, required this.deal_id
+    required this.sellerCurrency,
+    required this.bank,
+    required this.requisite,
+    required this.comment,
+    required this.makerAmount,
+    required this.deal_id,
   }) : super(key: key);
 
   @override
@@ -47,10 +53,28 @@ class SellExtended2 extends StatefulWidget {
 class _SellExtended2State extends State<SellExtended2> {
   bool isExpanded = false;
 
+  Future<void> loadDealDetails() async {
+    await Provider.of<DealInfoProvider>(context, listen: false)
+        .fetchDealDetail(widget.deal_id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadDealDetails();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dealInfo = Provider.of<DealInfoProvider>(context).dealDetail;
+    print('Deal status: ${dealInfo?.status}');
+
     return Scaffold(
-      body: Container(
+      body: RefreshIndicator(
+        onRefresh: loadDealDetails,
+        child: Container(
           width: double.infinity,
           height: double.infinity,
           padding: const EdgeInsets.only(
@@ -67,8 +91,11 @@ class _SellExtended2State extends State<SellExtended2> {
                 Row(
                   children: [
                     GestureDetector(
-                        onTap: () => widget.onPressed!(context),
-                        child: Icon(Icons.arrow_back_outlined, color: Color(0xFF8A929A),)
+                      onTap: () => widget.onPressed!(context),
+                      child: Icon(
+                        Icons.arrow_back_outlined,
+                        color: Color(0xFF8A929A),
+                      ),
                     ),
                     Spacer(),
                     Text(
@@ -79,10 +106,10 @@ class _SellExtended2State extends State<SellExtended2> {
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
                       ),
-                    )
+                    ),
                   ],
                 ),
-                SizedBox(height: 20.h,),
+                SizedBox(height: 20.h),
                 Row(
                   children: [
                     SizedBox(
@@ -98,22 +125,25 @@ class _SellExtended2State extends State<SellExtended2> {
                       ),
                     ),
                     Spacer(),
-                    CountdownTimer()
+                    CountdownTimer(),
                   ],
                 ),
-                SizedBox(height: 20.h,),
+                SizedBox(height: 20.h),
                 ExtendableBanksList(
-                    banks: [widget.bank,],
-                    price: widget.makerAmount,
-                    currency: "RUB",
-                    onPressed: (context) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                    },
-                    bank_requis: widget.requisite,
-                    comment: widget.comment
+                  banks: [widget.bank],
+                  price: widget.makerAmount,
+                  currency: "RUB",
+                  onPressed: (context) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                  bank_requis: widget.requisite,
+                  comment: widget.comment,
                 ),
                 Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent, ),
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                  ),
                   child: ExpansionTile(
                     tilePadding: EdgeInsets.zero,
                     childrenPadding: EdgeInsets.zero,
@@ -127,13 +157,16 @@ class _SellExtended2State extends State<SellExtended2> {
                       ),
                     ),
                     trailing: Icon(
-                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                      isExpanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
                       color: Color(0x7FEDF7FF),
                     ),
-                    onExpansionChanged: (bool expanding) => setState(() => isExpanded = expanding),
+                    onExpansionChanged: (bool expanding) =>
+                        setState(() => isExpanded = expanding),
                     children: [
                       Align(
-                        alignment:Alignment.centerLeft,
+                        alignment: Alignment.centerLeft,
                         child: Text(
                           'Количество: ${widget.sellerAmount} ${widget.sellerCurrency}',
                           style: TextStyle(
@@ -159,13 +192,13 @@ class _SellExtended2State extends State<SellExtended2> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20.h,),
+                SizedBox(height: 20.h),
                 Container(
                   width: 350.w,
                   height: 1.50.h,
                   color: Color(0xFF1D2126),
                 ),
-                SizedBox(height: 20.h,),
+                SizedBox(height: 20.h),
                 Text(
                   'Условия сделки',
                   style: TextStyle(
@@ -175,7 +208,7 @@ class _SellExtended2State extends State<SellExtended2> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 10.h,),
+                SizedBox(height: 10.h),
                 Text(
                   widget.comment,
                   style: TextStyle(
@@ -185,26 +218,38 @@ class _SellExtended2State extends State<SellExtended2> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                CustomButton(text: 'Платеж получен', clr: Color(0xFF0066FF), onPressed: (context){
-                  ConfirmationWindow(
-                    content: 'Вы точно получили ${widget.makerAmount} RUB \nот пользователя ${widget.sellerLogin}?',
-                    confirmButtonText: 'Подтвердить',
-                    cancelButtonText: 'Отмена',
-                    onConfirm: () async {
-                      final provider = Provider.of<DealInfoProvider>(context, listen: false);
-                      await provider.approveDeal(widget.deal_id);
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (BuildContext context) => P2PMarket()),
-                          ModalRoute.withName('/') // Replace this with your root screen's route name (usually '/')
-                      );
-                    },
-                  ).showConfirmationDialog(context);
-                },)
+                if (dealInfo?.status == 'notified') ...[
+                  notifiedContent()
+                ],
               ],
             ),
-          )
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget notifiedContent() {
+    return CustomButton(
+      text: 'Платеж получен',
+      clr: Color(0xFF0066FF),
+      onPressed: (context) {
+        ConfirmationWindow(
+          content:
+          'Вы точно получили ${widget.makerAmount} RUB \nот пользователя ${widget.sellerLogin}?',
+          confirmButtonText: 'Подтвердить',
+          cancelButtonText: 'Отмена',
+          onConfirm: () async {
+            final provider =
+            Provider.of<DealInfoProvider>(context, listen: false);
+            await provider.approveDeal(widget.deal_id);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => P2PMarket()),
+                ModalRoute.withName('/'));
+          },
+        ).showConfirmationDialog(context);
+      },
     );
   }
 }

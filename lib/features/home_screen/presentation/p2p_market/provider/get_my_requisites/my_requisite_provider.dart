@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:vvault_redesign/features/shared/constants/urls.dart';
 import 'my_requisite.dart';
 
 class RequisitesProvider with ChangeNotifier {
@@ -12,7 +13,7 @@ class RequisitesProvider with ChangeNotifier {
   Future<void> fetchRequisites() async {
     var token = await fss.read(key: 'token');
     final response = await http.get(
-      Uri.parse('https://exchange.api.tdev.wault.pro/api/exchange/requisites'),
+      Uri.parse('https://${Urls.exchangeBaseUrl}/api/exchange/requisites'),
       headers: {'Cookie': '$token'},
     );
 

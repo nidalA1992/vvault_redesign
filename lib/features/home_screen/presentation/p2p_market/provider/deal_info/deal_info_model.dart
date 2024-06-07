@@ -1,88 +1,88 @@
 class DealDetail {
-  final String card;
-  final String createdAt;
   final String id;
-  final bool isAuto;
-  final String maker;
-  final String makerConditions;
-  final String makerCurrency;
-  final String makerCurrencyType;
-  final String makerGet;
-  final String makerGive;
-  final bool makerRated;
-  final String makerWalletId;
-  final String orderId;
-  final String payer;
-  final String paymentId;
-  final String price;
-  final String requisiteId;
-  final String status;
-  final String taker;
-  final String takerCurrency;
-  final String takerCurrencyType;
-  final String takerGet;
-  final String takerGive;
-  final bool takerRated;
-  final String takerWalletId;
+  final String createdAt;
   final String updatedAt;
+  final String orderId;
+  final String? paymentId;
+  final String? payer;
+  final String taker;
+  final String maker;
+  final String takerCurrency;
+  final String makerCurrency;
+  final String takerCurrencyType;
+  final String makerCurrencyType;
+  final double makerGive;
+  final double makerGet;
+  final double takerGive;
+  final double takerGet;
+  final double price;
+  final String takerComment;
+  final String makerComment;
+  final String requisiteId;
+  final String bank;
+  final String card;
+  final String status;
+  final bool takerRated;
+  final bool makerRated;
+  final bool isAuto;
 
   DealDetail({
-    required this.card,
-    required this.createdAt,
     required this.id,
-    required this.isAuto,
-    required this.maker,
-    required this.makerConditions,
-    required this.makerCurrency,
-    required this.makerCurrencyType,
-    required this.makerGet,
-    required this.makerGive,
-    required this.makerRated,
-    required this.makerWalletId,
-    required this.orderId,
-    required this.payer,
-    required this.paymentId,
-    required this.price,
-    required this.requisiteId,
-    required this.status,
-    required this.taker,
-    required this.takerCurrency,
-    required this.takerCurrencyType,
-    required this.takerGet,
-    required this.takerGive,
-    required this.takerRated,
-    required this.takerWalletId,
+    required this.createdAt,
     required this.updatedAt,
+    required this.orderId,
+    this.paymentId,
+    this.payer,
+    required this.taker,
+    required this.maker,
+    required this.takerCurrency,
+    required this.makerCurrency,
+    required this.takerCurrencyType,
+    required this.makerCurrencyType,
+    required this.makerGive,
+    required this.makerGet,
+    required this.takerGive,
+    required this.takerGet,
+    required this.price,
+    required this.takerComment,
+    required this.makerComment,
+    required this.requisiteId,
+    required this.bank,
+    required this.card,
+    required this.status,
+    required this.takerRated,
+    required this.makerRated,
+    required this.isAuto,
   });
 
   factory DealDetail.fromJson(Map<String, dynamic> json) {
     return DealDetail(
-      card: json['card'],
-      createdAt: json['created_at'],
       id: json['id'],
-      isAuto: json['is_auto'],
-      maker: json['maker'],
-      makerConditions: json['maker_conditions'],
-      makerCurrency: json['maker_currency'],
-      makerCurrencyType: json['maker_currency_type'],
-      makerGet: json['maker_get'],
-      makerGive: json['maker_give'],
-      makerRated: json['maker_rated'],
-      makerWalletId: json['maker_wallet_id'],
-      orderId: json['order_id'],
-      payer: json['payer'],
-      paymentId: json['payment_id'],
-      price: json['price'],
-      requisiteId: json['requisite_id'],
-      status: json['status'],
-      taker: json['taker'],
-      takerCurrency: json['taker_currency'],
-      takerCurrencyType: json['taker_currency_type'],
-      takerGet: json['taker_get'],
-      takerGive: json['taker_give'],
-      takerRated: json['taker_rated'],
-      takerWalletId: json['taker_wallet_id'],
+      createdAt: json['created_at'],
       updatedAt: json['updated_at'],
+      orderId: json['order_id'],
+      paymentId: json['payment_id'],
+      payer: json['payer'],
+      taker: json['taker'],
+      maker: json['maker'],
+      takerCurrency: json['taker_currency'],
+      makerCurrency: json['maker_currency'],
+      takerCurrencyType: json['taker_currency_type'],
+      makerCurrencyType: json['maker_currency_type'],
+      makerGive: double.parse(json['maker_give'].toString()),
+      makerGet: double.parse(json['maker_get'].toString()),
+      takerGive: double.parse(json['taker_give'].toString()),
+      takerGet: double.parse(json['taker_get'].toString()),
+      price: double.parse(json['price'].toString()),
+      takerComment: json['taker_comment'] ?? '',
+      makerComment: json['maker_comment'] ?? '',
+      requisiteId: json['requisite_id'],
+      bank: json['bank'],
+      card: json['card'],
+      status: json['status'],
+      takerRated: json['taker_rated'],
+      makerRated: json['maker_rated'],
+      isAuto: json['is_auto'],
     );
   }
 }

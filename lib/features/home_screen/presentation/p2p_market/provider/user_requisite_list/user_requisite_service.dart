@@ -2,14 +2,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:vvault_redesign/features/shared/constants/urls.dart';
+
 class UserRequisiteService {
-  final String baseUrl = 'https://exchange.api.tdev.wault.pro';
   FlutterSecureStorage fss = FlutterSecureStorage();
 
   Future<List<dynamic>> fetchRequisites() async {
     final token = await fss.read(key: 'token');
     final response = await http.get(
-      Uri.parse('$baseUrl/api/exchange/requisites'),
+      Uri.parse('${Urls.exchangeBaseUrl}/api/exchange/requisites'),
       headers: {'Cookie': token!},
     );
 

@@ -51,7 +51,7 @@ class _OperationInstanceState extends State<OperationInstance> {
   Color _getColorFromType(String type, String userId) {
     switch (type) {
       case 'deal':
-        return userId == widget.username ? Color(0xFFE93349) : Color(0xFF0066FF);
+        return userId == widget.username ? Color(0xFF14A769) : Color(0xFFE93349);
       case 'payment':
         return userId == widget.username ? Color(0xFFE93349) : Color(0xFF14A769);
       case 'exchange':
@@ -74,7 +74,7 @@ class _OperationInstanceState extends State<OperationInstance> {
   String _getImagePath(String type, String userId) {
     switch (type) {
       case 'deal':
-        return "assets/users.svg";
+        return "assets/users_white.svg";
       case 'payment':
         return "assets/download_icon.svg";
       case 'exchange':

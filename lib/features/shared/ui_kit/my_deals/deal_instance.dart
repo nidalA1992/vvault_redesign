@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/deal_extended_page.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
 
+import '../../../home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
+
 class DealInstance extends StatefulWidget {
   final String makerCurrency;
   final String takerCurrency;
@@ -17,6 +19,7 @@ class DealInstance extends StatefulWidget {
   final String status;
   final String data;
   final String req;
+  final String maker_id;
 
   final Function(BuildContext)? onPressed;
 
@@ -35,21 +38,33 @@ class DealInstance extends StatefulWidget {
     required this.data,
     required this.req,
     this.onPressed,
+    required this.maker_id
   }) : super(key: key);
 }
 
 class _DealInstanceState extends State<DealInstance> {
+  Future<String>? userIdFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserMe();
+  }
+
+  void loadUserMe() async {
+    await Provider.of<BanksListProvider>(context, listen: false).loadUserMe();
+  }
 
   Map<String, dynamic> getStatusProperties(String status) {
     switch (status) {
       case 'activeWithoutConfirmation':
       case 'active':
-        return {'color': Color(0xFF0066FF), 'text': 'Обработка'};
+        return {'color': Color(0xFF0066FF), 'text': 'Перевод'};
       case 'notified':
-        return {'color': Color(0xFF02603E), 'text': 'Перевод'};
+        return {'color': Color(0xFF02603E), 'text': 'Подтверждение'};
       case 'approvedWithoutConfirmation':
       case 'approved':
-        return {'color': Color(0xFF02603E), 'text': 'Подтверждене'};
+        return {'color': Color(0xFF3E4349), 'text': 'Завершена'};
       case 'cancelledWithoutConfirmation':
       case 'cancelled':
         return {'color': Color(0xFF3E4349), 'text': 'Отменена'};
@@ -66,11 +81,15 @@ class _DealInstanceState extends State<DealInstance> {
   @override
   Widget build(BuildContext context) {
     final statusProps = getStatusProperties(widget.status);
+    final userme = Provider.of<BanksListProvider>(context).userme;
+    bool isSell = userme['id'] == widget.maker_id;
 
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => DealExtended(
-            dealNumber: "poka ne peredaiu",
+            dealType: statusProps['text'],
+            isSell: !isSell,
+            dealNumber: widget.id,
             sellerAmount: widget.amount,
             sellerLogin: "poka net",
             sellerCurrency: widget.makerCurrency,
@@ -87,9 +106,9 @@ class _DealInstanceState extends State<DealInstance> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Покупка ${widget.makerCurrency}',
+                isSell ? 'Продажа ${widget.makerCurrency}' : 'Покупка ${widget.takerCurrency}',
                 style: TextStyle(
-                  color: Color(0xFF05CA77),
+                  color: isSell ? Color(0xFFE93349): Color(0xFF05CA77),
                   fontSize: 16.sp,
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
@@ -105,13 +124,13 @@ class _DealInstanceState extends State<DealInstance> {
                   bottom: 10.h,
                 ),
                 decoration: ShapeDecoration(
-                  color: statusProps['color'], // Use the dynamic color
+                  color: statusProps['color'],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: Text(
-                  statusProps['text'], // Use the dynamic text
+                  statusProps['text'],
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,

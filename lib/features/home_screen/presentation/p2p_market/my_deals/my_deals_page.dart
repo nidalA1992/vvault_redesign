@@ -116,6 +116,7 @@ class _MyDealsPageState extends State<MyDealsPage> {
           itemBuilder: (context, index) {
             final deal = deals[index];
             return DealInstance(
+              maker_id: deal['maker'],
               makerCurrency: deal['maker_currency'],
               takerCurrency: deal['taker_currency'],
               amount: deal['taker_give'],
