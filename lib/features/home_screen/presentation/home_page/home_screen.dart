@@ -33,48 +33,32 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool notificationsSelected = false;
 
-  void loadAllMoney() async {
+  Future<void> loadAllData() async {
     await Provider.of<AllMoneyProvider>(context, listen: false).fetchAllMoney("RUB");
-  }
-
-  void loadTransactions() async {
     await Provider.of<TransactionHistoryProvider>(context, listen: false).loadTransactions();
-  }
-
-  void loadWallets() async {
     await Provider.of<WalletProvider>(context, listen: false).loadWallets();
-  }
-
-  void _loadNotifications() async {
     await Provider.of<NotificationsProvider>(context, listen: false).loadNotifications();
-  }
-
-  void _deleteAllNotifications() async {
-    await Provider.of<NotificationsProvider>(context, listen: false).deleteAllNotifications();
-  }
-
-  void _deleteNotification(String id) async {
-    await Provider.of<NotificationsProvider>(context, listen: false).deleteNotification(id);
   }
 
   @override
   void initState() {
-    loadAllMoney();
-    loadWallets();
-    loadTransactions();
-    _loadNotifications();
     super.initState();
   }
 
   Future<void> _onRefresh() async {
     try {
-      await Provider.of<AllMoneyProvider>(context, listen: false).fetchAllMoney("RUB");
-      await Provider.of<WalletProvider>(context, listen: false).loadWallets();
-      await Provider.of<TransactionHistoryProvider>(context, listen: false).loadTransactions();
-      await Provider.of<NotificationsProvider>(context, listen: false).loadNotifications();
+      await loadAllData();
     } catch (error) {
       print("Failed to refresh data: $error");
     }
+  }
+
+  Future<void> _deleteAllNotifications() async {
+    await Provider.of<NotificationsProvider>(context, listen: false).deleteAllNotifications();
+  }
+
+  Future<void> _deleteNotification(String id) async {
+    await Provider.of<NotificationsProvider>(context, listen: false).deleteNotification(id);
   }
 
   void _toggleNotificationsSelected(BuildContext context) {
@@ -85,154 +69,168 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _wallets = Provider.of<WalletProvider>(context).wallets;
-    final createWallet = Provider.of<WalletCreationProvider>(context, listen: false);
-    final checkBalance = Provider.of<CheckBalanceProvider>(context, listen: false);
-    final transactionProvider = Provider.of<TransactionHistoryProvider>(context, listen: false);
-    final _transactions = Provider.of<TransactionHistoryProvider>(context).transactions;
-
-    // Add logging to debug
-    print('Wallets: $_wallets');
-    print('Transactions: $_transactions');
-
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(
-              top: 20,
-              left: 20,
-              right: 20,
+    return FutureBuilder<void>(
+      future: loadAllData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            backgroundColor: Color(0xFF141619),
+            body: Center(
+              child: CircularProgressIndicator(color: Colors.white,),
             ),
-            decoration: BoxDecoration(color: Color(0xFF141619)),
-            child: Padding(
-              padding: EdgeInsets.only(top: 40),
-              child: RefreshIndicator(
-                color: Color(0xFF141619),
-                onRefresh: _onRefresh,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomAppBar(
-                        img_path: "assets/avatar.svg",
-                        id_user: "201938064",
-                        onPressedNotifications: (context) => _toggleNotificationsSelected(context),
-                        onPressedScanQR: (context) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => CameraPage()));
-                        },
-                      ),
-                      SizedBox(height: 20.h,),
-                      notificationsSelected ? notificationsContent() : mainContent(),
-                      SizedBox(height: 40.h,),
-                      Text(
-                        'Cчета',
-                        style: TextStyle(
-                          color: Color(0xFFEDF7FF),
-                          fontSize: 20.sp,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 20.h,),
-                      if (_wallets.isNotEmpty) ...[
-                        customCryptoWidget(
-                          img: "assets/crypto logo.svg",
-                          cryptoName: _wallets[0]['currency'] ?? 'N/A',
-                          cryptoAmount: _wallets[0]['balance']?.toString() ?? '0.00',
-                          includeDivider: false,
-                        ),
-                      ],
-                      SizedBox(height: 30.h,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'События',
-                            style: TextStyle(
-                              color: Color(0xFFEDF7FF),
-                              fontSize: 20.sp,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w700,
+          );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            backgroundColor: Color(0xFF141619),
+            body: Center(
+              child: Text('Error loading data'),
+            ),
+          );
+        } else {
+          final _wallets = Provider.of<WalletProvider>(context).wallets;
+          final createWallet = Provider.of<WalletCreationProvider>(context, listen: false);
+          final checkBalance = Provider.of<CheckBalanceProvider>(context, listen: false);
+          final transactionProvider = Provider.of<TransactionHistoryProvider>(context, listen: false);
+          final _transactions = Provider.of<TransactionHistoryProvider>(context).transactions;
+
+          return Scaffold(
+            body: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                  ),
+                  decoration: BoxDecoration(color: Color(0xFF141619)),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: RefreshIndicator(
+                      color: Color(0xFF141619),
+                      onRefresh: _onRefresh,
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomAppBar(
+                              img_path: "assets/avatar.svg",
+                              id_user: "201938064",
+                              onPressedNotifications: (context) => _toggleNotificationsSelected(context),
+                              onPressedScanQR: (context) {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => CameraPage()));
+                              },
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionsHistoryPage()));
-                            },
-                            child: Text(
-                              'История операций',
+                            SizedBox(height: 20.h,),
+                            notificationsSelected ? notificationsContent() : mainContent(),
+                            SizedBox(height: 40.h,),
+                            Text(
+                              'Cчета',
                               style: TextStyle(
-                                color: Color(0xFF62A0FF),
-                                fontSize: 14.sp,
+                                color: Color(0xFFEDF7FF),
+                                fontSize: 20.sp,
                                 fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 15.h,),
-                      _transactions.isEmpty
-                          ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 100.h,),
-                              Text("No transactions yet", style: TextStyle(color: Color(0x7FEDF7FF), fontSize: 16.sp)),
-                              SizedBox(height: 100.h,)
+                            SizedBox(height: 20.h,),
+                            if (_wallets.isNotEmpty) ...[
+                              customCryptoWidget(
+                                img: "assets/crypto logo.svg",
+                                cryptoName: _wallets[0]['currency'] ?? 'N/A',
+                                cryptoAmount: _wallets[0]['balance']?.toString() ?? '0.00',
+                                includeDivider: false,
+                              ),
                             ],
-                          ))
-                          : ListView.builder(
-                        physics: ClampingScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: min(_transactions.length, 4),
-                        itemBuilder: (context, index) {
-                          var transaction = _transactions[index];
+                            SizedBox(height: 30.h,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'События',
+                                  style: TextStyle(
+                                    color: Color(0xFFEDF7FF),
+                                    fontSize: 20.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionsHistoryPage()));
+                                  },
+                                  child: Text(
+                                    'История операций',
+                                    style: TextStyle(
+                                      color: Color(0xFF62A0FF),
+                                      fontSize: 14.sp,
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 15.h,),
+                            _transactions.isEmpty
+                                ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(height: 100.h,),
+                                    Text("No transactions yet", style: TextStyle(color: Color(0x7FEDF7FF), fontSize: 16.sp)),
+                                    SizedBox(height: 100.h,)
+                                  ],
+                                ))
+                                : ListView.builder(
+                              physics: ClampingScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: min(_transactions.length, 4),
+                              itemBuilder: (context, index) {
+                                var transaction = _transactions[index];
 
-                          // Log the transaction for debugging
-                          print('Transaction: $transaction');
-
-                          return OperationInstance(
-                            type: transaction['Type'] as String? ?? 'N/A',
-                            username: transaction['From'] as String? ?? 'Unknown',
-                            quantity: transaction['GiveAmount'] as String? ?? '0.00',
-                            currency: transaction['Currency'] as String? ?? 'N/A',
-                            walletAdress: transaction['data']?['wallet_address'] ?? '',
-                            tx_hash: transaction['data']?['tx_hash'] ?? '',
-                            dateTime: transaction['UpdatedAt'] ?? 'N/A',
-                          );
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                checkBalance.checkBalance("USDT");
+                                return OperationInstance(
+                                  type: transaction['Type'] as String? ?? 'N/A',
+                                  username: transaction['From'] as String? ?? 'Unknown',
+                                  quantity: transaction['GiveAmount'] as String? ?? '0.00',
+                                  currency: transaction['Currency'] as String? ?? 'N/A',
+                                  walletAdress: transaction['data']?['wallet_address'] ?? '',
+                                  tx_hash: transaction['data']?['tx_hash'] ?? '',
+                                  dateTime: transaction['UpdatedAt'] ?? 'N/A',
+                                );
                               },
-                              child: Text('add balance', style: TextStyle(color: Color(0xFF141619)),)
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                createWallet.createWallet("USDT");
-                              },
-                              child: Text('create wallet', style: TextStyle(color: Color(0xFF141619)),)
-                          ),
-                        ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () {
+                                      checkBalance.checkBalance("USDT");
+                                    },
+                                    child: Text('add balance', style: TextStyle(color: Color(0xFF141619)),)
+                                ),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      createWallet.createWallet("USDT");
+                                    },
+                                    child: Text('create wallet', style: TextStyle(color: Color(0xFF141619)),)
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 
