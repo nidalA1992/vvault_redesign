@@ -32,6 +32,13 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Permission handler configurations
+  permissions_path = '../.symlinks/plugins/permission_handler/ios/Classes/PermissionHandlerEnums.h'
+  if File.exist?(permissions_path)
+    pod 'permission_handler_legacy', :path => '../.symlinks/plugins/permission_handler/ios'
+  end
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
