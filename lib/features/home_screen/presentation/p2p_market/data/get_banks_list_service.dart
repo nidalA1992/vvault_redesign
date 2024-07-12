@@ -47,4 +47,20 @@ class BanksListService {
     }
   }
 
+  Future<Map<String, dynamic>> getAccountInfo(String? id) async {
+    final token = await fss.read(key: 'token');
+    final uri = Uri.https(Urls.usersBaseUrl, '/api/users/$id');
+    final response = await http.get(uri, headers: {
+      'Cookie': '$token',
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body)['data'];
+      return data;
+    } else {
+      throw Exception('Failed to load account info: ${json.decode(response.body)['error']}');
+    }
+  }
+
 }

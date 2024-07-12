@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:vvault_redesign/features/shared/constants/urls.dart';
 
-
 class UpdateOrderActivityService {
   final String baseUrl = Urls.exchangeBaseUrl;
   FlutterSecureStorage fss = FlutterSecureStorage();
@@ -12,16 +11,18 @@ class UpdateOrderActivityService {
   Future<Map<String, dynamic>> updateOrderActivity(Map<String, dynamic> orderData, String id) async {
     final token = await fss.read(key: 'token');
     final response = await http.post(
-      Uri.https(baseUrl, '/api/exchange/orders/activity/$id'),
+      Uri.https(baseUrl, '/api/exchange/orders/activity'),
       headers: {
         'Cookie': '$token',
         'Content-Type': 'application/json',
       },
-      body: json.encode(orderData),
+      body: json.encode({
+        'id': id,
+        'active': orderData['active']
+      }),
     );
 
     if (response.statusCode == 200) {
-      print(json.encode(orderData));
       final responseBody = json.decode(response.body);
       if (responseBody.containsKey('data') && responseBody['data'] != null) {
         return responseBody['data'];
@@ -32,5 +33,4 @@ class UpdateOrderActivityService {
       throw Exception('Failed to update an order\'s activity: ${response.body}');
     }
   }
-
 }

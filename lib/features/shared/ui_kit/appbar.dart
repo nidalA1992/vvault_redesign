@@ -52,12 +52,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
         Container(
           width: 40.w,
           height: 40.h,
-          decoration: ShapeDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/avatar.png"),
+          child: ClipOval(
+            child: SvgPicture.asset(
+              "assets/avatar.svg",
               fit: BoxFit.cover,
             ),
-            shape: OvalBorder(),
           ),
         ),
         SizedBox(width: 15.w,),

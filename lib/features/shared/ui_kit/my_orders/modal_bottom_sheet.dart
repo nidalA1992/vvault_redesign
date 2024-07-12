@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class OrdersBottomSheet extends StatefulWidget {
-  final List<dynamic> options;
+  final List<String>? options;
+  final List<String>? requisites;
   final String title;
   final String searchText;
   final ValueChanged<String>? onSelected;
 
   OrdersBottomSheet({
     Key? key,
-    required this.options,
+    this.requisites,
+    this.options,
     required this.searchText,
     this.onSelected,
     this.title = 'Выберите опцию',
@@ -25,6 +27,12 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final items = widget.requisites != null && widget.requisites!.isNotEmpty
+        ? widget.requisites
+        : widget.options;
+
+    final isUsingRequisites = items == widget.requisites;
+
     return FractionallySizedBox(
       heightFactor: 1.2,
       child: Container(
@@ -84,9 +92,23 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
             ),
             SizedBox(height: 20.h),
             Expanded(
-              child: ListView.builder(
-                itemCount: widget.options.length,
+              child: items != null && items.isNotEmpty
+                  ? ListView.builder(
+                itemCount: items.length,
                 itemBuilder: (context, index) {
+                  final option = items[index];
+
+                  String bank = option;
+                  String requisite = "";
+
+                  if (isUsingRequisites) {
+                    final parts = option.split(':').map((e) => e.trim()).toList();
+                    if (parts.length >= 2) {
+                      bank = parts[0];
+                      requisite = parts[1];
+                    }
+                  }
+
                   return Column(
                     children: [
                       GestureDetector(
@@ -95,21 +117,21 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                             selectedIndex = index;
                           });
                           if (widget.onSelected != null) {
-                            widget.onSelected!(widget.options[index]);
+                            widget.onSelected!(option);
                           }
                         },
                         child: Container(
                           width: 350.w,
-                          height: 50.h,
-                          padding: EdgeInsets.symmetric(horizontal: 20.h),
+                          padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.h),
                           decoration: ShapeDecoration(
                             color: selectedIndex == index ? Color(0xFF1A283C) : Color(0xFF21262D),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                           ),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.options[index],
+                                bank,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14.sp,
@@ -117,10 +139,16 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Spacer(),
-                              if (selectedIndex == index) ...[
-                                Icon(Icons.check, color: Colors.white,)
-                              ]
+                              if (requisite.isNotEmpty)
+                                Text(
+                                  requisite,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -129,6 +157,17 @@ class _OrdersBottomSheetState extends State<OrdersBottomSheet> {
                     ],
                   );
                 },
+              )
+                  : Center(
+                child: Text(
+                  'No options available',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14.sp,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ],

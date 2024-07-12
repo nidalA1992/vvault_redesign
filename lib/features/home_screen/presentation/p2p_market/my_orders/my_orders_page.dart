@@ -10,6 +10,8 @@ import 'package:vvault_redesign/features/shared/ui_kit/appbar_without_avatar.dar
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/order_instance.dart';
 
+import '../../../../../main.dart';
+
 class MyOrdersPage extends StatefulWidget {
   const MyOrdersPage({super.key});
 
@@ -17,36 +19,62 @@ class MyOrdersPage extends StatefulWidget {
   State<MyOrdersPage> createState() => _MyOrdersPageState();
 }
 
-class _MyOrdersPageState extends State<MyOrdersPage> {
+class _MyOrdersPageState extends State<MyOrdersPage> with RouteAware {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  bool _isLoading = true;
 
   Future<void> _loadData() async {
     await Provider.of<OrderProvider>(context, listen: false).loadOrders(isMyOrders: true);
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void loadUserMe() async {
     await Provider.of<BanksListProvider>(context, listen: false).loadUserMe();
   }
 
-  void _onRefresh() async{
-    await Provider.of<OrderProvider>(context, listen: false).loadOrders();
+  void _onRefresh() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<OrderProvider>(context, listen: false).loadOrders(isMyOrders: true);
+    setState(() {
+      _isLoading = false;
+    });
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     await Future.delayed(Duration(milliseconds: 1000));
-    if(mounted)
-      setState(() {
-
-      });
     _refreshController.loadComplete();
   }
 
   @override
   void initState() {
+    super.initState();
     _loadData();
     loadUserMe();
-    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute? modalRoute = ModalRoute.of(context);
+    if (modalRoute is PageRoute) {
+      routeObserver.subscribe(this, modalRoute);
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _loadData();
   }
 
   @override
@@ -56,48 +84,52 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
 
     return Scaffold(
       body: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.only(
-            top: 20,
-            left: 20,
-            right: 20,
+        width: double.infinity,
+        padding: const EdgeInsets.only(
+          top: 20,
+          left: 20,
+          right: 20,
+        ),
+        decoration: BoxDecoration(color: Color(0xFF141619)),
+        child: Padding(
+          padding: EdgeInsets.only(top: 50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomAppBarWithoutAva(txt: "Мои ордера"),
+              SizedBox(height: 20.h),
+              Container(
+                width: 350.w,
+                height: 1.50.h,
+                color: Color(0xFF1D2126),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Выключить все',
+                style: TextStyle(
+                  color: Color(0xFF62A0FF),
+                  fontSize: 16.sp,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              _isLoading
+                  ? Center(child: CircularProgressIndicator(color: Colors.white))
+                  : _myOrders(orders, userme),
+              SizedBox(height: 20.h),
+              CustomButton(
+                text: "Создать объявление",
+                onPressed: (context) {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => CreateOrder()));
+                },
+                clr: Color(0xFF0066FF),
+              ),
+              SizedBox(height: 20.h),
+            ],
           ),
-          decoration: BoxDecoration(color: Color(0xFF141619)),
-          child: Padding(
-            padding: EdgeInsets.only(top: 50),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomAppBarWithoutAva(txt: "Мои ордера"),
-                SizedBox(height: 20.h,),
-                Container(
-                  width: 350.w,
-                  height: 1.50.h,
-                  color: Color(0xFF1D2126),
-                ),
-                SizedBox(height: 20.h,),
-                Text(
-                  'Выключить все',
-                  style: TextStyle(
-                    color: Color(0xFF62A0FF),
-                    fontSize: 16.sp,
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 10.h,),
-                _myOrders(orders, userme),
-                SizedBox(height: 20.h,),
-                CustomButton(text: "Создать объявление",
-                    onPressed: (context) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateOrder()));
-                    },
-                    clr: Color(0xFF0066FF)
-                ),
-                SizedBox(height: 20.h,),
-              ],
-            ),
-          )
+        ),
       ),
     );
   }
@@ -118,11 +150,12 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
               return SizedBox.shrink();
             } else {
               final order = orders[index];
-              return FutureBuilder<String>(
-                future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
-                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              return FutureBuilder<Map<String, dynamic>>(
+                future: Provider.of<OrderProvider>(context, listen: false)
+                    .fetchUserStats(order['order']['maker']),
+                builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return SizedBox.shrink(); // Hide the circular progress indicator here
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
@@ -134,17 +167,15 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => EditOrderPage(
-                                    price: order['order']['price'],
-                                    priceCurrency: order['order']['maker_currency'],
-                                    banks: order['order']['banks'],
-                                    titleCurrency: order['order']['maker_currency'],
-                                    lowerLimit: order['order']['lower'],
-                                    upperLimit: order['order']['upper'],
-                                    comment: order['order']['comment'],
-                                    orderID: order['order']['id'],
-                                )
-                            )
-                        );
+                                  price: order['order']['price'],
+                                  priceCurrency: order['order']['maker_currency'],
+                                  banks: order['order']['banks'],
+                                  titleCurrency: order['order']['maker_currency'],
+                                  lowerLimit: order['order']['lower'],
+                                  upperLimit: order['order']['upper'],
+                                  comment: order['order']['comment'],
+                                  orderID: order['order']['id'],
+                                )));
                       },
                       banks: order['order']['banks'],
                       isActive: order['order']['active'],
@@ -155,7 +186,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                       comment: order['order']['comment'],
                       orderID: order['order']['id'],
                     );
-                }
+                  }
                 },
               );
             }

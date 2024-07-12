@@ -24,7 +24,8 @@ class TransferConfirmationWindow {
   });
 
   void showConfirmationDialog(BuildContext context) async {
-    final user_name = await Provider.of<OrderProvider>(context, listen: false).fetchUserStats(idUser);
+    final userStats = await Provider.of<OrderProvider>(context, listen: false).fetchUserStats(idUser);
+    final user_name = userStats['user_name'];
 
     showDialog(
       context: context,

@@ -6,6 +6,44 @@ import 'dart:convert';
 
 import 'deal_info_model.dart';
 
+class DealDetail {
+  final String id;
+  final String status;
+  final String sellerAmount;
+  final String buyerAmount;
+  final String sellerLogin;
+  final String sellerCurrency;
+  final String requisiteId;
+  final String comment;
+  final String bank;
+
+  DealDetail({
+    required this.id,
+    required this.status,
+    required this.sellerAmount,
+    required this.buyerAmount,
+    required this.sellerLogin,
+    required this.sellerCurrency,
+    required this.requisiteId,
+    required this.comment,
+    required this.bank,
+  });
+
+  factory DealDetail.fromJson(Map<String, dynamic> json) {
+    return DealDetail(
+      id: json['id'] ?? '',
+      status: json['status'] ?? '',
+      sellerAmount: json['taker_give'] ?? '',
+      buyerAmount: json['buyerAmount'] ?? '',
+      sellerLogin: json['sellerLogin'] ?? '',
+      sellerCurrency: json['sellerCurrency'] ?? '',
+      requisiteId: json['card'] ?? '',
+      comment: json['maker_comment'] ?? '',
+      bank: json['bank'] ?? '',
+    );
+  }
+}
+
 class DealInfoProvider with ChangeNotifier {
   DealDetail? dealDetail;
   bool isLoading = false;
@@ -30,7 +68,6 @@ class DealInfoProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-        print('Parsed JSON: $jsonData');
         if (jsonData.containsKey('data') && jsonData['data'].containsKey('deal')) {
           dealDetail = DealDetail.fromJson(jsonData['data']['deal']);
           print('Deal detail: ${dealDetail.toString()}');

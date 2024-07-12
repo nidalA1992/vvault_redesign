@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/appbar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/transfer_confirmation_window.dart';
@@ -23,9 +24,9 @@ class _CameraPageState extends State<CameraPage> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller!.pauseCamera();
+      controller?.pauseCamera();
     } else if (Platform.isIOS) {
-      controller!.resumeCamera();
+      controller?.resumeCamera();
     }
   }
 
@@ -33,6 +34,13 @@ class _CameraPageState extends State<CameraPage> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+
+  Future<void> requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      await Permission.camera.request();
+    }
   }
 
   void _onQRViewCreated(QRViewController controller) {
@@ -43,103 +51,118 @@ class _CameraPageState extends State<CameraPage> {
 
       final qrData = jsonDecode(scanData.code ?? '{}');
 
-      if (qrData != null && qrData['idUser'] != null && qrData['amountRub'] != null &&
-          qrData['amountCrypto'] != null && qrData['crypto'] != null && qrData['comment'] != null) {
-
+      if (qrData != null &&
+          qrData['idUser'] != null &&
+          qrData['amountRub'] != null &&
+          qrData['amountCrypto'] != null &&
+          qrData['crypto'] != null &&
+          qrData['comment'] != null) {
         TransferConfirmationWindow(
-            idUser: qrData['idUser'],
-            amountRub: qrData['amountRub'],
-            amountCrypto: qrData['amountCrypto'],
-            crypto: qrData['crypto'],
-            comment: qrData['comment']
+          idUser: qrData['idUser'],
+          amountRub: qrData['amountRub'],
+          amountCrypto: qrData['amountCrypto'],
+          crypto: qrData['crypto'],
+          comment: qrData['comment'],
         ).showConfirmationDialog(context);
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final double scanArea = MediaQuery.of(context).size.width * 0.8;
 
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-              ),
-              decoration: BoxDecoration(color: Color(0xFF141619)),
-              child: Padding(
-                padding: EdgeInsets.only(top: 50.h),
-                child: Column(
-                  children: [
-                    Row(
+      backgroundColor: Color(0xFF141619),
+      body: FutureBuilder(
+        future: requestCameraPermission(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                  ),
+                  decoration: BoxDecoration(color: Color(0xFF141619)),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 50.h),
+                    child: Column(
                       children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(Icons.arrow_back_outlined, color: Color(0x7FEDF7FF))
-                        ),
-                        SizedBox(width: 10.w,),
-                        Text(
-                          'Перевод пользователю',
-                          style: TextStyle(
-                            color: Color(0xFFEDF7FF),
-                            fontSize: 20.sp,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20.h,),
-                    Container(
-                      width: 350.w,
-                      height: 1.50.h,
-                      color: Color(0xFF1D2126),
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        Positioned(
-                            bottom: 0,
-                            child: Divider()
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 639.h,
-                          child: QRView(
-                            key: qrKey,
-                            onQRViewCreated: _onQRViewCreated,
-                          ),
-                        ),
-                        Center(
-                          child: Container(
-                            width: scanArea * 0.7,
-                            height: scanArea * 0.7,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              border: Border.all(
-                                color: Colors.transparent,
-                                width: 0,
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Icon(Icons.arrow_back_outlined,
+                                  color: Color(0x7FEDF7FF)),
+                            ),
+                            SizedBox(width: 9.w),
+                            Text(
+                              'Перевод пользователю',
+                              style: TextStyle(
+                                color: Color(0xFFEDF7FF),
+                                fontSize: 20.sp,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            child: CustomPaint(
-                              painter: QrBorderPainter(),
+                          ],
+                        ),
+                        SizedBox(height: 20.h),
+                        Container(
+                          width: 350.w,
+                          height: 1.50.h,
+                          color: Color(0xFF1D2126),
+                        ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Positioned(
+                              bottom: 0,
+                              child: Divider(),
                             ),
-                          ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 638.h,
+                              child: QRView(
+                                key: qrKey,
+                                onQRViewCreated: _onQRViewCreated,
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                width: scanArea * 0.7,
+                                height: scanArea * 0.7,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 0,
+                                  ),
+                                ),
+                                child: CustomPaint(
+                                  painter: QrBorderPainter(),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                )
-              )
-          ),
-        ],
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Center(child: CircularProgressIndicator(color: Colors.white,));
+          }
+        },
       ),
     );
   }

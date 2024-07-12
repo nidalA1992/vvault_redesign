@@ -11,6 +11,8 @@ import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/requisite_instance.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
+import '../../../../../main.dart';
+
 class RequisitesPage extends StatefulWidget {
   const RequisitesPage({super.key});
 
@@ -18,13 +20,33 @@ class RequisitesPage extends StatefulWidget {
   State<RequisitesPage> createState() => _RequisitesPageState();
 }
 
-class _RequisitesPageState extends State<RequisitesPage> {
+class _RequisitesPageState extends State<RequisitesPage> with RouteAware {
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    _loadData();
     super.initState();
+    _loadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute? modalRoute = ModalRoute.of(context);
+    if (modalRoute is PageRoute) {
+      routeObserver.subscribe(this, modalRoute);
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _loadData();
   }
 
   void _loadData() async {
@@ -114,11 +136,17 @@ class _RequisitesPageState extends State<RequisitesPage> {
                       ),
                     ),
                     CustomButton(
-                        text: "Добавить реквизиты",
-                        clr: Color(0xFF0066FF),
-                        onPressed: (context) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => NewRequisitePage()));
-                        },
+                      text: "Добавить реквизиты",
+                      clr: Color(0xFF0066FF),
+                      onPressed: (context) async {
+                        final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => NewRequisitePage())
+                        );
+                        if (result == true) {
+                          _loadData();
+                        }
+                      },
                     ),
                     SizedBox(height: 20.h,)
                   ],

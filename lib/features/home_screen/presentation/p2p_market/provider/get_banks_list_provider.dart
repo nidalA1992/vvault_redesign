@@ -31,4 +31,16 @@ class BanksListProvider with ChangeNotifier {
     }
   }
 
+  Map<String, dynamic> _accountInfo = {};
+  Map<String, dynamic> get accountInfo => _accountInfo;
+
+  Future<void> loadAccountInfo(String? id) async {
+    try {
+      _accountInfo = await _apiService.getAccountInfo(id);
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
 }

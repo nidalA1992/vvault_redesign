@@ -15,6 +15,7 @@ class OrderInfoService {
     );
 
     if (response.statusCode == 200) {
+      print('winnie ${json.decode(response.body)}');
       return json.decode(response.body)['data'];
     } else {
       throw Exception('Failed to fetch order details: ${response.body}');

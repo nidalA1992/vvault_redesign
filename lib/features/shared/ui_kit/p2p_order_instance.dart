@@ -70,7 +70,7 @@ class P2Pinstance extends StatelessWidget {
             ),
             Spacer(),
             Text(
-              '${order_quantity} ордера | ${success_percentage}% успешно',
+              '${order_quantity} ордера | ${formatLimit(success_percentage)}% успешно',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF8A929A),
@@ -195,6 +195,16 @@ class P2Pinstance extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String formatLimit(String limit) {
+    if (limit == null || limit.isEmpty) return '0.00';
+    try {
+      double value = double.parse(limit);
+      return value.toStringAsFixed(2);
+    } catch (e) {
+      return '0.00';
+    }
   }
 
   String formatBankNames(List<dynamic> names) {

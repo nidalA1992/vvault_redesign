@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -36,6 +37,7 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
       child: ListView.builder(
         padding: EdgeInsets.zero,
         itemCount: widget.banks.length,
+        shrinkWrap: true,
         itemBuilder: (context, index) {
           bool isSelected = selectedIndex == index;
           return Stack(
@@ -89,7 +91,21 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
                               ),
                             ),
                             SizedBox(width: 10.w),
-                            SvgPicture.asset("assets/copy_icon.svg")
+                            InkWell(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(text: widget.price))
+                                      .then((_) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: Color(0xFF262C35),
+                                        content: Text("Copied to clipboard!"),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  });
+                                },
+                                child: SvgPicture.asset("assets/copy_icon.svg")
+                            )
                           ],
                         ),
                         SizedBox(height: 10.h),
@@ -113,9 +129,24 @@ class _ExtendableBanksListState extends State<ExtendableBanksList> {
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w500,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(width: 10.w),
-                            SvgPicture.asset("assets/copy_icon.svg")
+                            InkWell(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(text: widget.bank_requis))
+                                      .then((_) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: Color(0xFF262C35),
+                                        content: Text("Copied to clipboard!"),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  });
+                                },
+                                child: SvgPicture.asset("assets/copy_icon.svg")
+                            )
                           ],
                         ),
                         SizedBox(height: 20.h),

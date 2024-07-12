@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/buy_extended.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/my_deals_page.dart';
@@ -37,6 +34,7 @@ class _P2PMarketState extends State<P2PMarket> {
   String? selectedBank;
   String? selectedFiatCurrency = "RUB";
   String? enteredPrice;
+  bool isLoading = false; // Loading state flag
 
   void loadBanksList() async {
     await Provider.of<BanksListProvider>(context, listen: false).loadBanks();
@@ -51,8 +49,14 @@ class _P2PMarketState extends State<P2PMarket> {
   }
 
   void _onRefresh() async {
+    setState(() {
+      isLoading = true;
+    });
     await Provider.of<OrderProvider>(context, listen: false).loadOrders(price: enteredPrice);
     _refreshController.refreshCompleted();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void _onLoading() async {
@@ -63,15 +67,21 @@ class _P2PMarketState extends State<P2PMarket> {
 
   @override
   void initState() {
+    super.initState();
     _loadData();
     loadBanksList();
     loadFiatCurrencies();
     loadCryptoCurrencies();
-    super.initState();
   }
 
   Future<void> _loadData() async {
+    setState(() {
+      isLoading = true;
+    });
     await Provider.of<OrderProvider>(context, listen: false).loadOrders(price: enteredPrice);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -310,7 +320,9 @@ class _P2PMarketState extends State<P2PMarket> {
                         ],
                       ),
                       SizedBox(height: 20.h,),
-                      Expanded(
+                      isLoading
+                          ? Center(child: CircularProgressIndicator(color: Colors.white))
+                          : Expanded(
                         child: OrdersList(
                           isPurchaseSelected: isPurchaseSelected,
                           enteredPrice: enteredPrice,
@@ -521,19 +533,19 @@ class OrdersList extends StatelessWidget {
             return SizedBox.shrink();
           } else {
             final order = filteredOrders[index];
-            return FutureBuilder<String>(
+            return FutureBuilder<Map<String, dynamic>>(
               future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator(color: Colors.white,));
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   return P2Pinstance(
-                    login: snapshot.data ?? 'N/A',
-                    like_percentage: '95%',
-                    order_quantity: '120',
-                    success_percentage: '98',
+                    login: snapshot.data?['user_name'] ?? 'N/A',
+                    like_percentage: calculateLikesPercentage(snapshot.data?['likes'], snapshot.data?['dislikes']).toString(),
+                    order_quantity: snapshot.data!['deals_count'].toString(),
+                    success_percentage: (snapshot.data?['success_deals'] * 100 / snapshot.data!['deals_count']).toString(),
                     price: order['order']['price'],
                     currency: order['order']['taker_currency'],
                     lower_limit: order['order']['lower'],
@@ -549,7 +561,7 @@ class OrdersList extends StatelessWidget {
                       orderProvider.comments = order['order']['comment'];
                       orderProvider.crypto = order['order']['maker_currency'];
                       orderProvider.unitCost = order['order']['upper'];
-                      orderProvider.login = snapshot.data ?? 'N/A';
+                      orderProvider.login = snapshot.data?['user_name'] ?? 'N/A';
                       orderProvider.upper = order['order']['upper'];
                       orderProvider.lower = order['order']['lower'];
                       Navigator.push(
@@ -568,6 +580,12 @@ class OrdersList extends StatelessWidget {
         },
       ),
     );
+  }
+
+  double calculateLikesPercentage(int likes, int dislikes) {
+    if (likes + dislikes == 0) {
+      return 0;
+    } else return (likes / (likes + dislikes));
   }
 
   Widget sellOrders(BuildContext context, List<dynamic> orders) {
@@ -593,19 +611,19 @@ class OrdersList extends StatelessWidget {
             return SizedBox.shrink();
           } else {
             final order = filteredOrders[index];
-            return FutureBuilder<String>(
+            return FutureBuilder<Map<String, dynamic>>(
               future: Provider.of<OrderProvider>(context, listen: false).fetchUserStats(order['order']['maker']),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator(color: Colors.white,));
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   return P2Pinstance(
-                    login: snapshot.data ?? 'N/A',
-                    like_percentage: '95%',
-                    order_quantity: '120',
-                    success_percentage: '98',
+                    login: snapshot.data?['user_name'] ?? 'N/A',
+                    like_percentage: calculateLikesPercentage(snapshot.data?['likes'], snapshot.data?['dislikes']).toString(),
+                    order_quantity: snapshot.data!['deals_count'].toString(),
+                    success_percentage: (snapshot.data?['success_deals'] * 100 / snapshot.data!['deals_count']).toString(),
                     price: order['order']['price'],
                     currency: order['order']['maker_currency'],
                     lower_limit: order['order']['lower'],
@@ -619,7 +637,7 @@ class OrdersList extends StatelessWidget {
                             builder: (context) => SellExtended(
                               orderId: order['order']['id'],
                               lower: order['order']['lower'],
-                              login: snapshot.data ?? 'N/A',
+                              login: snapshot.data?['user_name'] ?? 'N/A',
                               banks: order['order']['banks'],
                               cost: double.parse(order['order']['price']).toInt().toString(),
                               fiat: order['order']['taker_currency'],

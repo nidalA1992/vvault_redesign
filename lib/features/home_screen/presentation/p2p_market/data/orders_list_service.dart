@@ -22,7 +22,6 @@ class OrdersService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body)['data'] as List;
-      print(data);
       return data;
     } else {
       throw Exception('Failed to load orders: ${response.statusCode}');

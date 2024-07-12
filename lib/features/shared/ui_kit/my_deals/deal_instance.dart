@@ -20,6 +20,9 @@ class DealInstance extends StatefulWidget {
   final String data;
   final String req;
   final String maker_id;
+  final String comment;
+  final String bank;
+  final String payer;
 
   final Function(BuildContext)? onPressed;
 
@@ -38,7 +41,10 @@ class DealInstance extends StatefulWidget {
     required this.data,
     required this.req,
     this.onPressed,
-    required this.maker_id
+    required this.maker_id,
+    required this.comment,
+    required this.bank,
+    required this.payer
   }) : super(key: key);
 }
 
@@ -49,6 +55,7 @@ class _DealInstanceState extends State<DealInstance> {
   void initState() {
     super.initState();
     loadUserMe();
+    loadAccountInfo(widget.id);
   }
 
   void loadUserMe() async {
@@ -77,25 +84,30 @@ class _DealInstanceState extends State<DealInstance> {
     }
   }
 
+  Future<void> loadAccountInfo(String id) async {
+    await Provider.of<BanksListProvider>(context, listen: false).loadAccountInfo(id);
+  }
 
   @override
   Widget build(BuildContext context) {
     final statusProps = getStatusProperties(widget.status);
     final userme = Provider.of<BanksListProvider>(context).userme;
-    bool isSell = userme['id'] == widget.maker_id;
+    final accountInfo = Provider.of<BanksListProvider>(context).accountInfo;
+    bool isSell = widget.takerCurrency == 'USDT';
 
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => DealExtended(
             dealType: statusProps['text'],
-            isSell: !isSell,
+            isSell: isSell,
             dealNumber: widget.id,
             sellerAmount: widget.amount,
             sellerLogin: "poka net",
             sellerCurrency: widget.makerCurrency,
             requisiteId: widget.req,
-            comment: "poka net",
-            buyerAmount: "poka net"
+            comment: widget.comment,
+            buyerAmount: "poka net",
+            bank: widget.bank,
         )
         )
         );
@@ -106,7 +118,7 @@ class _DealInstanceState extends State<DealInstance> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                isSell ? 'Продажа ${widget.makerCurrency}' : 'Покупка ${widget.takerCurrency}',
+                isSell ? 'Продажа USDT' : 'Покупка USDT',
                 style: TextStyle(
                   color: isSell ? Color(0xFFE93349): Color(0xFF05CA77),
                   fontSize: 16.sp,
@@ -119,8 +131,8 @@ class _DealInstanceState extends State<DealInstance> {
                 height: 28.h,
                 padding: EdgeInsets.only(
                   top: 5.h,
-                  left: 20.w,
-                  right: 20.w,
+                  left: 10.w,
+                  right: 10.w,
                   bottom: 10.h,
                 ),
                 decoration: ShapeDecoration(
@@ -254,7 +266,7 @@ class _DealInstanceState extends State<DealInstance> {
           Row(
             children: [
               Text(
-                'Zaluper_312_cu8m',
+                accountInfo['username'] ?? "f",
                 style: TextStyle(
                   color: Color(0xFF8A929A),
                   fontSize: 14.sp,
@@ -299,7 +311,13 @@ class _DealInstanceState extends State<DealInstance> {
   }
 
   String formatLimit(String limit) {
-    return limit.length > 10 ? limit.substring(0, 10) : limit;
+    if (limit == null || limit.isEmpty) return '0.00';
+    try {
+      double value = double.parse(limit);
+      return value.toStringAsFixed(2);
+    } catch (e) {
+      return '0.00';
+    }
   }
 
 }

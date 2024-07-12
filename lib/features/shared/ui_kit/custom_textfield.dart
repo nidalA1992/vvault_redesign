@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
-
-import '../../../main.dart';
 
 class CustomTextField extends StatefulWidget {
   final String hintText;
@@ -14,8 +9,9 @@ class CustomTextField extends StatefulWidget {
   final bool isRequisite;
   final TextEditingController? controller;
   final Function(BuildContext)? onPressed;
-  
-  const CustomTextField({Key? key,
+
+  const CustomTextField({
+    Key? key,
     required this.hintText,
     this.isHidden = true,
     this.isEditable = false,
@@ -30,15 +26,11 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   late bool _isHidden;
-  late bool _isEditable;
-  late bool _isHiddenForBuild;
 
   @override
   void initState() {
     super.initState();
     _isHidden = widget.isHidden;
-    _isEditable = widget.isEditable;
-    _isHiddenForBuild = widget.isHidden;
   }
 
   void _toggleVisibility() {
@@ -54,11 +46,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
       height: widget.isRequisite ? 54.h : 60.h,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-          borderRadius: BorderRadius.circular(5.r),
-        ),
-        color: widget.isRequisite ? Color(0xFF1D2126) : Colors.transparent
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1.50.w, color: const Color(0xFF262C35)),
+            borderRadius: BorderRadius.circular(5.r),
+          ),
+          color: widget.isRequisite ? const Color(0xFF1D2126) : Colors.transparent
       ),
       child: Row(
         children: [
@@ -67,7 +59,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               controller: widget.controller,
               obscureText: _isHidden,
               style: TextStyle(
-                color: Color(0xFFEDF7FF),
+                color: const Color(0xFFEDF7FF),
                 fontSize: 16.sp,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w500,
@@ -75,33 +67,34 @@ class _CustomTextFieldState extends State<CustomTextField> {
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 hintStyle: TextStyle(
-                  color: Color(0xFFEDF7FF).withOpacity(0.5), // Lighter hint text color
+                  color: const Color(0xFFEDF7FF).withOpacity(0.5),
                   fontSize: 16.sp,
                 ),
-                border: InputBorder.none, // No border
-                contentPadding: EdgeInsets.zero, // Default padding is fine
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
               ),
             ),
           ),
-          if (_isEditable) ... [
+          if (widget.isEditable) ...[
             IconButton(
               icon: SvgPicture.asset("assets/edit.svg"),
               onPressed: () {
-                Get.find<NavBarVisibilityController>().hide();
-                widget.onPressed!(context);
-              }
+                if (widget.onPressed != null) {
+                  widget.onPressed!(context);
+                }
+              },
             ),
-          ] else if (_isHiddenForBuild)
-          IconButton(
-            icon: Icon(
-              _isHidden ? Icons.visibility_off : Icons.visibility,
-              color: Color(0x7FEDF7FF), // Icon color
+          ] else if (widget.isHidden) ...[
+            IconButton(
+              icon: Icon(
+                _isHidden ? Icons.visibility_off : Icons.visibility,
+                color: const Color(0x7FEDF7FF),
+              ),
+              onPressed: _toggleVisibility,
             ),
-            onPressed: _toggleVisibility,
-          ),
+          ],
         ],
       ),
     );
   }
 }
-

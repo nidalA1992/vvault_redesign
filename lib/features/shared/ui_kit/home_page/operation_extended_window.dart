@@ -51,7 +51,7 @@ class OperationExtendedWindowWindow {
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           content: SizedBox(
-            height: isBlockchain ? 330.h : 263.h,
+            height: isBlockchain ? 370.h : 273.h,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -63,20 +63,20 @@ class OperationExtendedWindowWindow {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20.sp,
+                          fontSize: 18.sp,
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                     Positioned(
-                      right: 0,
+                      right: -5,
                       child: GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
                         child: Icon(
                           Icons.close_outlined,
                           color: Colors.white,
-                          size: 18.sp,
+                          size: 20.sp,
                         ),
                       ),
                     ),

@@ -62,119 +62,124 @@ class _CreateOrderState extends State<CreateOrder> {
 
     List<MyRequisite> requisites = Provider.of<RequisitesProvider>(context).requisites;
 
-    return Scaffold(
-      body: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.only(
-            top: 20,
-            left: 20,
-            right: 20,
-          ),
-          decoration: BoxDecoration(color: Color(0xFF141619)),
-          child: Padding(
-            padding: EdgeInsets.only(top: 50),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomAppBarWithoutAva(txt: "Новый ордер"),
-                  SizedBox(height: 20.h,),
-                  Container(
-                    width: 350.w,
-                    height: 1.50.h,
-                    color: Color(0xFF1D2126),
-                  ),
-                  SizedBox(height: 20.h,),
-                  Text(
-                    'Тип сделки',
-                    style: TextStyle(
-                      color: Color(0x7FEDF7FF),
-                      fontSize: 14.sp,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 10.h,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isBuy = true;
-                          });
-                        },
-                        child: Container(
-                          width: 170.w,
-                          height: 56.h,
-                          padding: EdgeInsets.symmetric(horizontal: 25.w),
-                          decoration: ShapeDecoration(
-                            color: isBuy ? Color(0xFF02603E) : Color(0xFF272D35),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Покупка',
-                                style: TextStyle(
-                                  color: isBuy ? Color(0xFFEDF7FF) : Color(0x7FEDF7FF),
-                                  fontSize: 16.sp,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isBuy = false;
-                          });
-                        },
-                        child: Container(
-                          width: 170.w,
-                          height: 56.h,
-                          padding: EdgeInsets.symmetric(horizontal: 25.w),
-                          decoration: ShapeDecoration(
-                            color: !isBuy ? Color(0xFF3F1C23) : Color(0xFF272D35),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Продажа',
-                                style: TextStyle(
-                                  color: !isBuy ? Color(0xFFEDF7FF) : Color(0x7FEDF7FF),
-                                  fontSize: 16.sp,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h,),
-                  if (isBuy) ... [
-                    _createBuyContent(),
-                  ] else ... [
-                    _createSellContent()
-                  ],
-                  SizedBox(height: 20.h,)
-                ],
-              ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(
+              top: 20,
+              left: 20,
+              right: 20,
             ),
-          )
+            decoration: BoxDecoration(color: Color(0xFF141619)),
+            child: Padding(
+              padding: EdgeInsets.only(top: 50),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomAppBarWithoutAva(txt: "Новый ордер"),
+                    SizedBox(height: 20.h,),
+                    Container(
+                      width: 350.w,
+                      height: 1.50.h,
+                      color: Color(0xFF1D2126),
+                    ),
+                    SizedBox(height: 20.h,),
+                    Text(
+                      'Тип сделки',
+                      style: TextStyle(
+                        color: Color(0x7FEDF7FF),
+                        fontSize: 14.sp,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 10.h,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isBuy = true;
+                            });
+                          },
+                          child: Container(
+                            width: 170.w,
+                            height: 56.h,
+                            padding: EdgeInsets.symmetric(horizontal: 25.w),
+                            decoration: ShapeDecoration(
+                              color: isBuy ? Color(0xFF02603E) : Color(0xFF272D35),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Покупка',
+                                  style: TextStyle(
+                                    color: isBuy ? Color(0xFFEDF7FF) : Color(0x7FEDF7FF),
+                                    fontSize: 16.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isBuy = false;
+                            });
+                          },
+                          child: Container(
+                            width: 170.w,
+                            height: 56.h,
+                            padding: EdgeInsets.symmetric(horizontal: 25.w),
+                            decoration: ShapeDecoration(
+                              color: !isBuy ? Color(0xFF3F1C23) : Color(0xFF272D35),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Продажа',
+                                  style: TextStyle(
+                                    color: !isBuy ? Color(0xFFEDF7FF) : Color(0x7FEDF7FF),
+                                    fontSize: 16.sp,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h,),
+                    if (isBuy) ... [
+                      _createBuyContent(),
+                    ] else ... [
+                      _createSellContent()
+                    ],
+                    SizedBox(height: 20.h,)
+                  ],
+                ),
+              ),
+            )
+        ),
       ),
     );
   }
@@ -205,21 +210,25 @@ class _CreateOrderState extends State<CreateOrder> {
                 SizedBox(height: 10.h,),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OrdersBottomSheet(
-                          options: fiatCurrencies,
-                          title: 'Выберите валюту',
-                          searchText: "Поиск валют",
-                          onSelected: (String fiatCur) {
-                            setState(() {
-                              selectedCoin = fiatCur;
-                            });
-                          },
-                        );
-                      },
-                    );
+                    if (fiatCurrencies.isNotEmpty) {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return OrdersBottomSheet(
+                            options: fiatCurrencies,
+                            title: 'Выберите валюту',
+                            searchText: "Поиск валют",
+                            onSelected: (String fiatCur) {
+                              setState(() {
+                                selectedCoin = fiatCur;
+                              });
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      _showNoOptionsDialog(context);
+                    }
                   },
                   child: Container(
                     width: 170.w,
@@ -268,21 +277,25 @@ class _CreateOrderState extends State<CreateOrder> {
                 SizedBox(height: 10.h,),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OrdersBottomSheet(
-                          options: fiatCurrencies,
-                          title: 'Выберите валюту',
-                          searchText: "Поиск валют",
-                          onSelected: (String fiatCur) {
-                            setState(() {
-                              selectedFiatCoin = fiatCur;
-                            });
-                          },
-                        );
-                      },
-                    );
+                    if (fiatCurrencies.isNotEmpty) {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return OrdersBottomSheet(
+                            options: fiatCurrencies,
+                            title: 'Выберите валюту',
+                            searchText: "Поиск валют",
+                            onSelected: (String fiatCur) {
+                              setState(() {
+                                selectedFiatCoin = fiatCur;
+                              });
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      _showNoOptionsDialog(context);
+                    }
                   },
                   child: Container(
                     width: 170.w,
@@ -464,24 +477,28 @@ class _CreateOrderState extends State<CreateOrder> {
         SizedBox(height: 20.h,),
         GestureDetector(
           onTap: () async {
-            final chosenBank = await showModalBottomSheet<String>(
-              context: context,
-              builder: (BuildContext context) {
-                return OrdersBottomSheet(
-                  options: _banks,
-                  title: 'Выберите банк',
-                  searchText: 'Поиск',
-                  onSelected: (selectedBank) {
-                    Navigator.pop(context, selectedBank);  // Ensure this is correct context
-                  },
-                );
-              },
-            );
+            if (_banks.isNotEmpty) {
+              final chosenBank = await showModalBottomSheet<String>(
+                context: context,
+                builder: (BuildContext context) {
+                  return OrdersBottomSheet(
+                    options: _banks,
+                    title: 'Выберите банк',
+                    searchText: 'Поиск',
+                    onSelected: (selectedBank) {
+                      Navigator.pop(context, selectedBank);
+                    },
+                  );
+                },
+              );
 
-            if (chosenBank != null && !banks.contains(chosenBank)) {
-              setState(() {
-                banks.add(chosenBank);
-              });
+              if (chosenBank != null && !banks.contains(chosenBank)) {
+                setState(() {
+                  banks.add(chosenBank);
+                });
+              }
+            } else {
+              _showNoOptionsDialog(context);
             }
           },
           child: Container(
@@ -637,21 +654,25 @@ class _CreateOrderState extends State<CreateOrder> {
                 SizedBox(height: 10.h,),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OrdersBottomSheet(
-                          options: fiatCurrencies,
-                          title: 'Выберите валюту',
-                          searchText: "Поиск валют",
-                          onSelected: (String fiatCur) {
-                            setState(() {
-                              selectedCoin = fiatCur;
-                            });
-                          },
-                        );
-                      },
-                    );
+                    if (fiatCurrencies.isNotEmpty) {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return OrdersBottomSheet(
+                            options: fiatCurrencies,
+                            title: 'Выберите валюту',
+                            searchText: "Поиск валют",
+                            onSelected: (String fiatCur) {
+                              setState(() {
+                                selectedCoin = fiatCur;
+                              });
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      _showNoOptionsDialog(context);
+                    }
                   },
                   child: Container(
                     width: 170.w,
@@ -700,21 +721,25 @@ class _CreateOrderState extends State<CreateOrder> {
                 SizedBox(height: 10.h,),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OrdersBottomSheet(
-                          options: fiatCurrencies,
-                          title: 'Выберите валюту',
-                          searchText: "Поиск валют",
-                          onSelected: (String fiatCur) {
-                            setState(() {
-                              selectedFiatCoin = fiatCur;
-                            });
-                          },
-                        );
-                      },
-                    );
+                    if (fiatCurrencies.isNotEmpty) {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return OrdersBottomSheet(
+                            options: fiatCurrencies,
+                            title: 'Выберите валюту',
+                            searchText: "Поиск валют",
+                            onSelected: (String fiatCur) {
+                              setState(() {
+                                selectedFiatCoin = fiatCur;
+                              });
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      _showNoOptionsDialog(context);
+                    }
                   },
                   child: Container(
                     width: 170.w,
@@ -732,7 +757,7 @@ class _CreateOrderState extends State<CreateOrder> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'RUB',
+                          selectedFiatCoin,
                           style: TextStyle(
                             color: Color(0x7FEDF7FF),
                             fontSize: 16.sp,
@@ -896,29 +921,39 @@ class _CreateOrderState extends State<CreateOrder> {
         SizedBox(height: 20.h,),
         GestureDetector(
           onTap: () async {
-            final chosenBank = await showModalBottomSheet<String>(
-              context: context,
-              builder: (BuildContext context) {
-                return OrdersBottomSheet(
-                  options: requisites.map((requisite) => requisite.bank).toList(),
-                  title: 'Выберите банк',
-                  searchText: 'Поиск',
-                    onSelected: (selectedId) {
+            if (requisites.isNotEmpty) {
+              final chosenBank = await showModalBottomSheet<String>(
+                context: context,
+                builder: (BuildContext context) {
+                  return OrdersBottomSheet(
+                    options: requisites.map((requisite) => requisite.bank).toList(),
+                    title: 'Выберите банк',
+                    searchText: 'Поиск',
+                    onSelected: (selectedBank) {
                       var selectedRequisite = requisites.firstWhere(
-                              (requisite) => requisite.bank == requisite.bank,
+                              (requisite) => requisite.bank == selectedBank,
                           orElse: () => MyRequisite(bank: '', comment: '', id: '', requisite: '', userId: '')
                       );
                       setState(() {
-                        selectedPaymentMethod = selectedRequisite.bank; // Используем имя банка как пример
+                        selectedPaymentMethod = selectedRequisite.bank;
                         selectedRequisiteId = selectedRequisite.id;
                         mySelectedRequisite = selectedRequisite.requisite;
-                        print(selectedRequisiteId);
                       });
-                    }
-                );
-              },
-            );
-            },
+                      Navigator.pop(context, selectedBank); // Ensure this is the correct context
+                    },
+                  );
+                },
+              );
+
+              if (chosenBank != null && !banks.contains(chosenBank)) {
+                setState(() {
+                  banks.add(chosenBank);
+                });
+              }
+            } else {
+              _showNoOptionsDialog(context);
+            }
+          },
           child: Container(
             width: 350.w,
             height: 56.h,
@@ -1029,9 +1064,9 @@ class _CreateOrderState extends State<CreateOrder> {
                     ]
                   },
                   'price': {
-                    'maker_currency': _takerCurrency,
-                    'taker_currency': _makerCurrency,
-                    'type': 'frozen',
+                    'maker_currency': selectedFiatCoin,
+                    'taker_currency': selectedCoin,
+                    'type': isFixed ? 'frozen' : 'unfrozen',
                     'unit_cost': unitCostController.text,
                   }
                 };
@@ -1268,4 +1303,23 @@ class _CreateOrderState extends State<CreateOrder> {
     }
   }
 
+  void _showNoOptionsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('No Options Available'),
+          content: Text('Currently, there are no options available to select.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

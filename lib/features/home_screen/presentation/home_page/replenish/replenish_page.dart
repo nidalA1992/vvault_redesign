@@ -232,7 +232,7 @@ class _ReplenishPageState extends State<ReplenishPage> {
                           SvgPicture.asset("assets/qr_borders.svg", height: 250.h),
                           QrImageView(
                             foregroundColor: Colors.white,
-                            data: walletByCurrency['id'].toString(),
+                            data: walletByCurrency['address'].toString(),
                             version: QrVersions.auto,
                             size: 220.sp,
                             gapless: false,

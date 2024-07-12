@@ -1,23 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/wallet_by_currency_provider.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/confirmation_window.dart';
+import 'package:vvault_redesign/features/shared/ui_kit/transfer_confirmation_window.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_button.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/custom_textfield.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_orders/modal_bottom_sheet.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_converter.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/p2p_buy-sell_field.dart';
-import 'package:vvault_redesign/features/shared/ui_kit/transfer_confirmation_window.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class TransferPage extends StatefulWidget {
   const TransferPage({super.key});
@@ -43,15 +37,19 @@ class _TransferPageState extends State<TransferPage> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller!.pauseCamera();
+      controller?.pauseCamera();
     } else if (Platform.isIOS) {
-      controller!.resumeCamera();
+      controller?.resumeCamera();
     }
   }
 
   @override
   void dispose() {
     controller?.dispose();
+    idController.dispose();
+    commentsController.dispose();
+    takerController.dispose();
+    _makerController.dispose();
     super.dispose();
   }
 
@@ -63,9 +61,12 @@ class _TransferPageState extends State<TransferPage> {
 
       final qrData = jsonDecode(scanData.code ?? '{}');
 
-      if (qrData != null && qrData['idUser'] != null && qrData['amountRub'] != null &&
-          qrData['amountCrypto'] != null && qrData['crypto'] != null && qrData['comment'] != null) {
-
+      if (qrData != null &&
+          qrData['idUser'] != null &&
+          qrData['amountRub'] != null &&
+          qrData['amountCrypto'] != null &&
+          qrData['crypto'] != null &&
+          qrData['comment'] != null) {
         setState(() {
           idController.text = qrData['idUser'];
           takerController.text = qrData['amountRub'];
@@ -75,22 +76,24 @@ class _TransferPageState extends State<TransferPage> {
         });
 
         TransferConfirmationWindow(
-            idUser: idController.text,
-            amountRub: takerController.text,
-            amountCrypto: _makerController.text,
-            crypto: selectedCoin,
-            comment: commentsController.text
+          idUser: idController.text,
+          amountRub: takerController.text,
+          amountCrypto: _makerController.text,
+          crypto: selectedCoin,
+          comment: commentsController.text,
         ).showConfirmationDialog(context);
       }
     });
   }
 
   void loadCryptoCurrencies() async {
-    await Provider.of<CryptoCurrenciesListProvider>(context, listen: false).loadCryptoCurrencies();
+    await Provider.of<CryptoCurrenciesListProvider>(context, listen: false)
+        .loadCryptoCurrencies();
   }
 
   void loadWalletByCurrency() async {
-    await Provider.of<WalletByCurrencyProvider>(context, listen: false).fetchWallet("USDT");
+    await Provider.of<WalletByCurrencyProvider>(context, listen: false)
+        .fetchWallet("USDT");
   }
 
   void _onTakerChanged() {
@@ -111,6 +114,7 @@ class _TransferPageState extends State<TransferPage> {
 
   @override
   void initState() {
+    super.initState();
     loadCryptoCurrencies();
     loadWalletByCurrency();
     takerController.addListener(() {
@@ -123,133 +127,99 @@ class _TransferPageState extends State<TransferPage> {
       _onMakerChanged();
       isMakerActive = false;
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Container(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF141619),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
               width: double.infinity,
-              padding: const EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-              ),
-              decoration: BoxDecoration(color: Color(0xFF141619)),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: const BoxDecoration(color: Color(0xFF141619)),
               child: Padding(
-                padding: EdgeInsets.only(top: 50.h, bottom: 20.h),
+                padding: EdgeInsets.only(top: 70.h, bottom: 20.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(Icons.arrow_back_outlined, color: Color(0x7FEDF7FF))
-                        ),
-                        SizedBox(width: 10.w,),
-                        Text(
-                          'Перевод пользователю',
-                          style: TextStyle(
-                            color: Color(0xFFEDF7FF),
-                            fontSize: 20.sp,
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20.h,),
-                    Container(
-                      width: 350.w,
-                      height: 1.50.h,
-                      color: Color(0xFF1D2126),
-                    ),
-                    SizedBox(height: 20.h,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              qrSelected = true;
-                            });
-                          },
-                            child: Container(
-                              width: 170.w,
-                              height: 46.h,
-                              decoration: ShapeDecoration(
-                                color: qrSelected ? Color(0xFF0066FF) : Color(0xFF262C35),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Сканировать QR",
-                                    style: TextStyle(
-                                      color: qrSelected ? Colors.white : Color(0x7FEDF7FF),
-                                      fontSize: 16.sp,
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              qrSelected = false;
-                            });
-                          },
-                            child: Container(
-                              width: 170.w,
-                              height: 46.h,
-                              decoration: ShapeDecoration(
-                                color: qrSelected ? Color(0xFF262C35): Color(0xFF0066FF),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "По реквизитам",
-                                    style: TextStyle(
-                                      color: qrSelected ? Color(0x7FEDF7FF) : Colors.white,
-                                      fontSize: 16.sp,
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 20.h,),
-                    if (qrSelected) ... [
-                      _buildQrContent()
-                    ] else ... [
-                      _buildReqContent()
-                    ]
+                    _buildHeader(),
+                    SizedBox(height: 10.h),
+                    Divider(color: Color(0xFF1D2126), thickness: 1.5.h),
+                    SizedBox(height: 20.h),
+                    _buildTabSwitch(),
+                    SizedBox(height: 20.h),
+                    qrSelected ? _buildQrContent() : _buildReqContent()
                   ],
                 ),
-              )
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back_outlined, color: Color(0x7FEDF7FF)),
+        ),
+        SizedBox(width: 10.w),
+        Text(
+          'Перевод пользователю',
+          style: TextStyle(
+            color: const Color(0xFFEDF7FF),
+            fontSize: 20.sp,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w700,
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabSwitch() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildTab("Сканировать QR", qrSelected),
+        _buildTab("По реквизитам", !qrSelected)
+      ],
+    );
+  }
+
+  Widget _buildTab(String text, bool isSelected) {
+    return GestureDetector(
+      onTap: () => setState(() {
+        qrSelected = !qrSelected;
+      }),
+      child: Container(
+        width: 170.w,
+        height: 46.h,
+        decoration: ShapeDecoration(
+          color: isSelected ? const Color(0xFF0066FF) : const Color(0xFF262C35),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: isSelected ? Colors.white : const Color(0x7FEDF7FF),
+              fontSize: 16.sp,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -261,10 +231,6 @@ class _TransferPageState extends State<TransferPage> {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Positioned(
-              bottom: 0,
-              child: Divider()
-          ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: 408.h,
@@ -279,10 +245,7 @@ class _TransferPageState extends State<TransferPage> {
               height: scanArea * 0.7,
               decoration: BoxDecoration(
                 color: Colors.transparent,
-                border: Border.all(
-                  color: Colors.transparent,
-                  width: 0,
-                ),
+                border: Border.all(color: Colors.transparent, width: 0),
               ),
               child: CustomPaint(
                 painter: QrBorderPainter(),
@@ -304,13 +267,13 @@ class _TransferPageState extends State<TransferPage> {
         Text(
           'Выберите криптовалюту',
           style: TextStyle(
-            color: Color(0x7FEDF7FF),
+            color: const Color(0x7FEDF7FF),
             fontSize: 14.sp,
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 10.h,),
+        SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -339,7 +302,7 @@ class _TransferPageState extends State<TransferPage> {
                 padding: EdgeInsets.symmetric(horizontal: 25.w),
                 decoration: ShapeDecoration(
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
+                    side: BorderSide(width: 1.50.w, color: const Color(0xFF262C35)),
                     borderRadius: BorderRadius.circular(5.r),
                   ),
                 ),
@@ -351,14 +314,17 @@ class _TransferPageState extends State<TransferPage> {
                     Text(
                       selectedCoin,
                       style: TextStyle(
-                        color: Color(0x7FEDF7FF),
+                        color: const Color(0x7FEDF7FF),
                         fontSize: 16.sp,
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Spacer(),
-                    Icon(Icons.keyboard_arrow_down_outlined, color: Color(0x7FEDF7FF),)
+                    const Spacer(),
+                    const Icon(
+                      Icons.keyboard_arrow_down_outlined,
+                      color: Color(0x7FEDF7FF),
+                    )
                   ],
                 ),
               ),
@@ -366,14 +332,14 @@ class _TransferPageState extends State<TransferPage> {
             Row(
               children: [
                 SvgPicture.asset("assets/crypto logo.svg"),
-                SizedBox(width: 15.w,),
+                SizedBox(width: 15.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       walletByCurrency['currency'] ?? "Unknown",
                       style: TextStyle(
-                        color: Color(0xFFEDF7FF),
+                        color: const Color(0xFFEDF7FF),
                         fontSize: 18.sp,
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
@@ -382,7 +348,7 @@ class _TransferPageState extends State<TransferPage> {
                     Text(
                       formatLimit(walletByCurrency['balance']),
                       style: TextStyle(
-                        color: Color(0x7FEDF7FF),
+                        color: const Color(0x7FEDF7FF),
                         fontSize: 16.sp,
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w500,
@@ -394,78 +360,41 @@ class _TransferPageState extends State<TransferPage> {
             )
           ],
         ),
-        SizedBox(height: 20.h,),
-        CustomTextField(hintText: 'ID пользователя Sentoke', isHidden: false, controller: idController,),
-        SizedBox(height: 20.h,),
-        BuySellField(hint_txt: "Сумма", isBuy: true, fiat: selectedCoin, textController: _makerController),
-        SizedBox(height: 10.h,),
-        BuySellField(hint_txt: "Сумма", isBuy: true, fiat: "RUB", textController: takerController),
-        SizedBox(height: 30.h,),
-        Text(
-          'Комментарий',
-          style: TextStyle(
-            color: Color(0x7FEDF7FF),
-            fontSize: 16.sp,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w500,
-          ),
+        SizedBox(height: 20.h),
+        CustomTextField(
+          hintText: 'ID пользователя Sentoke',
+          isHidden: false,
+          controller: idController,
         ),
-        SizedBox(height: 10.h,),
-        Container(
-          width: 370.w,
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-          decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1.50.w, color: Color(0xFF262C35)),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              color: Color(0xFF1D2126)
-          ),
-          child: TextField(
-            controller: commentsController,
-            maxLength: 50,
-            maxLines: null,
-            decoration: InputDecoration(
-              labelText: 'Напишите Ваши условия',
-              labelStyle: TextStyle(
-                color: Color(0xFF8A929A),
-                fontSize: 16.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
-              ),
-              counterStyle: TextStyle(
-                color: Color(0xFF8A929A),
-                fontSize: 14.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
-              ),
-              border: InputBorder.none,
-            ),
-            buildCounter: (BuildContext context, {int? currentLength, int? maxLength, bool? isFocused}) => Text(
-              '${currentLength ?? 0} / ${maxLength ?? 300}',
-              style: TextStyle(
-                color: Color(0xFF8A929A),
-                fontSize: 14.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+        SizedBox(height: 20.h),
+        BuySellField(
+          hint_txt: "Сумма",
+          isBuy: true,
+          fiat: selectedCoin,
+          textController: _makerController,
         ),
-        SizedBox(height: 70.h,),
-        CustomButton(text: "Далее",
-            onPressed: (context) {
-              TransferConfirmationWindow(
-                  idUser: idController.text,
-                  amountRub: takerController.text,
-                  amountCrypto: _makerController.text,
-                  crypto: selectedCoin,
-                  comment: commentsController.text
-              ).showConfirmationDialog(context);
-            },
-            clr: Color(0xFF0066FF)
+        SizedBox(height: 10.h),
+        BuySellField(
+          hint_txt: "Сумма",
+          isBuy: true,
+          fiat: "RUB",
+          textController: takerController,
         ),
-        SizedBox(height: 20.h,)
+        SizedBox(height: 220.h),
+        CustomButton(
+          text: "Далее",
+          onPressed: (context) {
+            TransferConfirmationWindow(
+              idUser: idController.text,
+              amountRub: takerController.text,
+              amountCrypto: _makerController.text,
+              crypto: selectedCoin,
+              comment: commentsController.text,
+            ).showConfirmationDialog(context);
+          },
+          clr: const Color(0xFF0066FF),
+        ),
+        SizedBox(height: 20.h)
       ],
     );
   }
@@ -473,7 +402,6 @@ class _TransferPageState extends State<TransferPage> {
   String formatLimit(String limit) {
     return limit.length > 10 ? limit.substring(0, 10) : limit;
   }
-
 }
 
 class QrBorderPainter extends CustomPainter {
@@ -493,8 +421,10 @@ class QrBorderPainter extends CustomPainter {
     canvas.drawLine(Offset(0, size.height), Offset(0, size.height - 30), paint);
     canvas.drawLine(Offset(0, size.height), Offset(30, size.height), paint);
 
-    canvas.drawLine(Offset(size.width, size.height), Offset(size.width, size.height - 30), paint);
-    canvas.drawLine(Offset(size.width, size.height), Offset(size.width - 30, size.height), paint);
+    canvas.drawLine(Offset(size.width, size.height),
+        Offset(size.width, size.height - 30), paint);
+    canvas.drawLine(
+        Offset(size.width, size.height), Offset(size.width - 30, size.height), paint);
   }
 
   @override

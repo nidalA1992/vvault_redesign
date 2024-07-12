@@ -52,12 +52,22 @@ class _BuyExtendedState extends State<BuyExtended> {
     super.initState();
   }
 
-  void _loadData() {
-    Provider.of<OrderInfoProvider>(context, listen: false)
-        .loadOrderDetails(widget.orderId!)
-        .then((_) {
-      setState(() {});
-    });
+  void _loadData() async {
+    await Provider.of<OrderInfoProvider>(context, listen: false)
+        .loadOrderDetails(widget.orderId!);
+
+    final orderDetails = Provider.of<OrderInfoProvider>(context, listen: false).orderDetails;
+
+    if (orderDetails != null && orderDetails.containsKey('requisites') && orderDetails['requisites'].isNotEmpty) {
+      for (var req in orderDetails['requisites']) {
+        _requisites.add('${req['bank']}: ${req['requisite']}');
+        _requisitesId.add(req['id']);
+      }
+      setState(() {
+        requisite = _requisites.first;
+        comment = orderDetails['requisites'].first['comment'];
+      });
+    }
   }
 
   void _onTakerChanged() {
@@ -65,7 +75,7 @@ class _BuyExtendedState extends State<BuyExtended> {
 
     double takerValue = double.tryParse(takerController.text) ?? 0.0;
     double makerValue = takerValue / usdToRubRate;
-    _makerController.text = makerValue.toString();
+    _makerController.text = makerValue.toStringAsFixed(2);
   }
 
   void _onMakerChanged() {
@@ -103,17 +113,18 @@ class _BuyExtendedState extends State<BuyExtended> {
 
     if (orderDetails != null && orderDetails.containsKey('requisites') && orderDetails['requisites'].isNotEmpty) {
       for (var req in orderDetails['requisites']) {
-        _requisites.add(req['bank']);
+        _requisites.add('${req['bank']}: ${req['requisite']}');
         _requisitesId.add(req['id']);
       }
-      requisite = orderDetails['requisites'][0]['requisite'];
-      comment = orderDetails['requisites'][0]['comment'];
+      requisite = _requisites.first;
+      comment = orderDetails['requisites'].first['comment'];
     }
 
     if (orderDetails.isEmpty || !orderDetails.containsKey('requisites')) {
       return Scaffold(
+        backgroundColor: Color(0xFF141619),
         body: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: Colors.white),
         ),
       );
     } else {
@@ -165,18 +176,19 @@ class _BuyExtendedState extends State<BuyExtended> {
                     context: context,
                     builder: (BuildContext context) {
                       return OrdersBottomSheet(
-                        options: _requisites,
+                        requisites: _requisites,
                         title: 'Выберите Реквизиты',
                         searchText: "Поиск монет",
                       );
                     },
                   );
+                  print('provkerka $_requisites');
 
                   if (newIndex != null && newIndex < _requisites.length) {
                     setState(() {
                       selectedIndex = newIndex;
-                      requisite = orderDetails['requisites'][selectedIndex]['requisite'];
-                      comment = orderDetails['requisites'][selectedIndex]['comment'];
+                      requisite = _requisites[selectedIndex!];
+                      comment = orderDetails['requisites'][selectedIndex!]['comment'];
                     });
                   }
                 },

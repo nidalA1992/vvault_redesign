@@ -46,6 +46,8 @@ import 'features/home_screen/presentation/p2p_market/provider/get_my_requisites/
 import 'features/home_screen/presentation/p2p_market/provider/notify_deal/notify_deal_provider.dart';
 import 'features/home_screen/presentation/p2p_market/provider/user_requisite_list/user_requisite_provider.dart';
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
@@ -96,6 +98,7 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (_ , child) {
           return GetMaterialApp(
+            navigatorObservers: [routeObserver],
             debugShowCheckedModeBanner: false,
             title: 'First Method',
             theme: ThemeData(

@@ -6,6 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
 
+import '../../../home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
+import '../../../home_screen/presentation/p2p_market/provider/update_order_provider.dart';
+
 class OrderInstance extends StatefulWidget {
   final String price;
   final String titleCurrency;
@@ -51,6 +54,8 @@ class _OrderInstanceState extends State<OrderInstance> {
   @override
   Widget build(BuildContext context) {
     final updateOrderActivityProvider = Provider.of<UpdateOrderActivityProvider>(context, listen: false);
+    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+    final updateOrderProvider = Provider.of<UpdateOrderProvider>(context, listen: false);
 
     return Column(
       children: [
@@ -68,7 +73,7 @@ class _OrderInstanceState extends State<OrderInstance> {
             ),
             SizedBox(width: 5.w,),
             GestureDetector(
-              onTap: () => widget.onPressed!(context),
+                onTap: () => widget.onPressed!(context),
                 child: SvgPicture.asset("assets/edit_icon.svg")
             ),
             Spacer(),
@@ -191,22 +196,36 @@ class _OrderInstanceState extends State<OrderInstance> {
             Transform.scale(
               scale: 0.8,
               child: CupertinoSwitch(
-                value: isActive!,
-                onChanged: (bool value) {
+                value: isActive,
+                onChanged: (bool value) async {
                   setState(() {
                     isActive = value;
-                    final orderData = {
-                      "active": value
-                    };
-                    print("order id karap otrm ${widget.orderID.toString()}");
-                    updateOrderActivityProvider.updateOrderActivity(orderData, widget.orderID.toString());
                   });
+
+                  final orderData = {
+                    "active": isActive,
+                    "conditions": {
+                      "comment": widget.comment,
+                      "lower": widget.lowerLimit,
+                      "upper": widget.upperLimit
+                    },
+                    "price": {
+                      "type": "exchange",
+                      "unit_cost": widget.price
+                    }
+                  };
+
+                  try {
+                    updateOrderProvider.updateOrder(orderData, widget.orderID.toString());
+                  } catch (e) {
+                    // Handle error if needed
+                  }
                 },
                 activeColor: Color(0xFF0066FF),
               ),
             ),
             Text(
-             isActive ? 'Выключить' : "Включить",
+              isActive ? 'Выключить' : "Включить",
               style: TextStyle(
                 color: Color(0xFF8A929A),
                 fontSize: 16.sp,

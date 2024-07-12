@@ -20,7 +20,7 @@ class RequisitesProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       List<dynamic> requisitesJson = jsonDecode(response.body)['data'];
       _requisites = requisitesJson.map((json) => MyRequisite.fromJson(json)).toList();
-      print('Fetched Requisites: $_requisites'); // Debugging print
+      print('Fetched Requisites: $_requisites');
       notifyListeners();
     } else {
       throw Exception('Failed to load requisites');

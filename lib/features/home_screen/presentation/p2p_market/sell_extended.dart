@@ -88,225 +88,225 @@ class _SellExtendedState extends State<SellExtended> {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch requisites from provider
     List<MyRequisite> requisites = Provider.of<RequisitesProvider>(context).requisites;
 
-    // Filter requisites to only include those that match the banks in widget.banks
     List<MyRequisite> filteredRequisites = requisites.where((requisite) {
       return widget.banks.contains(requisite.bank);
     }).toList();
 
-    // Debugging print
-    print('Filtered Requisites: $filteredRequisites');
-
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.only(top: 80, left: 20, right: 20),
-        decoration: BoxDecoration(color: Color(0xFF141619)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(Icons.arrow_back_outlined, color: Color(0xFF8A929A)),
-                ),
-                Spacer(),
-                Text(
-                  'Продажа ${widget.crypto ?? ''}', // Add null check
-                  style: TextStyle(
-                    color: Color(0xFFEDF7FF),
-                    fontSize: 16.sp,
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          padding: const EdgeInsets.only(top: 80, left: 20, right: 20),
+          decoration: BoxDecoration(color: Color(0xFF141619)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back_outlined, color: Color(0xFF8A929A)),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            BuySellConverterField(
-              isBuy: false,
-              price: '${widget.cost ?? ''}', // Add null check
-              fiat: widget.crypto ?? '',
-              crypto: widget.fiat ?? '',
-              unitCost: widget.unitCost ?? '',
-            ),
-            SizedBox(height: 10.h),
-            GestureDetector(
-              onTap: () async {
-                final chosenBank = await showModalBottomSheet<String>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return OrdersBottomSheet(
-                      options: filteredRequisites.map((requisite) => requisite.bank).toList(),
-                      title: 'Выберите банк',
-                      searchText: "Поиск банка",
-                      onSelected: (selectedBank) {
-                        var selectedRequisite = filteredRequisites.firstWhere(
-                              (requisite) => requisite.bank == selectedBank,
-                          orElse: () => MyRequisite(bank: '', comment: '', id: '', requisite: '', userId: ''),
-                        );
-                        setState(() {
-                          selectedPaymentMethod = selectedRequisite.bank;
-                          selectedRequisiteId = selectedRequisite.id;
-                          mySelectedRequisite = selectedRequisite.requisite;
-                          print('Selected Requisite: $selectedRequisite'); // Debugging print
-                        });
-                        Navigator.pop(context, selectedBank);
-                      },
-                    );
-                  },
-                );
-                if (chosenBank != null) {
-                  setState(() {
-                    selectedPaymentMethod = chosenBank;
-                  });
-                }
-              },
-              child: Container(
-                width: 350.w,
-                height: 56.h,
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                decoration: ShapeDecoration(
-                  color: Color(0xFF272D35),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      selectedPaymentMethod,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF8A929A),
-                        fontSize: 14.sp,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                      ),
+                  Spacer(),
+                  Text(
+                    'Продажа ${widget.crypto ?? ''}', // Add null check
+                    style: TextStyle(
+                      color: Color(0xFFEDF7FF),
+                      fontSize: 16.sp,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600,
                     ),
-                    Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A)),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 10.h),
-            BuySellField(
-              isBuy: true,
-              hint_txt: "Я заплачу",
-              fiat: '${widget.fiat ?? ''}', // Add null check
-              textController: makerController,
-              minLimit: double.parse(widget.lower!) / usdToRubRate,
-              maxLimit: double.parse(widget.unitCost!) / usdToRubRate,
-            ),
-            SizedBox(height: 10.h),
-            BuySellField(
-              isBuy: true,
-              hint_txt: "Я получу",
-              fiat: '${widget.crypto ?? ''}', // Add null check
-              textController: takerController,
-              minLimit: double.parse(widget.lower!),
-              maxLimit: double.parse(widget.unitCost!),
-            ),
-            SizedBox(height: 10.h),
-            BuySellButton(
-              onTap: () async {
-                print('Selected Requisite ID: $selectedRequisiteId'); // Debugging print
-
-                final dealData = {
-                  "amount": takerController.text,
-                  "requisite_id": selectedRequisiteId,
-                };
-                final dealProvider = Provider.of<DealProvider>(context, listen: false);
-                final response = await dealProvider.startDeal(widget.orderId, dealData);
-
-                if (response['data'] != null && response['data']['deal_id'] != null) {
-                  String dealId = response['data']['deal_id'];
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                        create: (_) => DealInfoProvider(),
-                        child: SellExtended2(
-                          dealNumber: "174573",
-                          onPressed: (context) {
-                            Navigator.pop(context);
-                          },
-                          sellerAmount: makerController.text,
-                          sellerCurrency: "USDT",
-                          sellerLogin: widget.login ?? '', // Add null check
-                          bank: selectedPaymentMethod,
-                          requisite: mySelectedRequisite,
-                          comment: widget.comments ?? '', // Add null check
-                          makerAmount: takerController.text,
-                          deal_id: dealId, // Correctly pass dealId
+              SizedBox(height: 20.h),
+              BuySellConverterField(
+                isBuy: false,
+                price: '${widget.cost ?? ''}',
+                fiat: widget.crypto ?? '',
+                crypto: widget.fiat ?? '',
+                unitCost: widget.unitCost ?? '',
+              ),
+              SizedBox(height: 10.h),
+              GestureDetector(
+                onTap: () async {
+                  final chosenRequisite = await showModalBottomSheet<String>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return OrdersBottomSheet(
+                        requisites: filteredRequisites.map((requisite) => '${requisite.bank}: ${requisite.requisite}').toList(),
+                        title: 'Выберите Реквизиты',
+                        searchText: "Поиск реквизитов",
+                        onSelected: (selectedRequisite) {
+                          var selectedRequisiteObj = filteredRequisites.firstWhere(
+                                (requisite) => '${requisite.bank}: ${requisite.requisite}' == selectedRequisite,
+                            orElse: () => MyRequisite(bank: '', comment: '', id: '', requisite: '', userId: ''),
+                          );
+                          setState(() {
+                            selectedPaymentMethod = selectedRequisiteObj.bank;
+                            selectedRequisiteId = selectedRequisiteObj.id;
+                            mySelectedRequisite = selectedRequisiteObj.requisite;
+                            print('Selected Requisite: $selectedRequisiteObj'); // Debugging print
+                          });
+                          Navigator.pop(context, selectedRequisite);
+                        },
+                      );
+                    },
+                  );
+                  if (chosenRequisite != null) {
+                    setState(() {
+                      selectedPaymentMethod = chosenRequisite.split(':').first.trim();
+                    });
+                  }
+                },
+                child: Container(
+                  width: 350.w,
+                  height: 56.h,
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: ShapeDecoration(
+                    color: Color(0xFF272D35),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        selectedPaymentMethod,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF8A929A),
+                          fontSize: 14.sp,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                  );
-                } else {
-                  // Handle error case, for example show a snackbar with the error message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(response['error']['message'] ?? 'Error creating deal')),
-                  );
-                }
-              },
-              txt: "Продать",
-              isBuy: false,
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              'Способ оплаты',
-              style: TextStyle(
-                color: Color(0xFFEDF7FF),
-                fontSize: 18.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
+                      Icon(Icons.keyboard_arrow_down_outlined, color: Color(0xFF8A929A)),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              widget.banks.join(", "),
-              style: TextStyle(
-                color: Color(0xFF8A929A),
-                fontSize: 14.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
+              SizedBox(height: 10.h),
+              BuySellField(
+                isBuy: true,
+                hint_txt: "Я заплачу",
+                fiat: '${widget.fiat ?? ''}', // Add null check
+                textController: makerController,
+                minLimit: double.parse(widget.lower!) / usdToRubRate,
+                maxLimit: double.parse(widget.unitCost!) / usdToRubRate,
               ),
-            ),
-            SizedBox(height: 20.h),
-            Container(
-              width: 350.w,
-              height: 1.50.h,
-              color: Color(0xFF1D2126),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              'Условия сделки',
-              style: TextStyle(
-                color: Color(0xFFEDF7FF),
-                fontSize: 18.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
+              SizedBox(height: 10.h),
+              BuySellField(
+                isBuy: true,
+                hint_txt: "Я получу",
+                fiat: '${widget.crypto ?? ''}', // Add null check
+                textController: takerController,
+                minLimit: double.parse(widget.lower!),
+                maxLimit: double.parse(widget.unitCost!),
               ),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              widget.comments ?? '', // Add null check
-              style: TextStyle(
-                color: Color(0x7FEDF7FF),
-                fontSize: 14.sp,
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
+              SizedBox(height: 10.h),
+              BuySellButton(
+                onTap: () async {
+                  print('Selected Requisite ID: $selectedRequisiteId'); // Debugging print
+
+                  final dealData = {
+                    "amount": takerController.text,
+                    "requisite_id": selectedRequisiteId,
+                  };
+                  final dealProvider = Provider.of<DealProvider>(context, listen: false);
+                  final response = await dealProvider.startDeal(widget.orderId, dealData);
+
+                  if (response['data'] != null && response['data']['deal_id'] != null) {
+                    String dealId = response['data']['deal_id'];
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChangeNotifierProvider(
+                          create: (_) => DealInfoProvider(),
+                          child: SellExtended2(
+                            dealNumber: "174573",
+                            onPressed: (context) {
+                              Navigator.pop(context);
+                            },
+                            sellerAmount: makerController.text,
+                            sellerCurrency: "USDT",
+                            sellerLogin: widget.login ?? '', // Add null check
+                            bank: selectedPaymentMethod,
+                            requisite: mySelectedRequisite,
+                            comment: widget.comments ?? '', // Add null check
+                            makerAmount: takerController.text,
+                            deal_id: dealId, // Correctly pass dealId
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    // Handle error case, for example show a snackbar with the error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(response['error']['message'] ?? 'Error creating deal')),
+                    );
+                  }
+                },
+                txt: "Продать",
+                isBuy: false,
               ),
-            ),
-          ],
+              SizedBox(height: 20.h),
+              Text(
+                'Способ оплаты',
+                style: TextStyle(
+                  color: Color(0xFFEDF7FF),
+                  fontSize: 18.sp,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                widget.banks.join(", "),
+                style: TextStyle(
+                  color: Color(0xFF8A929A),
+                  fontSize: 14.sp,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Container(
+                width: 350.w,
+                height: 1.50.h,
+                color: Color(0xFF1D2126),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Условия сделки',
+                style: TextStyle(
+                  color: Color(0xFFEDF7FF),
+                  fontSize: 18.sp,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                widget.comments ?? '', // Add null check
+                style: TextStyle(
+                  color: Color(0x7FEDF7FF),
+                  fontSize: 14.sp,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

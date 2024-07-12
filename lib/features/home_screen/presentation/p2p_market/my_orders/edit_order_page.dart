@@ -372,12 +372,12 @@ class _EditOrderPageState extends State<EditOrderPage> {
                                   "active": true,
                                   "conditions": {
                                     "comment": commentsController.text,
-                                    "lower": "2",
-                                    "upper": "4"
+                                    "lower": widget.lowerLimit,
+                                    "upper": widget.upperLimit
                                   },
                                   "price": {
                                     "type": "exchange",
-                                    "unit_cost": "5"
+                                    "unit_cost": widget.price
                                   }
                                 };
                                 updateOrderProvider.updateOrder(orderData, widget.orderID);

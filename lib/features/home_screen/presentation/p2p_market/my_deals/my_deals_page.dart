@@ -7,6 +7,8 @@ import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_
 import 'package:vvault_redesign/features/shared/ui_kit/appbar_without_avatar.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/my_deals/deal_instance.dart';
 
+import '../provider/get_banks_list_provider.dart';
+
 class MyDealsPage extends StatefulWidget {
   const MyDealsPage({super.key});
 
@@ -116,7 +118,8 @@ class _MyDealsPageState extends State<MyDealsPage> {
           itemBuilder: (context, index) {
             final deal = deals[index];
             return DealInstance(
-              maker_id: deal['maker'],
+              payer: deal['payer'],
+              maker_id: deal['taker'],
               makerCurrency: deal['maker_currency'],
               takerCurrency: deal['taker_currency'],
               amount: deal['taker_give'],
@@ -125,7 +128,9 @@ class _MyDealsPageState extends State<MyDealsPage> {
               id: deal['id'],
               data: deal['created_at'],
               status: deal['status'],
-              req: deal['requisite_id']
+              req: deal['card'],
+              comment: deal['maker_comment'],
+              bank: deal['bank'],
             );
           },
         ),

@@ -74,7 +74,7 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomAppBarWithoutAva(
-                  txt: "Transaction History",
+                  txt: "История операций",
                 ),
                 SizedBox(height: 20.h,),
                 Container(

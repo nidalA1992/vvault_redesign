@@ -15,7 +15,9 @@ class OrderProvider with ChangeNotifier {
   String? makerId = '';
   String? upper = '';
   String? lower = '';
+  String? requisite = '';
   final OrdersService _apiService = OrdersService();
+
   List<dynamic> get orders => _orders;
 
   Future<void> loadOrders({String? price, bool? isMyOrders}) async {
@@ -47,13 +49,23 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-  Future<String> fetchUserStats(String userId) async {
+  Future<Map<String, dynamic>> fetchUserStats(String userId) async {
     try {
-      final user_name =  await _apiService.fetchUserStats(userId);
-      return user_name['user_name'];
+      final userStats = await _apiService.fetchUserStats(userId);
+      return userStats;
     } catch (e) {
       print(e);
       rethrow;
     }
+  }
+
+  void updateOrderActivity(String id, bool isActive) {
+    for (var order in _orders) {
+      if (order['order']['id'] == id) {
+        order['order']['active'] = isActive;
+        break;
+      }
+    }
+    notifyListeners();
   }
 }

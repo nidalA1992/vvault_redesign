@@ -1,11 +1,14 @@
+// notifications_provider.dart
+
 import 'package:flutter/material.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/data/notifications_service.dart';
+import '../../../../shared/ui_kit/home_page/notification_model.dart';
+import '../data/notifications_service.dart';
 
 class NotificationsProvider with ChangeNotifier {
-  List<dynamic> _notifications = [];
+  List<NotificationModel> _notifications = [];
   final NotificationsService _apiService = NotificationsService();
 
-  List<dynamic> get notifications => _notifications;
+  List<NotificationModel> get notifications => _notifications;
 
   Future<void> loadNotifications({int offset = 0, int limit = 10}) async {
     try {
@@ -33,7 +36,7 @@ class NotificationsProvider with ChangeNotifier {
   Future<void> deleteNotification(String id) async {
     try {
       await _apiService.deleteNotification(id);
-      _notifications.removeWhere((notification) => notification['id'] == id);
+      _notifications.removeWhere((notification) => notification.id == id);
       notifyListeners();
     } catch (e) {
       print(e);
