@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../../home_screen/presentation/home_page/provider/notifications_provider.dart';
-import '../../../home_screen/presentation/p2p_market/my_deals/deal_extended_page.dart';
+import 'package:vvault_redesign/features/home_page/provider/notifications_provider.dart';
+import 'package:vvault_redesign/features/p2p_market/my_deals/deal_extended_page.dart';
 import 'notification_model.dart';
 
 String formatLimit(String limit) {

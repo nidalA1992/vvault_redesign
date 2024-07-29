@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/bill/successful_bill_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_payment_provider.dart';
+import 'package:vvault_redesign/features/home_page/bill/successful_bill_page.dart';
+import 'package:vvault_redesign/features/home_page/provider/home_page_providers.dart';
 
 class BillConfirmationWindow {
   final String amountRub;

@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_buy_extended.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/extended_sell_extended.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
-
-import '../../home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
 
 class BuySellButton extends StatelessWidget {
   final String txt;

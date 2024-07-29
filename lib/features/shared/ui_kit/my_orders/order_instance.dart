@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
 
-import '../../../home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
-import '../../../home_screen/presentation/p2p_market/provider/update_order_provider.dart';
+import '../../../p2p_market/provider/p2p_market_providers.dart';
 
 class OrderInstance extends StatefulWidget {
   final String price;

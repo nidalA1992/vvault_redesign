@@ -1,12 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transfer_currency_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/transfer/transfer_confirmed_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
 
 class WithdrawConfirmationWindow {
   final String amountRub;

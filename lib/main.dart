@@ -2,49 +2,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_in_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/authorization/provider/sign_up_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_in_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/authorization/sign_up_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/home_screen.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/all_money_1value_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/check_balance_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_payment_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/create_wallet_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_crypto_currencies_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/get_user_wallets_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/notifications_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transaction_history_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/transfer_currency_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/wallet_by_currency_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/home_page/provider/withdraw_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/loading_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_deals/provider/my_deals_list_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/my_orders/new_order_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/p2p_market_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_buy_order_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/create_sell_order_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/deal_info/deal_info_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/get_fiat_currencies_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/order_info/order_info_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/orders_list_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_activity_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/p2p_market/provider/update_order_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/settings_page/confidentiality_page/change_mail/change_mail_page.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/provider/new_requisite_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/settings_page/requisites_page/provider/requisites_list_provider.dart';
-import 'package:vvault_redesign/features/home_screen/presentation/settings_page/settings_page.dart';
-
-import 'features/home_screen/presentation/p2p_market/provider/deal_from_order/deal_from_order_provider.dart';
-import 'features/home_screen/presentation/p2p_market/provider/get_my_requisites/my_requisite_provider.dart';
-import 'features/home_screen/presentation/p2p_market/provider/notify_deal/notify_deal_provider.dart';
-import 'features/home_screen/presentation/p2p_market/provider/user_requisite_list/user_requisite_provider.dart';
+import 'package:vvault_redesign/features/authorization/sign_up_page.dart';
+import 'package:vvault_redesign/features/home_page/home_screen.dart';
+import 'package:vvault_redesign/features/p2p_market/my_deals/provider/my_deals_list_provider.dart';
+import 'package:vvault_redesign/features/p2p_market/p2p_market_page.dart';
+import 'package:vvault_redesign/features/settings_page/requisites_page/provider/new_requisite_provider.dart';
+import 'package:vvault_redesign/features/settings_page/requisites_page/provider/requisites_list_provider.dart';
+import 'package:vvault_redesign/features/settings_page/settings_page.dart';
+import 'features/authorization/provider/auth_providers.dart';
+import 'features/home_page/provider/home_page_providers.dart';
+import 'features/p2p_market/provider/p2p_market_providers.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -108,7 +78,7 @@ class MyApp extends StatelessWidget {
             home: child,
           );
         },
-        child: SignInPage(),
+        child: SignUpPage(),
       ),
     );
   }

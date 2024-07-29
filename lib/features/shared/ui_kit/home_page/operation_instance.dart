@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/p2p_market/provider/p2p_market_providers.dart';
 import 'package:vvault_redesign/features/shared/ui_kit/home_page/operation_extended_window.dart';
-import '../../../home_screen/presentation/p2p_market/provider/get_banks_list_provider.dart';
+
 
 class OperationInstance extends StatefulWidget {
   final String type;

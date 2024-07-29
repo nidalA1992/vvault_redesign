@@ -1,0 +1,14 @@
+export 'maker_requisite_list/maker_requisite_provider.dart';
+export 'notify_deal/notify_deal_provider.dart';
+export 'order_info/order_info_provider.dart';
+export 'user_requisite_list/user_requisite_provider.dart';
+export 'create_buy_order_provider.dart';
+export 'create_sell_order_provider.dart';
+export 'get_banks_list_provider.dart';
+export 'get_fiat_currencies_provider.dart';
+export 'orders_list_provider.dart';
+export 'update_order_activity_provider.dart';
+export 'update_order_provider.dart';
+export 'deal_info/deal_info_provider.dart';
+export 'deal_from_order/deal_from_order_provider.dart';
+export 'get_my_requisites/my_requisite_provider.dart';
