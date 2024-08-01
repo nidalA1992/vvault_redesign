@@ -40,23 +40,24 @@ class _BuySellFieldState extends State<BuySellField> {
   @override
   void initState() {
     super.initState();
-    if(widget.minLimit != null && widget.maxLimit != null){
-      widget.textController.addListener(_validateInput);
-    }
+    widget.textController.addListener(_validateInput);
   }
 
   @override
   void dispose() {
-    if(widget.minLimit != null && widget.maxLimit != null){
-      widget.textController.removeListener(_validateInput);
-    }
+    widget.textController.removeListener(_validateInput);
     super.dispose();
   }
 
   void _validateInput() {
     final value = double.tryParse(widget.textController.text);
-    if (value == null || value < widget.minLimit! || value > widget.maxLimit!) {
-      setState(() => currentError = widget.errorText ?? "От ${widget.minLimit} До ${widget.maxLimit}");
+    if (value == null) {
+      setState(() => currentError = widget.errorText ?? "От ${widget.minLimit} до ${widget.maxLimit}");
+    } else if (value < widget.minLimit! || value > widget.maxLimit!) {
+      setState(() {
+        currentError = widget.errorText ?? "От ${widget.minLimit} до ${widget.maxLimit}";
+        widget.textController.text = value < widget.minLimit! ? widget.minLimit!.toStringAsFixed(2) : widget.maxLimit!.toStringAsFixed(2);
+      });
     } else {
       setState(() => currentError = null);
     }
@@ -87,9 +88,9 @@ class _BuySellFieldState extends State<BuySellField> {
             child: TextField(
               controller: widget.textController,
               textAlign: TextAlign.start,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
               style: TextStyle(
                 color: Color(0xFF8A929A),
@@ -125,7 +126,7 @@ class _BuySellFieldState extends State<BuySellField> {
             color: Color(0xFF8A929A),
           ),
           GestureDetector(
-            // onTap: () => widget.textController.text = widget.maxLimit.toString(),
+            onTap: () => widget.textController.text = widget.maxLimit!.toStringAsFixed(2),
             child: Text(
               'Все',
               textAlign: TextAlign.center,
@@ -142,4 +143,5 @@ class _BuySellFieldState extends State<BuySellField> {
     );
   }
 }
+
 

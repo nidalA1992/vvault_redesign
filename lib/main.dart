@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
+import 'package:vvault_redesign/features/authorization/sign_in_page.dart';
 import 'package:vvault_redesign/features/authorization/sign_up_page.dart';
 import 'package:vvault_redesign/features/home_page/home_screen.dart';
 import 'package:vvault_redesign/features/p2p_market/my_deals/provider/my_deals_list_provider.dart';
@@ -29,7 +30,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(NavBarVisibilityController());
-    //Set the fit size (Find your UI design, look at the dimensions of the device screen and fill it in,unit in dp)
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => SignInProvider()),
